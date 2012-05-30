@@ -1,0 +1,57 @@
+img.titlebar          = titlebar.9
+img.dialog            = dialog.9
+img.dialog.titlebar   = titlebar.9
+img.progress          = button.9
+img.prograss.fill     = button_focus.9
+img.selection         = select.9
+img.selection.push    = select_push.9
+img.button            = button.9
+img.button.focus      = button_focus.9
+img.button.push       = button_press.9
+img.checkbox          = cb
+img.checkbox.focus    = cb_sel
+img.checkbox.push     = cb
+img.checkbox.on       = cb_on
+img.checkbox.on.focus = cb_on_sel
+img.checkbox.on.push  = cb_on
+img.radio             = radio
+img.radio.focus       = radio_sel
+img.radio.push        = radio
+img.radio.on          = radio_on
+img.radio.on.focus    = radio_on_sel
+img.radio.on.push     = radio_on
+
+
+color.winbg           = #F1EFE9
+color.winbg_g         = #DFDCD8
+color.winfg           = #000000
+color.winfg_gray      = #666666
+color.dialogbg        = #F1EFE9
+color.dialogbg_g      = #DFDCD8
+color.dialogfg        = #000000
+color.textbg          = #ffffff
+color.textfg          = #000000
+color.textfg_gray     = #666666
+color.controlbg       = #F2EFEB
+color.controlbg_g     = #DCD9D5
+color.controlfg       = #222222
+color.selectbg        = #8EC349
+color.selectbg_g      = #82B343
+color.selectfg        = #ffffff
+color.titlebg         = #4B4A48
+color.titlebg_g       = #333231
+color.titlefg         = #ffffff
+color.dlgtitlebg      = #4B4A48
+color.dlgtitlebg_g    = #333231
+color.dlgtitlefg      = #ffffff
+color.scrollbar       = #82B343
+color.navbg           = #F1EFE9
+color.navbg_g         = #DFDCD8
+color.border          = #dddddd
+color.border_g        = #cccccc
+color.progressglow    = #8EC349
+
+
+config.roundsize             = 2
+config.button_roundsize      = 2
+config.window_roundsize      = 2

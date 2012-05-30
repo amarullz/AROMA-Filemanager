@@ -1,0 +1,126 @@
+﻿ok = OK
+yes = Si
+no = No
+done = Fatto
+cancel = Cancella
+tryagain = Riprova
+exit = Uscita
+about = About
+continue = Continua
+select = Seleziona
+
+canceling = Cancellazione...
+finishing = Conclusione...
+calculating = Calcolo
+discovered = Discovered %s Files
+deleting = Eliminazione di %s Files
+moving = Spostamento di %s di %s Files
+copying = Copia di %s di %s Files
+progress.of = %s di %s
+
+seconds = secondi
+minutes = minuti
+hours = ore
+remaining = rimanenti
+
+mounting = Montaggio Periferiche
+exit.message = Sei sicuro di voler uscire dal filemanager?
+
+tools.newfolder = Nuova Cartella
+tools.favorite = Preferiti
+tools.selectall = Seleziona Tutto
+tools.unselect = Deseleziona
+tools.copy = Copia
+tools.cut = Taglia
+tools.paste = Incolla
+tools.menu = Menu
+tools.delete = Cancella
+tools.details = Dettagli
+tools.chmod = Cambia Permessi
+tools.rename = Rinomina
+tools.favorite.add = Aggiungi ai Preferiti
+tools.favorite.del = Rimuovi dai Preferiti
+tools.hiddenfile = Nascondi i files nascosti
+tools.hiddenfile.show = Mostra i files nascosti 
+
+file.exists = File già esistente
+file.exists.info = Esiste già un file con lo stesso nome in questa posizione.
+overwrite.skip = Salta
+overwrite.skipall = Salta Tutto
+overwrite = Sovrascrivi
+overwrite.all = Sovrascrivi Tutto
+
+disk.full = Disco Pieno
+disk.full.info = Il disco è già pieno, vuoi saltare questo file?
+disk.full.info2 = Il disco è già pieno, impossibile effettuare l'operazione richiesta.
+
+newfolder = Crea Nuova Cartella
+newfolder.insertname = Inserire un nome per creare una nuova cartella
+newfolder.exist = Esiste già un file o una cartella con lo stesso nome del nome dalla cartella che hai specificato.\
+\
+Specificare un nome diverso.
+
+paste.location = Selezionare la posizione e premere incolla
+
+dir.root = Root
+dir.filecount = %s File
+dir.filecounts = %s Files
+
+selected.file = %i File selezionato
+selected.files = %i Files selezionati
+
+symlink = Symlink
+symlink.error = Errore Symlink
+
+settings = Impostazioni
+settings.calib = Calibrazione Schermo
+settings.reset = Reset Impostazioni
+
+settings.toolbar = Stile della Toolbar
+settings.toolbar.icontext = Icona e Testo
+settings.toolbar.icononly = Solo Icona
+
+settings.fontsize = Grandezza Carattere
+settings.fontsize.small = Piccolo
+settings.fontsize.medium = Medio
+settings.fontsize.big = Grande
+
+settings.fontfamily = Caratteri
+settings.iconset = Icone
+settings.themes = Temi
+settings.lang = Lingue
+
+settings.trans = Animazione della Transizione
+settings.trans.0 = Nessuna Transizione
+settings.trans.1 = Veloce
+settings.trans.2 = Normale
+settings.trans.3 = Fluida
+settings.trans.4 = Extra Fluida
+
+settings.mount = Configurazione Montaggi
+settings.mount.all = Automonta tutte le periferiche all'avvio
+settings.mount.none = Nessuno
+
+settings.reset.msg= Sei sicuro di voler resettare le tue impostazioni?
+
+newfolder.error = Impossibile creare una nuova cartella
+
+rename = Rinomina il File
+rename.insertname = Inserire un nuovo nome per rinominare questo file
+rename.exist = Esiste già un file o una cartella con lo stesso nome del nome dall'oggetto che hai specificato.\
+\
+Specificare un nome diverso.
+rename.error = Impossibile rinominare il file
+
+paste.error = Errore Incollaggio
+paste.subfolder_paste = La cartella di destinazione è una sottocartella della cartella sorgente.\
+\
+Prova ad incollarla in un'altra posizione.
+paste.nofile = Non c'è nessun file da incollare qui
+
+copy.prepare = Preparazione alla Copia
+move.prepare = Preparazione allo Spostamento
+delete.prepare = Preparazione all'Eliminazione
+
+delete.title = Elimina il File
+delete.message = Sei sicuro di voler eliminare permanentemente %s oggetti?

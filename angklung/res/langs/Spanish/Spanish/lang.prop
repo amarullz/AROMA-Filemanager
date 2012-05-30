@@ -1,0 +1,126 @@
+﻿ok = OK
+yes = Si
+no = No
+done = Hecho
+cancel = Cancelar
+tryagain = Inténtelo de nuevo
+exit = Salir
+about = Acerca de 
+continue = Continuar
+select = Seleccione
+
+canceling = Cancelando...
+finishing = Finalizando...
+calculating = Calculando
+discovered = Descubiertos %s Ficheros
+deleting = Borrando %s Ficheros
+moving = Moviendo %s de %s Ficheros
+copying = Copiando %s de %s Ficheros
+progress.of = %s de %s
+
+seconds = segundos
+minutes = minutos
+hours = horas
+remaining = remanentes
+
+mounting = Montando Dispositivos
+exit.message = Está seguro de querer salir del filemanager?
+
+tools.newfolder = Nueva Carpeta
+tools.favorite = Favoritos
+tools.selectall = Seleccionar Todo
+tools.unselect = Deseleccionar
+tools.copy = Copiar
+tools.cut = Cortar
+tools.paste = Pegar
+tools.menu = Menu
+tools.delete = Borrar
+tools.details = Detalles
+tools.chmod = Cambiar Permisos
+tools.rename = Renombrar
+tools.favorite.add = Añadir a favoritos
+tools.favorite.del = Borrar de favoritos
+tools.hiddenfile = Ocultar ficheros ocultos
+tools.hiddenfile.show = Mostrar ficheros ocultos
+
+file.exists = Fichero ya existe
+file.exists.info = Ya existe un fichero con el mismo nombre en esta ubicación.
+overwrite.skip = Saltar
+overwrite.skipall = Saltar Todo
+overwrite = Sobrescribir
+overwrite.all = Sobrescribir Todo
+
+disk.full = Disco Lleno
+disk.full.info = El almacenamiento está lleno, quiere saltar este fichero?
+disk.full.info2 = El almacenamiento está lleno, no se puede realizar la operación solicitada.
+
+newfolder = Crear nueva carpeta
+newfolder.insertname = Introduzca un nombre para crear una nueva carpeta
+newfolder.exist = Ya existe un fichero o carpeta con el mismo nombre que ha especificado.\
+\
+Especifique un nombre distinto.
+
+paste.location = Seleccione una ubicación y pulse pegar
+
+dir.root = Raiz
+dir.filecount = %s Fichero
+dir.filecounts = %s Ficheros
+
+selected.file = %i Fichero seleccionado
+selected.files = %i Ficheros seleccionados
+
+symlink = Symlink
+symlink.error = Symlink error
+
+settings = Ajustes
+settings.calib = Pantalla de Calibración
+settings.reset = Restaurar Ajustes
+
+settings.toolbar = Estilo Barra de Herramientas
+settings.toolbar.icontext = Iconos y Texto
+settings.toolbar.icononly = Iconos solamente
+
+settings.fontsize = Tamaño Fuente
+settings.fontsize.small = Pequeño
+settings.fontsize.medium = Mediano
+settings.fontsize.big = Grande
+
+settings.fontfamily = Familia de la Fuente
+settings.iconset = Conjunto de Iconos
+settings.themes = Temas
+settings.lang = Lenguajes
+
+settings.trans = Animaciones de Transicion
+settings.trans.0 = Sin Transiciones
+settings.trans.1 = Rápido
+settings.trans.2 = Normal
+settings.trans.3 = Suave
+settings.trans.4 = Extra Suave
+
+settings.mount = Configuración de Montaje
+settings.mount.all = Automontar todos los dispositivos en el inicio
+settings.mount.none = Ninguno
+
+settings.reset.msg=Está seguro de querer restablecer sus ajustes?
+
+newfolder.error = No se puede crear una nueva carpeta
+
+rename = Renombrar Fichero
+rename.insertname = Introduzca un nuevo nombre para renombrar este fichero
+rename.exist = Ya existe un ficheri o carpeta con el mismo nombre especificado.\
+\
+Especifique un nombre distinto.
+rename.error = No se puede renombrar el fichero
+
+paste.error = Error de Pegado
+paste.subfolder_paste = La carpeta de destino is una subcarpeta de la carpeta de origen.\
+\
+Intente pegar en otra ubicación.
+paste.nofile = No hay ningún fichero para pegar aquí
+
+copy.prepare = Preparando para Copiar
+move.prepare = Preparando para Mover
+delete.prepare = Preparando para Borrar
+
+delete.title = Borrar Fichero
+delete.message = Está seguro de borrar permanentemente %s elementos?
