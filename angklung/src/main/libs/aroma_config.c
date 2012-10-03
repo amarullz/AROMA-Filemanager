@@ -380,7 +380,7 @@ void aui_cfg_save()
 	aarray_set(aui_cfg_array, "theme", auicv.theme);
 
 	//aui_cfg_savecalib();
-	//aui_cfg_savechange();
+	aui_cfg_savechange();
 }
 
 void aui_cfg_loadcfg()
