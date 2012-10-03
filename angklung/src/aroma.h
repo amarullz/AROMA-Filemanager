@@ -75,8 +75,8 @@
 // AROMA Main Configurations
 //
 #define AROMA_NAME        "AROMA Filemanager"
-#define AROMA_VERSION     "1.00"
-#define AROMA_BUILD       "120512-002"
+#define AROMA_VERSION     "1.20"
+#define AROMA_BUILD       "121003-004"
 #define AROMA_BUILD_CN    "Angklung"
 #define AROMA_BUILD_L     "Bandung - Indonesia"
 #define AROMA_BUILD_A     "<support@amarullz.com>"
@@ -225,13 +225,18 @@ typedef struct{
 //
 // Math Macro
 //
-#define max(a,b) ((a>=b)?a:b)
-#define min(a,b) ((a<=b)?a:b)
 #define LOWORD(l) ((word)(l))
 #define HIWORD(l) ((word)(((dword)(l) >> 16) & 0xFFFF))
 #define MAKEDWORD(a, b) ((dword) (((word) (a)) | ((dword) ((word) (b))) << 16))
-#define div2ceil(a) ((a%2)?(a/2):((a+1)/2))
-#define div2floor(a) (a/2)
+
+int max(int a, int b);
+int min(int a, int b);
+int div2ceil(int a);
+int div2floor(int a);
+// #define max(a,b) ((a>=b)?a:b)
+// #define min(a,b) ((a<=b)?a:b)
+// #define div2ceil(a) ((a%2)?(a/2):((a+1)/2))
+// #define div2floor(a) (a/2)
 //
 // AROMA Graphic Pixel Macro
 //
@@ -603,6 +608,8 @@ byte      ag_roundgrad_ex(CANVAS *_b,int x, int y, int w, int h,      // Draw Ro
             color cl1, color cl2, int roundsz, byte tlr,              // With Extra Arguments
             byte trr, byte blr, byte brr);
 void ag_dither(byte * qe, int qp, int qx, int dthx, int dthy, int dthw, int dthh, byte r, byte g, byte b);
+color ag_dodither(int x,int y,dword col);
+color ag_dodither_rgb(int x, int y, byte sr, byte sg, byte sb);
 
 //
 // AROMA Color Calculator Functions
@@ -648,13 +655,7 @@ byte ag_text_exl(CANVAS *_b,int maxwidth,int x,int y, const char *s, color cl_de
 //         Copyright (C) 2007 The Android Open Source Project
 //         Licensed under the Apache License
 //
-AW_CALIBMATRIXP atouch_getcalibmatrix();
-byte atouch_usematrix();
-void    atouch_matrix_calibrate(AW_CALIBMATRIXP matrix);
-int     atouch_gethack();
-void    atouch_sethack(int t);
 struct  input_event;
-void    atouch_set_calibrate(float dx, int ax, float dy, int ay);
 int     atouch_wait(ATEV *atev);
 int     atouch_wait_ex(ATEV *atev, byte calibratingtouch);
 byte    atouch_send_message(dword msg);
@@ -671,7 +672,6 @@ int     touchX();
 int     touchY();
 int     ontouch();
 void    set_key_pressed(int key,char val);
-int     atmsg();
 
 //
 // AROMA System Library Functions

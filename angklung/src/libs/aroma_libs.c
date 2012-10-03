@@ -27,6 +27,19 @@
 #include <sys/stat.h>
 #include "../aroma.h"
 
+int max(int a, int b){
+  return (a > b) ? a : b;
+}
+int min(int a, int b){
+  return (a < b) ? a : b;
+}
+int div2ceil(int a){
+  return ((a%2)?(a/2):((a+1)/2));
+}
+int div2floor(int a){
+  return (a/2);
+}
+
 char * dirname(const char * str){
   char * newdirname = strdup(str);
   if (strlen(newdirname)<=1) return newdirname;

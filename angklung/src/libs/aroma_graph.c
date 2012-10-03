@@ -55,6 +55,88 @@ static byte                            ag_font_onload=0;
 static byte                            ag_oncopybusy=0;
 static int                             ag_caret[4]={0,0,0,0}; //-- Caret, x,y,h,status
 
+/*
+ RG B0 RG B0
+ B0 RG B0 RG
+ 
+ 
+ R0 GB R0
+ GB R0 GB
+*/
+static const byte dither_tresshold_r[64]={
+   1,7, 3,5, 0,8, 2,6,
+   7,1, 5,3, 8,0, 6,2,
+   3,5, 0,8, 2,6, 1,7,
+   5,3, 8,0, 6,2, 7,1,
+   0,8, 2,6, 1,7, 3,5,
+   8,0, 6,2, 7,1, 5,3,
+   2,6, 1,7, 3,5, 0,8,
+   6,2, 7,1, 5,3, 8,0
+};
+static const byte dither_tresshold_g[64]={
+   1,3, 2,2, 3,1, 2,2,
+   2,2, 0,4, 2,2, 4,0,
+   3,1, 2,2, 1,3, 2,2,
+   2,2, 4,0, 2,2, 0,4,
+   1,3, 2,2, 3,1, 2,2,
+   2,2, 0,4, 2,2, 4,0,
+   3,1, 2,2, 1,3, 2,2,
+   2,2, 4,0, 2,2, 0,4
+};
+static const byte dither_tresshold_b[64]={
+   5,3, 8,0, 6,2, 7,1, 
+   3,5, 0,8, 2,6, 1,7, 
+   8,0, 6,2, 7,1, 5,3, 
+   0,8, 2,6, 1,7, 3,5, 
+   6,2, 7,1, 5,3, 8,0, 
+   2,6, 1,7, 3,5, 0,8, 
+   7,1, 5,3, 8,0, 6,2, 
+   1,7, 3,5, 0,8, 2,6
+};
+/*
+static const byte dither_tresshold_r[64]={
+   0, 6, 2, 8, 0, 6, 2, 8, 
+   4, 2, 6, 4, 4, 2, 6, 4, 
+   1, 7, 1, 7, 1, 7, 1, 7, 
+   5, 3, 5, 3, 5, 3, 5, 3, 
+   0, 6, 2, 8, 0, 6, 2, 8, 
+   4, 2, 6, 4, 4, 2, 6, 4, 
+   1, 7, 1, 7, 1, 7, 1, 7, 
+   5, 3, 5, 3, 5, 3, 5, 3
+};
+static const byte dither_tresshold_g[64]={
+   0, 3, 1, 4, 0, 3, 1, 4, 
+   2, 1, 3, 2, 2, 1, 3, 2, 
+   1, 4, 0, 3, 1, 4, 0, 3, 
+   3, 2, 2, 1, 3, 2, 2, 1, 
+   0, 3, 1, 4, 0, 3, 1, 4, 
+   2, 1, 3, 2, 2, 1, 3, 2, 
+   1, 4, 0, 3, 1, 4, 0, 3, 
+   3, 2, 2, 1, 3, 2, 2, 1
+};
+static const byte dither_tresshold_b[64]={
+   0, 6, 2, 8, 0, 6, 2, 8, 
+   4, 2, 6, 4, 4, 2, 6, 4, 
+   1, 7, 1, 7, 1, 7, 1, 7, 
+   5, 3, 5, 3, 5, 3, 5, 3, 
+   0, 6, 2, 8, 0, 6, 2, 8, 
+   4, 2, 6, 4, 4, 2, 6, 4, 
+   1, 7, 1, 7, 1, 7, 1, 7, 
+   5, 3, 5, 3, 5, 3, 5, 3
+};
+*/
+color ag_dodither_rgb(int x, int y, byte sr, byte sg, byte sb){
+  byte dither_xy= ((y&7) << 3) + (x & 7);
+  byte r = ag_close_r(min(sr + dither_tresshold_r[dither_xy], 0xff));
+  byte g = ag_close_g(min(sg + dither_tresshold_g[dither_xy], 0xff));
+  byte b = ag_close_b(min(sb + dither_tresshold_b[dither_xy], 0xff));
+  return ag_rgb(r,g,b);
+}
+color ag_dodither(int x,int y,dword col){
+   return ag_dodither_rgb(x, y, ag_r32(col),ag_g32(col),ag_b32(col));
+}
+
+
 /****************************[ DECLARED FUNCTIONS ]*****************************/
 static void *ag_thread(void *cookie);
 void ag_refreshrate();
@@ -1074,6 +1156,7 @@ byte ag_rectopa(CANVAS *_b,int x, int y, int w, int h, color cl,byte l){
 }
 //-- Draw Rounded Gradient Rectangle
 void ag_dither(byte * qe, int qp, int qx, int dthx, int dthy, int dthw, int dthh, byte r, byte g, byte b){
+   
   byte errb[3]={r,g,b};
   int dtht = dthx+dthy;
   int dthr = (dtht  )%3;
@@ -1087,6 +1170,8 @@ void ag_dither(byte * qe, int qp, int qx, int dthx, int dthy, int dthw, int dthh
       qe[qx-3+dthb] += errb[dthb];
   }
 }
+
+
 #define ag_rndsave(a,b,c) a=min( a+((byte) (((b+c)  * 255) / 4)) , 255)
 byte ag_roundgrad(CANVAS *_b,int x, int y, int w, int h, color cl1, color cl2, int roundsz){
   return ag_roundgrad_ex(_b,x,y,w,h,cl1,cl2,roundsz,1,1,1,1);
@@ -1177,6 +1262,8 @@ byte ag_roundgrad_ex(CANVAS *_b,int x, int y, int w, int h, color cl1, color cl2
     byte g = ag_g32(linecolor);
     byte b = ag_b32(linecolor);
     
+    //byte dither_y = yy % 8;
+    
     int qp= ((yy-y)%2);
     int qn= qp?0:1;
     memset(qe+(qn*w*3),0,w*3);
@@ -1207,8 +1294,9 @@ byte ag_roundgrad_ex(CANVAS *_b,int x, int y, int w, int h, color cl1, color cl2
             curpix=ag_subpixelget32(_b,xx,yy,curpix,rndata[abyy*roundsz+absx]);
           }
         }
-        
+
         //-- Amarullz Dithering
+        /*
         byte old_r = (byte) min(((int) ag_r32(curpix)) + ((int) qe[qx]),  255);
         byte old_g = (byte) min(((int) ag_g32(curpix)) + ((int) qe[qx+1]),255);
         byte old_b = (byte) min(((int) ag_b32(curpix)) + ((int) qe[qx+2]),255);
@@ -1220,8 +1308,10 @@ byte ag_roundgrad_ex(CANVAS *_b,int x, int y, int w, int h, color cl1, color cl2
         byte err_b = old_b - new_b;
         
         ag_dither(qe,qp,qx,xx-x,yy-y,w,h,err_r,err_g,err_b);
+        */
       
-        dx[0] = ag_rgb( ((byte) new_r), ((byte) new_g), ((byte) new_b) );
+        //dx[0] = ag_rgb( ((byte) new_r), ((byte) new_g), ((byte) new_b) );
+        dx[0]=ag_dodither(xx, yy, curpix);
       }
     }
   }

@@ -235,6 +235,7 @@ byte aui_cfg_parse(AARRAYP * arr, char *bufs)
 
 void aui_cfg_savecalib()
 {
+  /*
 	AW_CALIBMATRIXP matrix = atouch_getcalibmatrix();
 	char data_calib[256];
 	if (atouch_usematrix()) {
@@ -246,10 +247,13 @@ void aui_cfg_savecalib()
 		snprintf(data_calib, 256, "");
 	}
 	aarray_set(aui_cfg_array, "calibration", data_calib);
+	*/
 }
 
 byte aui_cfg_loadcalib()
 {
+  return 1;
+  /*
 	byte res = 0;
 	char *calibdata = aarray_get(aui_cfg_array, "calibration");
 	if ((calibdata) && (strcmp(calibdata, "") != 0)) {
@@ -288,14 +292,6 @@ byte aui_cfg_loadcalib()
 		if (!(tok = strtok(NULL, ";")))
 			goto done;
 		byte usealt = (byte) atoi(tok);
-
-		/*
-		   printf("\n\nDATACALIB:\n%f;%f;%f;%f;%f;%f;%f;%i\n\n",
-		   matrix.An,matrix.Bn,matrix.Cn,
-		   matrix.Dn,matrix.En,matrix.Fn,
-		   matrix.Divider,usealt
-		   );
-		 */
 		atouch_matrix_calibrate(&matrix);
 		atouch_sethack(usealt);
 
@@ -305,6 +301,7 @@ byte aui_cfg_loadcalib()
 	}
 
 	return res;
+	*/
 }
 
 void aui_cfg_fromarray()
@@ -382,8 +379,8 @@ void aui_cfg_save()
 	aarray_set(aui_cfg_array, "language", auicv.language);
 	aarray_set(aui_cfg_array, "theme", auicv.theme);
 
-	aui_cfg_savecalib();
-	aui_cfg_savechange();
+	//aui_cfg_savecalib();
+	//aui_cfg_savechange();
 }
 
 void aui_cfg_loadcfg()

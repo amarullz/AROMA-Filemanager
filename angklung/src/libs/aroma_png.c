@@ -206,6 +206,7 @@ byte apng_draw_ex(CANVAS * _b, PNGCANVAS * p, int xpos, int ypos, int sxpos, int
     int qy = (y-sypos)%2;
     int qp = qy?0:1;
     memset(qe+(qp*sw*3),0,sw*3);
+    
     for (x=sxpos;(x<sxpos+sw) && (x<p->w) && ((x-sxpos)+xpos<_b->w);x++){
       int sx = y * p->w + x;
       int qx = ((qy * sw) + (x-sxpos)) * 3;
@@ -241,6 +242,7 @@ byte apng_draw_ex(CANVAS * _b, PNGCANVAS * p, int xpos, int ypos, int sxpos, int
       }
       
       //-- Dithering
+      /*
       byte old_r = (byte) min(((int) dr) + ((int) qe[qx]),  255);
       byte old_g = (byte) min(((int) dg) + ((int) qe[qx+1]),255);
       byte old_b = (byte) min(((int) db) + ((int) qe[qx+2]),255);
@@ -250,10 +252,18 @@ byte apng_draw_ex(CANVAS * _b, PNGCANVAS * p, int xpos, int ypos, int sxpos, int
       byte err_r = old_r - new_r;
       byte err_g = old_g - new_g;
       byte err_b = old_b - new_b;
-      
-      
       ag_dither(qe,qp,qx,x-sxpos,y-sypos,sw,sh,err_r,err_g,err_b);
+      */
+     /*byte dither_xy= (dither_y * 8) + (xx % 8);
+     byte new_r = ag_close_r(min(ag_r32(curpix) + dither_tresshold_r[dither_xy], 255));
+     byte new_g = ag_close_g(min(ag_g32(curpix) + dither_tresshold_g[dither_xy], 255));
+     byte new_b = ag_close_b(min(ag_b32(curpix) + dither_tresshold_b[dither_xy], 255));
+      
       ag_setpixel(_b,(x-sxpos)+xpos,(y-sypos)+ypos, ag_rgb(new_r,new_g,new_b));      
+      */
+      
+      ag_setpixel(_b,(x-sxpos)+xpos,(y-sypos)+ypos, ag_dodither_rgb(x, y, dr, dg, db));
+      
     }
   }
   //printf("PNGDRAW: %ix%i on %ix%i\n",p->w,p->h,xpos,ypos);
@@ -430,6 +440,7 @@ byte apng_drawfont(CANVAS * _b, PNGFONTS * p, byte fpos, int xpos, int ypos, col
       }
       
       //-- Dithering
+      /*
       byte old_r = (byte) min(((int) dr) + ((int) qe[qx]),  255);
       byte old_g = (byte) min(((int) dg) + ((int) qe[qx+1]),255);
       byte old_b = (byte) min(((int) db) + ((int) qe[qx+2]),255);
@@ -440,9 +451,11 @@ byte apng_drawfont(CANVAS * _b, PNGFONTS * p, byte fpos, int xpos, int ypos, col
       byte err_g = old_g - new_g;
       byte err_b = old_b - new_b;
       
-      ag_dither(qe,y+1,qx,x,y,fw,fh,err_r,err_g,err_b);
-      
+      ag_dither(qe,y+1,qx,x,y,fw,fh,err_r,err_g,err_b);      
       ag_setpixel(_b,x+xpos,y+ypos,ag_rgb(new_r,new_g,new_b));
+      */
+      ag_setpixel(_b,x+xpos,y+ypos,ag_dodither_rgb(x, y, dr, dg, db));
+      
       if (bold){
         int bx    = x+xpos;
         int by    = y+ypos;
@@ -660,7 +673,6 @@ byte apng_stretch(
     int qp= (y%2);
     int qn= qp?0:1;
     memset(qe+(qn*dw*3),0,dw*3);
-    
     for (x=0;x<dw;x++){
       int xpos = round(x * xscale);
       int ypos = round(y * yscale);
@@ -704,6 +716,7 @@ byte apng_stretch(
         }
         
         //-- Dithering
+        /*
         byte old_r = (byte) min(((int) dr) + ((int) qe[qx]),  255);
         byte old_g = (byte) min(((int) dg) + ((int) qe[qx+1]),255);
         byte old_b = (byte) min(((int) db) + ((int) qe[qx+2]),255);
@@ -716,7 +729,9 @@ byte apng_stretch(
         
         //-- New Dithering
         ag_dither(qe,qn,qx,x,y,dw,dh,err_r,err_g,err_b);
-        ag_setpixel(_b,dpx,dpy, ag_rgb(new_r,new_g,new_b));    
+        ag_setpixel(_b,dpx,dpy, ag_rgb(new_r,new_g,new_b)); 
+        */
+        ag_setpixel(_b,dpx,dpy, ag_dodither_rgb(x, y, dr, dg, db));   
       }
     }
   }

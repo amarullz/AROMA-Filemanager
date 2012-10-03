@@ -128,10 +128,12 @@ byte aui_start(){
   aui_isbgredraw = 1;                   //-- Set draw status
   
    //-- Show calibration tools
+   /*
   if (!aui_cfg_loadcalib()){
     if (aw_calibtools(NULL))
       aui_cfg_save();
   }
+  */
   
   //-- INIT OPENED PATH
   char * path       = NULL;
