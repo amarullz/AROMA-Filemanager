@@ -90,8 +90,21 @@ byte auia_click(AUI_VARSP v)
 }
 
 //* 
-//* ONHOLD
+//* CHANGE PERM
 //*
+byte auia_hold_perm(AUI_VARSP v, char *fname){
+  byte ret = 1;
+  char *path_filename = NULL;
+	aui_setpath(&path_filename,v->path,fname,0);
+	ret = auido_setperm(v->hWin, path_filename, fname);
+	free(path_filename);
+	if (!ret){
+	  v->reshow = 1;
+	  snprintf(v->selfile,256,"%s",fname);
+	}
+  return ret;
+}
+
 //* 
 //* MAKE NEW FOLDER
 //*
@@ -228,7 +241,7 @@ byte auia_hold(AUI_VARSP v)
 		aw_menuset(mi, cp++, "tools.copy", 2);
 		aw_menuset(mi, cp++, "tools.cut", 3);
 		aw_menuset(mi, cp++, "tools.delete", 4);
-		aw_menuset(mi, cp++, "tools.details", 5);
+		aw_menuset(mi, cp++, "tools.chmod", 1);
 		byte ret = aw_menu(v->hWin, fl, mi, cp);
 
 		if ((!onfav) && (ret > 0))
@@ -237,7 +250,12 @@ byte auia_hold(AUI_VARSP v)
 		if (ret == 2) {
 			//-- Rename
 			return auia_hold_rename(v, fl);
-		} else if ((ret == 3) || (ret == 4)) {
+		}
+		else if (ret == 6) {
+			//-- Rename
+			return auia_hold_perm(v, fl);
+		}
+		else if ((ret == 3) || (ret == 4)) {
 			//-- Copy / cut
 			ag_setbusy();
 			auic_init(ret - 2, 1, v->path);

@@ -104,16 +104,23 @@ void aui_filesize(char *buf, char *path)
 void aui_fileperm(char *buf, char *path)
 {
 	struct stat fst;
-	if (!stat(path, &fst)) {
-		buf[8] = (fst.st_mode & 1) ? 'x' : '-';
-		buf[7] = (fst.st_mode & 2) ? 'w' : '-';
-		buf[6] = (fst.st_mode & 4) ? 'r' : '-';
-		buf[5] = (fst.st_mode & 8) ? 'x' : '-';
-		buf[4] = (fst.st_mode & 16) ? 'w' : '-';
-		buf[3] = (fst.st_mode & 32) ? 'r' : '-';
-		buf[2] = (fst.st_mode & 64) ? 'x' : '-';
-		buf[1] = (fst.st_mode & 128) ? 'w' : '-';
-		buf[0] = (fst.st_mode & 256) ? 'r' : '-';
+	if (!stat(path, &fst)) {		  
+		buf[8] = (fst.st_mode & S_IXOTH) ? 'x' : '-';
+		buf[7] = (fst.st_mode & S_IWOTH) ? 'w' : '-';
+		buf[6] = (fst.st_mode & S_IROTH) ? 'r' : '-';
+		  
+		buf[5] = (fst.st_mode & S_IXGRP) ? 'x' : '-';
+		buf[4] = (fst.st_mode & S_IWGRP) ? 'w' : '-';
+		buf[3] = (fst.st_mode & S_IRGRP) ? 'r' : '-';
+		  
+		buf[2] = (fst.st_mode & S_IXUSR) ? 'x' : '-';
+		buf[1] = (fst.st_mode & S_IWUSR) ? 'w' : '-';
+		buf[0] = (fst.st_mode & S_IRUSR) ? 'r' : '-';
+
+    //-- SUID, GUID, STICKY
+		buf[2] = (fst.st_mode & S_ISUID) ? ((buf[2]=='x')?'s':'S') : buf[2];
+		buf[5] = (fst.st_mode & S_ISGID) ? ((buf[2]=='x')?'s':'S') : buf[5];
+		buf[8] = (fst.st_mode & S_ISVTX) ? ((buf[2]=='x')?'t':'T') : buf[8];
 		buf[9] = 0;
 	} else
 		snprintf(buf, 10, "---------");

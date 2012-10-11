@@ -1,0 +1,61 @@
+img.dialog=dialog.9
+img.dialog.titlebar=dialog_titlebar.9
+img.progress=progbg.9
+img.prograss.fill=progval.9
+img.selection=list.9
+img.selection.push=list.9
+img.button=button.9
+img.button.focus=button_focus.9
+img.button.push=button_press.9
+img.checkbox=cboff
+img.checkbox.focus=cboff
+img.checkbox.push=cboff
+img.checkbox.on=cbon
+img.checkbox.on.focus=cbon
+img.checkbox.on.push=cbon
+img.radio=radoff
+img.radio.focus=radoff
+img.radio.push=radoff
+img.radio.on=radon
+img.radio.on.focus=radon
+img.radio.on.push=radon
+
+
+color.winbg           = #eeeeee
+color.winbg_g         = #eeeeee
+color.winfg           = #000000
+color.winfg_gray      = #666666
+color.dialogbg        = #ffffff
+color.dialogbg_g      = #ffffff
+color.dialogfg        = #000000
+color.textbg          = #ffffff
+color.textfg          = #000000
+color.textfg_gray     = #666666
+color.controlbg       = #eeeeee
+color.controlbg_g     = #eeeeee
+color.controlfg       = #000000
+color.selectbg        = #33B5E5
+color.selectbg_g      = #33B5E5
+color.selectfg        = #000000
+color.titlebg         = #000000
+color.titlebg_g       = #000000
+color.titlefg         = #33B5E5
+color.dlgtitlebg      = #ffffff
+color.dlgtitlebg_g    = #ffffff
+color.dlgtitlefg      = #444444
+color.scrollbar       = #33B5E5
+color.navbg           = #eeeeee
+color.navbg_g         = #eeeeee
+color.border          = #cccccc
+color.border_g        = #cccccc
+color.progressglow    = #33B5E5
+
+config.roundsize             = 1
+config.button_roundsize      = 1
+config.window_roundsize      = 1
+config.transition_frame      = 4
+
+
+info.themename        = Holo Light
+info.description      = Holo Light Theme for AROMA Installer
+info.author           = amarullz

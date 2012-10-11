@@ -530,9 +530,9 @@ byte apng9_calc(PNGCANVAS * p, APNG9P v,byte with_pad){
   v->h = le;
   if (with_pad){
     v->t = rs;
-    v->b = (p->h - 1) - (rs+re);
+    v->b = (p->h - 1) - ((rs+re));
     v->l = bs;
-    v->r = (p->w - 1) - (bs+be);
+    v->r = (p->w - 1) - ((bs+be));
   }
   else{
     v->t = v->b = v->l = v->r = 0;
@@ -639,8 +639,83 @@ byte apng9_draw(
   return 1;
 }
 
+byte apng_stretch(CANVAS * _b, PNGCANVAS * p,
+  int dx,
+  int dy,
+  int wDst,
+  int hDst,
+  
+  int sx,
+  int sy,
+  int wSrc,
+  int hSrc){
+
+  if (_b==NULL) _b=agc();
+  if (p==NULL) return 0;
+  if (p->s==0) return 0;
+  if ((hDst<1)||(wDst<1)||(hSrc<1)||(wSrc<1)) return 0;
+    
+  unsigned int wStepFixed16b, hStepFixed16b, wCoef, hCoef, x, y;
+  unsigned int hc1, hc2, wc1, wc2, offsetX, offsetY;
+  int id1, id2, id3, id4, line1, line2;
+  byte dr, dg, db, da;
+  
+  wStepFixed16b = ((wSrc - 1) << 16) / (wDst - 1);
+  hStepFixed16b = ((hSrc - 1) << 16) / (hDst - 1);
+  hCoef = 0;
+  
+  for (y = 0 ; y < hDst ; y++){
+    offsetY = (hCoef >> 16);
+    hc2 = (hCoef >> 9) & 127;
+    hc1 = 128 - hc2;
+    wCoef = 0;
+    line1 = (offsetY + sy) * p->w;
+    line2 = (offsetY + sy + 1) * p->w;
+    for (x = 0 ; x < wDst ; x++){
+      color * dstp = agxy(_b,dx+x,dy+y);
+      if (dstp==NULL){
+        continue;
+      }
+      offsetX = (wCoef >> 16);
+      wc2 = (wCoef >> 9) & 127;
+      wc1 = 128 - wc2;
+      
+      id1 = line1 + offsetX + sx;
+      id2 = line2 + offsetX + sx;
+      id3 = line1 + offsetX + sx + 1;
+      id4 = line2 + offsetX + sx + 1;
+      
+      dr = ((p->r[id1] * hc1 + p->r[id2] * hc2) * wc1 +
+           (p->r[id3] * hc1 + p->r[id4] * hc2) * wc2) >> 14;
+      dg = ((p->g[id1] * hc1 + p->g[id2] * hc2) * wc1 +
+           (p->g[id3] * hc1 + p->g[id4] * hc2) * wc2) >> 14;
+      db = ((p->b[id1] * hc1 + p->b[id2] * hc2) * wc1 +
+           (p->b[id3] * hc1 + p->b[id4] * hc2) * wc2) >> 14;
+
+      if (p->c==4){
+        da = ((p->a[id1] * hc1 + p->a[id2] * hc2) * wc1 +
+             (p->a[id3] * hc1 + p->a[id4] * hc2) * wc2) >> 14;
+        color dcolor = dstp[0]; 
+        byte  falpha = da;
+        byte  ralpha = 255 - falpha;
+        dr = (byte) (((((int) ag_r(dcolor)) * ralpha) + (((int) dr) * falpha)) >> 8);
+        dg = (byte) (((((int) ag_g(dcolor)) * ralpha) + (((int) dg) * falpha)) >> 8);
+        db = (byte) (((((int) ag_b(dcolor)) * ralpha) + (((int) db) * falpha)) >> 8);
+        
+      }
+      ag_setpixel(_b,dx+x,dy+y,
+        ag_dodither_rgb(x, y, dr, dg, db)
+      );
+      wCoef += wStepFixed16b;
+    }
+    hCoef += hStepFixed16b;
+  }
+  return 1;
+}
+
+
 //-- STRETCH
-byte apng_stretch(
+byte apng_stretch_(
   CANVAS * _b,
   PNGCANVAS * p,
   int dx,

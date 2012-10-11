@@ -56,8 +56,8 @@ void aui_show_setting()
 	v.state = 0;
 	v.pad = agdp() * 2;
 	v.btnH = agdp() * 20;
-	v.boxH = agh() - (aui_minY + (v.btnH * 2) + (v.pad * 4));
-	v.boxY = aui_minY + v.btnH + (v.pad * 2);
+	v.boxH = agh() - (aui_minY + (v.btnH) + (v.pad * 2));
+	v.boxY = aui_minY;
 	v.btnY = v.boxY + v.boxH + v.pad;
 	v.navW = agw() - (v.pad * 2);
 	v.pthW = v.navW;
@@ -68,7 +68,7 @@ void aui_show_setting()
 	v.btnFH = aui_cfg_btnFH();
 
 	//-- Draw Navigation Bar
-	aui_drawtopbar(&aui_win_bg, 0, aui_minY, agw(), v.btnH + (v.pad * 2));
+	// aui_drawtopbar(&aui_win_bg, 0, aui_minY, agw(), v.btnH + (v.pad * 2));
 	aui_drawnav(&aui_win_bg, 0, v.btnY - (v.pad + v.btnFH), agw(),
 		    v.btnH + (v.pad * 2) + v.btnFH);
 
@@ -77,9 +77,9 @@ void aui_show_setting()
 
 	//****************************[ INIT WINDOW CONTROLS ]****************************/
 	// imgbtn(v.hWin, v.pad, v.navY, btnHlv, v.btnH, &UI_ICONS[20], alang_get("settings.mount"), 3, 22);
-	imgbtn(v.hWin, v.pad, v.navY, btnHlv, v.btnH, &UI_ICONS[17],
+	/*imgbtn(v.hWin, v.pad, v.navY, btnHlv, v.btnH, &UI_ICONS[17],
 	       alang_get("settings.calib"), 3, 21);
-
+  */
 	v.hFile = acopt(v.hWin, 0, v.boxY, agw(), (v.boxH - v.btnFH));
 
 	//-- Toolbar style : 1

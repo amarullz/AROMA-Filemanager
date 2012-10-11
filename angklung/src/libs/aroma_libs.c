@@ -89,6 +89,16 @@ long alib_tick(){
   return ((long) (now.tv_sec * 1000.0 + now.tv_nsec / 1000000.0)/10);
 }
 
+long alib_tickms(){
+  /*
+  struct tms tm;
+  return times(&tm);
+  */
+  struct timespec now;
+  if (clock_gettime(CLOCK_MONOTONIC, &now)) return 0;
+  return ((long) (now.tv_sec * 1000.0 + now.tv_nsec / 1000000.0));
+}
+
 int * ai_rtrimw(int * chr,int len){
   int * res = chr;
   int i;

@@ -125,3 +125,13 @@ delete.prepare = Persiapan Penghapusan
 
 delete.title = Hapus File
 delete.message = Anda yakin akan menghapus %s item ini?
+
+tools.chmod.read = Baca
+tools.chmod.write = Tulis
+tools.chmod.exec = Jalan
+tools.chmod.user = Pemilik
+tools.chmod.group = Grup
+tools.chmod.others = Lainnya
+tools.chmod.setuid = SetUID
+tools.chmod.setgid = SetGID
+tools.chmod.sticky = Sticky

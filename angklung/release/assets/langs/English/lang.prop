@@ -124,3 +124,13 @@ delete.prepare = Preparing to Delete
 
 delete.title = Delete File
 delete.message = Are you sure you want to permanently delete %s items?
+
+tools.chmod.read = Read
+tools.chmod.write = Write
+tools.chmod.exec = Exec
+tools.chmod.user = User
+tools.chmod.group = Group
+tools.chmod.others = Others
+tools.chmod.setuid = SetUID
+tools.chmod.setgid = SetGID
+tools.chmod.sticky = Sticky

@@ -75,9 +75,9 @@
 // AROMA Main Configurations
 //
 #define AROMA_NAME        "AROMA Filemanager"
-#define AROMA_VERSION     "1.20"
-#define AROMA_BUILD       "121003-004"
-#define AROMA_BUILD_CN    "Angklung"
+#define AROMA_VERSION     "1.50"
+#define AROMA_BUILD       "121011-006"
+#define AROMA_BUILD_CN    "Bonang"
 #define AROMA_BUILD_L     "Bandung - Indonesia"
 #define AROMA_BUILD_A     "<support@amarullz.com>"
 #define AROMA_BUILD_URL   "http://www.amarullz.com/"
@@ -688,6 +688,7 @@ void  alib_exec(char * cmd, char * arg);
 void  create_directory(const char *path);
 int   remove_directory(const char *path);
 long  alib_tick();
+long alib_tickms();
 
 char * dirname(const char * str);
 char * basename(const char * path);

@@ -95,6 +95,7 @@ typedef struct{
 #include "libs/aroma_uicut.c"
 #include "libs/aroma_uidel.c"
 #include "libs/aroma_uiabout.c"
+#include "libs/aroma_uiperm.c"
 
 #include "libs/aroma_uimain.c"
 #include "libs/aroma_handler.c"
