@@ -1,0 +1,142 @@
+﻿ok = OK
+yes = Ya
+no = Tidak
+done = Selesai
+cancel = Batal
+tryagain = Coba Lagi
+exit = Keluar
+about = Tentang
+continue = Lanjutkan
+select = Pilih
+close = Tutup
+
+canceling = Membatalkan...
+finishing = Menyelesaikan...
+calculating = Menghitung
+discovered = Ditemukan %s File
+deleting = Menghapus %s File
+moving = Memindahkan %s dari %s File
+copying = Menyalin %s dari %s File
+progress.of = %s dari %s
+
+seconds = detik
+minutes = menit
+hours = jam
+remaining = lagi
+
+mounting = Mounting Semua Partisi
+exit.message = Anda yakin akan keluar dari filemanager?
+
+tools.newfolder = Folder Baru
+tools.favorite = Favorit
+tools.selectall = Cek Semua
+tools.unselect = Kosongkan
+tools.copy = Salin
+tools.cut = Pindah
+tools.paste = Tempel
+tools.menu = Menu
+tools.delete = Hapus
+tools.details = Info Lengkap
+tools.chmod = Ubah Hak Akses
+tools.rename = Ubah Nama
+tools.favorite.add = Tambah ke favorit
+tools.favorite.del = Hapus dari favorite
+tools.hiddenfile = Sembunyikan file tersembunyi
+tools.hiddenfile.show = Tampilkan file tersembunyi
+
+file.exists = File sudah ada
+file.exists.info = Telah terdapat file dengan nama yang sama pada lokasi ini.
+overwrite.skip = Lewat
+overwrite.skipall = Lewat Semua
+overwrite = Timpa
+overwrite.all = Timpa Semua
+
+disk.full = Penyimpanan Penuh
+disk.full.info = Penyimpanan telah penuh ketika menyalin file berikut. Apakah Anda hendak melanjutkan pada file lainnya?
+
+file.exists = File already exists
+
+newfolder = Buat folder baru
+newfolder.insertname = Silahkan masukan nama folder untuk membuat folder baru
+newfolder.exist = File dengan nama yang sama telah terdapat di dalam folder yang Anda tentukan\
+\
+Silahkan masukan nama lain.
+paste.location = Pilih lokasi dan tekan Tempel
+
+dir.root = Atas
+dir.filecount = %s File
+dir.filecounts = %s Files
+
+selected.file = Dipilih %i File 
+selected.files = Dipilih %i Files
+
+symlink = Symlink
+symlink.error = Symlink error
+
+settings = Pengaturan
+settings.calib = Penyesuaian Layar
+settings.reset = Atur Ulang
+
+settings.toolbar = Jenis Toolbar
+settings.toolbar.icontext = Icon dan Teks
+settings.toolbar.icononly = Hanya Icon
+
+settings.fontsize = Ukuran Huruf
+settings.fontsize.small = Kecil
+settings.fontsize.medium = Sedang
+settings.fontsize.big = Besar
+
+settings.fontfamily = Jenis Huruf
+settings.iconset = Icon Pilihan
+settings.themes = Tema
+settings.lang = Bahasa
+
+settings.trans = Animasi Transisi
+settings.trans.0 = Tanpa Animasi
+settings.trans.1 = Cepat
+settings.trans.2 = Normal
+settings.trans.3 = Halus
+settings.trans.4 = Sangat Halus
+
+settings.mount = Konfigurasi Mount
+settings.mount.all = Mount semua device ketika dimulai
+settings.mount.none = Tidak di mount
+
+
+settings.reset.msg = Anda yakin akan mereset pengaturan?
+
+newfolder.error = Tidak dapat membuat folder baru
+
+rename = Ubah Nama File
+rename.insertname = Silahkan masukan nama file baru untuk merubah nama file
+rename.exist = Telah terdapat file atau folder dengan nama yang sama dengan yang Anda masukan\
+\
+Silahkan tentukan nama lainnya.
+rename.error = Tidak dapat merubah nama file
+
+paste.error = Tempel Gagal
+paste.subfolder_paste = Anda tidak dapat menempelkannya ke dalam subfolder dari folder asal.\
+\
+Coba untuk menempelkannya pada lokasi lain.
+paste.nofile = Tidak ada file yang dapat ditempelkan di sini
+
+copy.prepare = Persiapan Penyalinan
+move.prepare = Persiapan Pemindahan
+delete.prepare = Persiapan Penghapusan
+
+delete.title = Hapus File
+delete.message = Anda yakin akan menghapus %s item ini?
+
+tools.chmod.read = Baca
+tools.chmod.write = Tulis
+tools.chmod.exec = Jalan
+tools.chmod.user = Pemilik
+tools.chmod.group = Grup
+tools.chmod.others = Lainnya
+tools.chmod.setuid = SetUID
+tools.chmod.setgid = SetGID
+tools.chmod.sticky = Sticky
+
+tools.terminal.title = Terminal
+tools.terminal.terminate = Akhiri
+tools.terminal.terminate_info = Shell masih berjalan... Anda yakin akan menghentikannya?
