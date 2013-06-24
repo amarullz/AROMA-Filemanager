@@ -78,7 +78,7 @@ char auiterm_ctrl(char c){
 
 /* Send Into SHELL */
 void auiterm_send(AUITERMP p, char c, byte iscursor){
-  printf("Key : %i - %c - %i\n",c,c,iscursor);
+  //
   p->drawnow=1;
   if (iscursor){
     switch (c){

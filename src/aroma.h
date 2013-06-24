@@ -638,6 +638,7 @@ byte  ag_loadsmallfont(char * fontname, byte is_freetype, char * relativeto); //
 byte  ag_loadbigfont(char * fontname, byte is_freetype, char * relativeto); // Load Big Font From Zip
 byte  ag_loadfixedfont(char * fontname, byte is_freetype, char * relativeto);
 void  ag_closefonts();                                // Release Big & Small Fonts
+byte ag_drawchar_ex2(CANVAS * _b, int x, int y, int c, color cl, byte isbig, byte underline, byte bold, byte italic,byte lcd);
 byte  ag_drawchar(CANVAS *_b,int x, int y, int c,    // Draw Character into Canvas
         color cl, byte isbig);
 byte ag_drawchar_ex(CANVAS * _b, int x, int y, int c, color cl, byte isbig, byte underline, byte bold, byte italic);

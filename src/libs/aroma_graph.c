@@ -2090,7 +2090,7 @@ void ag_closefonts() {
 }
 
 //-- Draw Character
-byte ag_drawchar_ex(CANVAS * _b, int x, int y, int c, color cl, byte isbig, byte underline, byte bold, byte italic) {
+byte ag_drawchar_ex2(CANVAS * _b, int x, int y, int c, color cl, byte isbig, byte underline, byte bold, byte italic,byte lcd) {
   if (!ag_fontready(isbig)) {
     return 0;
   }
@@ -2102,7 +2102,7 @@ byte ag_drawchar_ex(CANVAS * _b, int x, int y, int c, color cl, byte isbig, byte
   byte isfreetype = isbig ? AG_BIG_FONT_FT : AG_SMALL_FONT_FT;
   
   if (isfreetype) {
-    return aft_drawfont(_b, isbig, c, x, y, cl, underline, bold, italic, 1);
+    return aft_drawfont(_b, isbig, c, x, y, cl, underline, bold, italic, lcd);
   }
   
   int yy, xx;
@@ -2123,6 +2123,9 @@ byte ag_drawchar_ex(CANVAS * _b, int x, int y, int c, color cl, byte isbig, byte
   
   PNGFONTS * fnt = isbig ? &AG_BIG_FONT : &AG_SMALL_FONT;
   return apng_drawfont(_b, fnt, cd, x, y, cl, underline, bold);
+}
+byte ag_drawchar_ex(CANVAS * _b, int x, int y, int c, color cl, byte isbig, byte underline, byte bold, byte italic) {
+  return ag_drawchar_ex2(_b,x,y,c,cl,isbig,underline,bold,italic,1);
 }
 byte ag_drawchar(CANVAS * _b, int x, int y, int c, color cl, byte isbig) {
   return ag_drawchar_ex(_b, x, y, c, cl, isbig, 0, 0, 0);

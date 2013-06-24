@@ -53,6 +53,7 @@ void acime2_sendmsg(ACONTROLP ctl, byte a2, byte a3, byte a4){
   ACIMEDP  d      = (ACIMEDP) ctl->d;
   
   dword msg=aw_msg(d->inputMsg,a2,(d->onCTRL?1:0),a4);
+  
   if (d->onCTRL){
     d->keyD[34]=0;
     d->onCTRL=0;
@@ -129,6 +130,7 @@ void  acime2_action(ACONTROLP ctl, int keyID, byte isUp){
   byte rb         = 0;
   char c          = 0;
   byte doThread   = 0;
+  byte iscursor   = 0;
   if ((keyID<27)&&(keyID!=19)){
     if (isUp){
       int n = keyID;
@@ -188,6 +190,7 @@ void  acime2_action(ACONTROLP ctl, int keyID, byte isUp){
     }
   }
   else if (keyID>=35){
+    iscursor = 1;
     if (!isUp){
       if (keyID==35) c=37; /* left */
       else if (keyID==36) c=38; /* up */
@@ -209,7 +212,7 @@ void  acime2_action(ACONTROLP ctl, int keyID, byte isUp){
   }
   
   if (c!=0){
-    acime2_sendmsg(ctl, (byte) c, 0, 0);
+    acime2_sendmsg(ctl, (byte) c, iscursor, iscursor);
   }
   
   if ((!isUp)&&((doThread)||(!d->on123))){

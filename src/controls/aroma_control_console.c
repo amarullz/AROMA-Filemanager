@@ -214,7 +214,7 @@ void tsetchar(ACONTROLP ctl, char c) {
   ACONSOLEP   d  = (ACONSOLEP) ctl->d;
   tclearregion(ctl, d->cx, d->cy, d->cx, d->cy);
   if (c!=' '){
-    ag_drawchar_ex(
+    ag_drawchar_ex2(
       &d->cv,
       d->cx*d->fw,
       d->cy*d->fh,
@@ -222,7 +222,7 @@ void tsetchar(ACONTROLP ctl, char c) {
       getfg(d),
       2,
       d->underline,
-      d->bold, 0
+      d->bold, 0, 0
     );
   }
 }
