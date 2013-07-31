@@ -51,7 +51,7 @@
 // ARM NEON - Testing Only
 //
 #ifdef __ARM_NEON__
-  #include <arm_neon.h>
+#include <arm_neon.h>
 #endif
 
 #include "aroma_mem.h"
@@ -77,10 +77,13 @@
 //
 // AROMA Main Configurations
 //
-#define AROMA_NAME        "AROMA Filemanager"
-#define AROMA_VERSION     "1.90"
-#define AROMA_BUILD       "130624-008"
-#define AROMA_BUILD_CN    "Degung"
+/*
+  //-- MOVE TO Android.mk
+  #define AROMA_NAME        "AROMA Filemanager"
+  #define AROMA_VERSION     "1.90"
+  #define AROMA_BUILD       "130624-008"
+  #define AROMA_BUILD_CN    "Degung Gamelan"
+*/
 #define AROMA_BUILD_L     "Bandung - Indonesia"
 #define AROMA_BUILD_A     "<support@amarullz.com>"
 #define AROMA_BUILD_URL   "http://www.amarullz.com/"
@@ -104,7 +107,7 @@ typedef struct {
   float Fn;     /* F = Fn/Divider */
   float Divider;
 } AW_CALIBMATRIX, *AW_CALIBMATRIXP;
-typedef struct{
+typedef struct {
   float x;
   float y;
 } AW_CALIBPOINT, *AW_CALIBPOINTP;
@@ -113,28 +116,28 @@ typedef struct{
 //
 // AROMA Canvas Structure
 //
-typedef struct{
-	int     w;       // Width
-	int     h;       // Height
-	int     sz;      // Data Size
-	color * data;    // Data 
+typedef struct {
+  int     w;       // Width
+  int     h;       // Height
+  int     sz;      // Data Size
+  color * data;    // Data
 } CANVAS;
 
 //
 // AROMA Assosiative Array Structure
 //
-typedef struct{
+typedef struct {
   char * key;
   char * val;
 } AARRAY_ITEM, * AARRAY_ITEMP;
 
-typedef struct{
+typedef struct {
   int length;
   AARRAY_ITEMP items;
 } AARRAY, * AARRAYP;
 
 AARRAYP   aarray_create();
-char *    aarray_get(AARRAYP a, char * key);
+char   *  aarray_get(AARRAYP a, char * key);
 byte      aarray_set(AARRAYP a, char * key, char * val);
 byte      aarray_del(AARRAYP a, char * key);
 byte      aarray_free(AARRAYP a);
@@ -147,10 +150,10 @@ typedef struct {
   int     h;       // Height
   int     s;       // Buffer Size
   byte    c;       // Channels
-  byte *  r;       // Red Channel
-  byte *  g;       // Green Channel
-  byte *  b;       // Blue Channel
-  byte *  a;       // Alpha Channel
+  byte  * r;       // Red Channel
+  byte  * g;       // Green Channel
+  byte  * b;       // Blue Channel
+  byte  * a;       // Alpha Channel
 } PNGCANVAS, * PNGCANVASP;
 
 
@@ -158,7 +161,7 @@ typedef struct {
 // AROMA PNG Font Canvas Structure
 //
 typedef struct {
-  byte    loaded;    // Font is Loaded 
+  byte    loaded;    // Font is Loaded
   int     fx[96];    // Font X Positions
   byte    fw[96];    // Font Width
   byte    fh;        // Font Height
@@ -166,15 +169,15 @@ typedef struct {
   int     h;         // Png Height
   int     s;         // Buffer Size
   byte    c;         // Channels
-  byte *  d;         // Fonts Alpha Channel
+  byte  * d;         // Fonts Alpha Channel
 } PNGFONTS;
 
 //
 // AROMA ZIP Memory Structure
 //
-typedef struct{
-	int sz;         // Data Size
-	byte *data;     // Data 
+typedef struct {
+  int sz;         // Data Size
+  byte * data;    // Data
 } AZMEM;
 
 //
@@ -194,7 +197,7 @@ typedef struct {
   AFTGLYPHP   cache;
   long        cache_n;
   byte        kern;
-  byte *      mem;
+  byte    *   mem;
 } AFTFACE, * AFTFACEP;
 
 //
@@ -216,12 +219,12 @@ typedef struct {
 //
 // AROMA Touch & Event Structure
 //
-typedef struct{
-	int   x;        // Touch X
-	int   y;        // Touch Y
-	int   d;        // Down State
-	int   k;        // Key Code
-	dword msg;      // Window Message for postmessage
+typedef struct {
+  int   x;        // Touch X
+  int   y;        // Touch Y
+  int   d;        // Down State
+  int   k;        // Key Code
+  dword msg;      // Window Message for postmessage
 } ATEV;
 
 
@@ -243,17 +246,17 @@ int div2floor(int a);
 //
 // AROMA Graphic Pixel Macro
 //
-#define ag_r(rgb)	          ((byte) (((((word)(rgb))&0xF800))>>8) ) 
-#define ag_g(rgb)	          ((byte) (((((word)(rgb))&0x07E0))>>3) ) 
-#define ag_b(rgb)	          ((byte) (((((word)(rgb))&0x001F))<<3) ) 
+#define ag_r(rgb)	          ((byte) (((((word)(rgb))&0xF800))>>8) )
+#define ag_g(rgb)	          ((byte) (((((word)(rgb))&0x07E0))>>3) )
+#define ag_b(rgb)	          ((byte) (((((word)(rgb))&0x001F))<<3) )
 #define ag_rgb(r,g,b)       ((color) ((r >> 3) << 11)| ((g >> 2) << 5)| ((b >> 3) << 0))
 
 /*
 #define ag_rgba32(r,g,b,a)  ((dword)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 #define ag_rgb32(r,g,b)     ag_rgba32(r,g,b,0xff)
-#define ag_b32(rgb)         ((byte) (rgb)) 
+#define ag_b32(rgb)         ((byte) (rgb))
 #define ag_g32(rgb)         ((byte) (((word) (rgb))>>8))
-#define ag_r32(rgb)         ((byte) ((rgb) >> 16)) 
+#define ag_r32(rgb)         ((byte) ((rgb) >> 16))
 #define ag_a32(rgb)         ((byte) (((dword) (rgb))>>24))
 */
 dword ag_rgba32(byte r, byte g, byte b, byte a);
@@ -269,7 +272,7 @@ byte artNEON();
 #define ag_close_b(b)       ag_close_r(b)
 #define ag_rgbto32(rgb)     (ag_rgba32(ag_r(rgb),ag_g(rgb),ag_b(rgb),0xff))
 #define ag_rgbto16(rgb)     (ag_rgb(ag_r32(rgb),ag_g32(rgb),ag_b32(rgb)))
-void ag_txtxy(int * x, int * y,int maxwidth, const char *ss, byte isbig, int haltat);
+void ag_txtxy(int * x, int * y, int maxwidth, const char * ss, byte isbig, int haltat);
 
 //
 // AROMA Touch Event Code
@@ -306,7 +309,7 @@ typedef struct  {
 typedef struct {
   int     n;  //-- Count
   char ** f;  //-- Filenames
-  byte *  t;  //-- Type ( 0=file, 1=dir )
+  byte  * t;  //-- Type ( 0=file, 1=dir )
 } AZREADDIR, * AZREADDIRP;
 
 //
@@ -314,9 +317,9 @@ typedef struct {
 //
 // m = message, d = draw, l = don't lost focus, h = high value
 #define aw_msg(m,d,l,h) ((dword)((((h)&0xff)<<24)|(((l)&0xff)<<16)|(((d)&0xff)<<8)|((m)&0xff)))
-#define aw_gm(msg)      ((byte) (msg)) 
+#define aw_gm(msg)      ((byte) (msg))
 #define aw_gd(msg)      ((byte) (((word) (msg))>>8))
-#define aw_gl(msg)      ((byte) ((msg) >> 16)) 
+#define aw_gl(msg)      ((byte) ((msg) >> 16))
 #define aw_gh(msg)      ((byte) (((dword) (msg))>>24))
 
 
@@ -363,24 +366,24 @@ typedef struct  {
   byte  fadeframes;           // Number of Frame used for Fade Transition
   
   // Common Text
-/*  char  text_ok[64];          // OK
-  char  text_next[64];        // Next >
-  char  text_back[64];        // < Back
+  /*  char  text_ok[64];          // OK
+    char  text_next[64];        // Next >
+    char  text_back[64];        // < Back
   
-  char  text_yes[64];         // Yes
-  char  text_no[64];          // No
-  char  text_about[64];       // About
-  char  text_calibrating[64]; // Calibration Tools
-  char  text_quit[64];        // Quit
-  char  text_quit_msg[128];   // Quit Message
+    char  text_yes[64];         // Yes
+    char  text_no[64];          // No
+    char  text_about[64];       // About
+    char  text_calibrating[64]; // Calibration Tools
+    char  text_quit[64];        // Quit
+    char  text_quit_msg[128];   // Quit Message
   
-  // ROM Text
-  char rom_name[128];          // ROM Name
-  char rom_version[128];       // ROM Version
-  char rom_author[128];        // ROM Author
-  char rom_device[128];        // ROM Device Name
-  char rom_date[128];          // ROM Date
-*/
+    // ROM Text
+    char rom_name[128];          // ROM Name
+    char rom_version[128];       // ROM Version
+    char rom_author[128];        // ROM Author
+    char rom_device[128];        // ROM Device Name
+    char rom_date[128];          // ROM Date
+  */
   
   // CUSTOM KEY
   int ckey_up;
@@ -400,7 +403,7 @@ typedef struct  {
 //
 // AROMA Window Control Callback Typedef
 //
-typedef dword (*AC_ONINPUT)(void *,int,ATEV *);
+typedef dword (*AC_ONINPUT)(void *, int, ATEV *);
 typedef void  (*AC_ONBLUR)(void *);
 typedef byte  (*AC_ONFOCUS)(void *);
 typedef void  (*AC_ONDRAW)(void *);
@@ -410,21 +413,21 @@ typedef void  (*AC_ONDESTROY)(void *);
 //
 // AROMA Window Structure
 //
-typedef struct{
+typedef struct {
   byte          isActived;    // Active & Showed
-	CANVAS *      bg;           // Background Canvas
-	CANVAS        c;            // Window drawing canvas
-	void**        controls;     // Child Controls
-	int           controln;     // Number of Controls
-	int           threadnum;    // Number of running thread
-	int           focusIndex;   // Child Focus Index
-	int           touchIndex;   // Child Touch Index
+  CANVAS    *   bg;           // Background Canvas
+  CANVAS        c;            // Window drawing canvas
+  void    **    controls;     // Child Controls
+  int           controln;     // Number of Controls
+  int           threadnum;    // Number of running thread
+  int           focusIndex;   // Child Focus Index
+  int           touchIndex;   // Child Touch Index
 } AWINDOW, *AWINDOWP;
 
 //
 // AROMA Window Structure
 //
-typedef struct{
+typedef struct {
   PNGCANVASP icon;
   char       title[128];
 } AWMENUITEM, *AWMENUITEMP;
@@ -432,7 +435,7 @@ typedef struct{
 //
 // AROMA Control Structure
 //
-typedef struct{
+typedef struct {
   AWINDOWP      win;          // Parent Window
   AC_ONDESTROY  ondestroy;    // On Destroy Callback
   AC_ONINPUT    oninput;      // On Input Callback
@@ -444,7 +447,7 @@ typedef struct{
   int           w;            // Control Width
   int           h;            // Control Height
   byte          forceNS;      // Force to Stop Scroll
-  void *        d;            // Control Specific Data
+  void     *    d;            // Control Specific Data
 } ACONTROL, *ACONTROLP;
 
 
@@ -457,10 +460,10 @@ typedef struct{
 //
 // AROMA Root Functions
 //
-FILE *    apipe();        // Recovery pipe to communicate the command
-char *    aui_readfromfs(char * name);
-char *    aui_readfromzip(char * name);
-char*     getArgv(int id);
+FILE   *  apipe();        // Recovery pipe to communicate the command
+char   *  aui_readfromfs(char * name);
+char   *  aui_readfromzip(char * name);
+char   *  getArgv(int id);
 byte      aui_start();
 
 //
@@ -481,23 +484,23 @@ void alangd_set(char * key, char * val);
 //
 byte      az_init(const char * filename);                               // Init Zip Archive
 void      az_close();                                                   // Release Zip Archive
-byte      az_readmem(AZMEM * out,const char * zpath, byte bytesafe);    // Read Zip Item into Memory
+byte      az_readmem(AZMEM * out, const char * zpath, byte bytesafe);   // Read Zip Item into Memory
 byte      az_extract(const char * zpath, const char * dest);            // Extract Zip Item into Filesystem
 void        az_readdir_free(AZREADDIRP r);
 AZREADDIRP  az_readdir(char * path);
 
 //-- UI Functions
-char * aui_parsepropstring(char * buffer,char *key);
+char * aui_parsepropstring(char * buffer, char * key);
 char * aui_readfromzip(char * name);
-void aui_drawnav(CANVAS * bg,int x, int y, int w, int h);
+void aui_drawnav(CANVAS * bg, int x, int y, int w, int h);
 char * aui_getvar(char * name);
 
 
 //-- .9.png struct
-typedef struct{
+typedef struct {
   int x;  //-- Strect X
   int y;  //-- Strect Y
-  int w;  //-- Strect Width  
+  int w;  //-- Strect Width
   int h;  //-- Strect Height
   
   int t;  //-- Padding Top
@@ -509,7 +512,7 @@ typedef struct{
 //
 // AROMA PNG Functions
 //
-byte      apng_load(PNGCANVAS * pngcanvas,char* imgname);         // Load PNG From Zip Item
+byte      apng_load(PNGCANVAS * pngcanvas, char * imgname);       // Load PNG From Zip Item
 void      apng_close(PNGCANVAS * pngcanvas);                            // Release PNG Memory
 byte      apng_draw(CANVAS * _b, PNGCANVAS * p, int xpos, int ypos);    // Draw PNG Into Canvas
 byte apng_stretch(
@@ -519,13 +522,13 @@ byte apng_stretch(
   int dy,
   int dw,
   int dh,
-  
+
   int sx,
   int sy,
   int sw,
-  int sh  
+  int sh
 );
-byte apng9_calc(PNGCANVAS * p, APNG9P v,byte with_pad);
+byte apng9_calc(PNGCANVAS * p, APNG9P v, byte with_pad);
 byte apng9_draw(
   CANVAS * _b,
   PNGCANVAS * p,
@@ -544,22 +547,22 @@ byte    aft_fontready(byte isbig);
 byte    aft_open();
 byte    aft_close();
 int     aft_kern(int c, int p, byte isbig);
-int     aft_fontwidth(int c,byte isbig);
+int     aft_fontwidth(int c, byte isbig);
 int     aft_spacewidth(byte isbig);
 byte    aft_fontheight(byte isbig);
-byte    aft_load(const char * source_name, int size, byte isbig,char * relativeto);
+byte    aft_load(const char * source_name, int size, byte isbig, char * relativeto);
 byte aft_drawfont(CANVAS * _b, byte isbig, int fpos, int xpos, int ypos, color cl, byte underline, byte bold, byte italic, byte lcd);
-byte aft_isrtl(int c,byte checkleft);
+byte aft_isrtl(int c, byte checkleft);
 
 
 //
 // AROMA PNG Font Functions
 //
-byte      apng_loadfont(PNGFONTS * pngfont,const char* imgname);        // Load PNG Font From Zip Item
+byte      apng_loadfont(PNGFONTS * pngfont, const char * imgname);      // Load PNG Font From Zip Item
 byte      apng_drawfont(CANVAS * _b, PNGFONTS * p, byte fpos,           // Draw PNG Font Into Canvas
-            int xpos, int ypos, color cl, byte underline, byte bold);
+                        int xpos, int ypos, color cl, byte underline, byte bold);
 byte      apng_draw_ex(CANVAS * _b, PNGCANVAS * p, int xpos,            // Draw PNG Font Into Canvas
-            int ypos, int sxpos, int sypos,int sw, int sh);             // With Extra Arguments
+                       int ypos, int sxpos, int sypos, int sw, int sh);            // With Extra Arguments
 
 //
 // AROMA Graphic Function
@@ -567,7 +570,7 @@ byte      apng_draw_ex(CANVAS * _b, PNGCANVAS * p, int xpos,            // Draw 
 void      ag_setcaret(int x, int y, int h);
 byte      ag_isfreetype(byte isbig);
 byte      ag_fontready(byte isbig);
-CANVAS *  agc();          // Get Main AROMA Graph Canvas
+CANVAS  * agc();          // Get Main AROMA Graph Canvas
 byte      ag_init();      // Init AROMA Graph and Framebuffers
 void      ag_close_thread(); // Close Graph Thread
 void      ag_close();     // Close AROMA Graph and Framebuffers
@@ -588,7 +591,7 @@ void      ag_setbusy_withtext(char * text); // Display Busy Progress with Custom
 // AROMA Canvas Functions
 //
 void ag_takescreenshoot();
-void ag_canvas(CANVAS * c,int w,int h);   // Create Canvas
+void ag_canvas(CANVAS * c, int w, int h); // Create Canvas
 void ag_ccanvas(CANVAS * c);              // Release Canvas
 void ag_blank(CANVAS * c);                // Set Blank into Canvas memset(0)
 
@@ -596,39 +599,39 @@ void ag_blank(CANVAS * c);                // Set Blank into Canvas memset(0)
 //
 // AROMA Canvas Manipulation Functions
 //
-color *   agxy(CANVAS *_b, int x, int y);                             // Get Pixel Pointer
-byte      ag_setpixel(CANVAS *_b,int x, int y,color cl);              // Set Pixel Color
-byte      ag_subpixel(CANVAS *_b,int x, int y, color cl,byte l);      // Set Pixel Color with Opacity
+color  *  agxy(CANVAS * _b, int x, int y);                            // Get Pixel Pointer
+byte      ag_setpixel(CANVAS * _b, int x, int y, color cl);           // Set Pixel Color
+byte      ag_subpixel(CANVAS * _b, int x, int y, color cl, byte l);   // Set Pixel Color with Opacity
 
 
 //
 // AROMA Canvas Drawing Functions
 //
-byte      ag_rect(CANVAS *_b,int x, int y, int w, int h, color cl);   // Draw Solid Rectangle
-byte      ag_rectopa(CANVAS *_b,int x, int y, int w, int h,           // Draw Solid Rectangle with Opacity
-            color cl,byte l);
-byte      ag_draw(CANVAS * dc,CANVAS * sc,int dx, int dy);            // Draw Canvas to Canvas
-byte      ag_draw_ex(CANVAS * dc,CANVAS * sc, int dx, int dy,         // Draw Canvas to Canvas + Extra Arguments
-            int sx, int sy, int sw, int sh);
-byte      ag_roundgrad(CANVAS *_b,int x, int y, int w, int h,         // Draw Rounded & Gradient Rectangle
-            color cl1, color cl2, int roundsz);
-byte      ag_roundgrad_ex(CANVAS *_b,int x, int y, int w, int h,      // Draw Rounded & Gradient Rectangle
-            color cl1, color cl2, int roundsz, byte tlr,              // With Extra Arguments
-            byte trr, byte blr, byte brr);
+byte      ag_rect(CANVAS * _b, int x, int y, int w, int h, color cl); // Draw Solid Rectangle
+byte      ag_rectopa(CANVAS * _b, int x, int y, int w, int h,         // Draw Solid Rectangle with Opacity
+                     color cl, byte l);
+byte      ag_draw(CANVAS * dc, CANVAS * sc, int dx, int dy);          // Draw Canvas to Canvas
+byte      ag_draw_ex(CANVAS * dc, CANVAS * sc, int dx, int dy,        // Draw Canvas to Canvas + Extra Arguments
+                     int sx, int sy, int sw, int sh);
+byte      ag_roundgrad(CANVAS * _b, int x, int y, int w, int h,       // Draw Rounded & Gradient Rectangle
+                       color cl1, color cl2, int roundsz);
+byte      ag_roundgrad_ex(CANVAS * _b, int x, int y, int w, int h,    // Draw Rounded & Gradient Rectangle
+                          color cl1, color cl2, int roundsz, byte tlr,              // With Extra Arguments
+                          byte trr, byte blr, byte brr);
 void ag_dither(byte * qe, int qp, int qx, int dthx, int dthy, int dthw, int dthh, byte r, byte g, byte b);
-color ag_dodither(int x,int y,dword col);
+color ag_dodither(int x, int y, dword col);
 color ag_dodither_rgb(int x, int y, byte sr, byte sg, byte sb);
 
 //
 // AROMA Color Calculator Functions
 //
-color     ag_subpixelget(CANVAS *_b,int x, int y, color cl,byte l);   // Calculate Color Opacity with Canvas Pixel
-color     ag_calculatealpha(color dcl,color scl,byte l);              // Calculate 2 Colors with Opacity
+color     ag_subpixelget(CANVAS * _b, int x, int y, color cl, byte l); // Calculate Color Opacity with Canvas Pixel
+color     ag_calculatealpha(color dcl, color scl, byte l);            // Calculate 2 Colors with Opacity
 color     strtocolor(char * c);                                       // Convert String Hex Color #fff,#ffffff to color
-dword     ag_calchighlight(color c1,color c2);
-dword     ag_calcpushlight(color c1,color c2);
+dword     ag_calchighlight(color c1, color c2);
+dword     ag_calcpushlight(color c1, color c2);
 color     ag_calpushad(color c_g);
-color     ag_calculatecontrast(color c,float intensity);
+color     ag_calculatecontrast(color c, float intensity);
 
 //
 // AROMA PNG Font Functions
@@ -638,26 +641,26 @@ byte  ag_loadsmallfont(char * fontname, byte is_freetype, char * relativeto); //
 byte  ag_loadbigfont(char * fontname, byte is_freetype, char * relativeto); // Load Big Font From Zip
 byte  ag_loadfixedfont(char * fontname, byte is_freetype, char * relativeto);
 void  ag_closefonts();                                // Release Big & Small Fonts
-byte ag_drawchar_ex2(CANVAS * _b, int x, int y, int c, color cl, byte isbig, byte underline, byte bold, byte italic,byte lcd);
-byte  ag_drawchar(CANVAS *_b,int x, int y, int c,    // Draw Character into Canvas
-        color cl, byte isbig);
+byte ag_drawchar_ex2(CANVAS * _b, int x, int y, int c, color cl, byte isbig, byte underline, byte bold, byte italic, byte lcd);
+byte  ag_drawchar(CANVAS * _b, int x, int y, int c,  // Draw Character into Canvas
+                  color cl, byte isbig);
 byte ag_drawchar_ex(CANVAS * _b, int x, int y, int c, color cl, byte isbig, byte underline, byte bold, byte italic);
-byte  ag_text(CANVAS *_b,int maxwidth,int x,int y,    // Draw String into Canvas
-        const char *s, color cl,byte isbig);
-byte  ag_textf(CANVAS *_b,int maxwidth,int x,int y,    // Draw String into Canvas
-        const char *s, color cl,byte isbig);          // Force Default Color
+byte  ag_text(CANVAS * _b, int maxwidth, int x, int y, // Draw String into Canvas
+              const char * s, color cl, byte isbig);
+byte  ag_textf(CANVAS * _b, int maxwidth, int x, int y, // Draw String into Canvas
+               const char * s, color cl, byte isbig);        // Force Default Color
 
-byte ag_text_ex(CANVAS *_b,int maxwidth,int x,int y,  // Draw String into Canvas
-        const char *s, color cl_def,byte isbig,       // With Extra Arguments
-        byte forcecolor);
+byte ag_text_ex(CANVAS * _b, int maxwidth, int x, int y, // Draw String into Canvas
+                const char * s, color cl_def, byte isbig,     // With Extra Arguments
+                byte forcecolor);
 int   ag_txtheight(int maxwidth,                      // Calculate String Height to be drawn
-        const char *s, byte isbig);
-int   ag_txtwidth(const char *s, byte isbig);         // Calculate String Width to be drawn
+                   const char * s, byte isbig);
+int   ag_txtwidth(const char * s, byte isbig);        // Calculate String Width to be drawn
 int  ag_tabwidth(int x, byte isbig);
-byte ag_fontwidth(int c,byte isbig);                // Calculate font width for 1 character
-byte ag_texts(CANVAS *_b,int maxwidth,int x,int y, const char *s, color cl_def,byte isbig);
-byte ag_textfs(CANVAS *_b,int maxwidth,int x,int y, const char *s, color cl_def,byte isbig);
-byte ag_text_exl(CANVAS *_b,int maxwidth,int x,int y, const char *s, color cl_def,byte isbig,byte forcecolor,byte multiline);
+byte ag_fontwidth(int c, byte isbig);               // Calculate font width for 1 character
+byte ag_texts(CANVAS * _b, int maxwidth, int x, int y, const char * s, color cl_def, byte isbig);
+byte ag_textfs(CANVAS * _b, int maxwidth, int x, int y, const char * s, color cl_def, byte isbig);
+byte ag_text_exl(CANVAS * _b, int maxwidth, int x, int y, const char * s, color cl_def, byte isbig, byte forcecolor, byte multiline);
 //
 // AROMA EVENTS & Input Functions
 //   NOTE: Contains Others Works
@@ -666,14 +669,14 @@ byte ag_text_exl(CANVAS *_b,int maxwidth,int x,int y, const char *s, color cl_de
 //         Licensed under the Apache License
 //
 struct  input_event;
-int     atouch_wait(ATEV *atev);
-int     atouch_wait_ex(ATEV *atev, byte calibratingtouch);
+int     atouch_wait(ATEV * atev);
+int     atouch_wait_ex(ATEV * atev, byte calibratingtouch);
 byte    atouch_send_message(dword msg);
 int     vibrate(int timeout_ms);
 void    ui_init();
 int     ev_init(void);
 void    ev_exit(void);
-int     ev_get(struct input_event *ev, unsigned dont_wait);
+int     ev_get(struct input_event * ev, unsigned dont_wait);
 int     ui_wait_key();
 int     ui_key_pressed(int key);
 void    ui_clear_key_queue();
@@ -681,12 +684,12 @@ void    ui_clear_key_queue_ex();
 int     touchX();
 int     touchY();
 int     ontouch();
-void    set_key_pressed(int key,char val);
+void    set_key_pressed(int key, char val);
 
 //
 // AROMA System Library Functions
 //
-int * ai_rtrimw(int * chr,int len);
+int * ai_rtrimw(int * chr, int len);
 char * ai_rtrim(char * chr);
 char * ai_trim(char * chr);
 byte  ismounted(char * path);
@@ -695,8 +698,8 @@ byte alib_disksize(const char * path, unsigned long * ret, int division);
 int   alib_diskusage(const char * path);
 byte alib_diskfree(const char * path, unsigned long * ret, int division);
 void  alib_exec(char * cmd, char * arg);
-void  create_directory(const char *path);
-int   remove_directory(const char *path);
+void  create_directory(const char * path);
+int   remove_directory(const char * path);
 long  alib_tick();
 long alib_tickms();
 
@@ -728,7 +731,7 @@ void        atheme_release(char * key);
 PNGCANVASP  atheme_create(char * key, char * path);
 PNGCANVASP  atheme(char * key);
 int         atheme_id(char * key);
-char *      atheme_key(int id);
+char    *   atheme_key(int id);
 byte        atheme_id_draw(int id, CANVAS * _b, int x, int y, int w, int h);
 byte        atheme_draw(char * key, CANVAS * _b, int x, int y, int w, int h);
 
@@ -740,17 +743,17 @@ void      aw_destroy(AWINDOWP win);                         // Destroy Window
 void aw_show_ex(AWINDOWP win, byte anitype, int pos, ACONTROLP firstFocus);  // Show Window Custom Animation
 void      aw_show(AWINDOWP win);                            // Show Window
 void      aw_draw(AWINDOWP win);                            // Redraw Window
-void      aw_add(AWINDOWP win,ACONTROLP ctl);               // Add Control into Window
+void      aw_add(AWINDOWP win, ACONTROLP ctl);              // Add Control into Window
 void      aw_post(dword msg);                               // Post Message
 dword     aw_dispatch(AWINDOWP win);                        // Dispatch Event, Message & Input
 byte      aw_touchoncontrol(ACONTROLP ctl, int x, int y);   // Calculate Touch Position
-byte      aw_setfocus(AWINDOWP win,ACONTROLP ctl);          // Set Focus into Control
+byte      aw_setfocus(AWINDOWP win, ACONTROLP ctl);         // Set Focus into Control
 void      aw_set_on_dialog(byte d);
 void      atouch_plaincalibrate();
 void      atouch_restorecalibrate();
 byte      aw_calibtools(AWINDOWP parent);
-byte      aw_menu(AWINDOWP parent, char * title,AWMENUITEMP mi, int n);
-char *    aw_ime(AWINDOWP parent, char * startval, char * title);
+byte      aw_menu(AWINDOWP parent, char * title, AWMENUITEMP mi, int n);
+char   *  aw_ime(AWINDOWP parent, char * startval, char * title);
 CANVAS * aw_muteparent(AWINDOWP win);
 void aw_unmaskparent(AWINDOWP win, CANVAS * p, CANVAS * maskc, int x, int y, int w, int h);
 void aw_unmuteparent(AWINDOWP win, CANVAS * p);
@@ -759,46 +762,46 @@ CANVAS * aw_maskparent();
 //
 // AROMA Window Dialog Controls
 //
-void aw_alert(AWINDOWP parent,char * titlev,char * textv,PNGCANVASP ap,char * ok_text);
-byte aw_confirm(AWINDOWP parent, char * titlev,char * textv,PNGCANVASP ap,char * yes_text,char * no_text);
+void aw_alert(AWINDOWP parent, char * titlev, char * textv, PNGCANVASP ap, char * ok_text);
+byte aw_confirm(AWINDOWP parent, char * titlev, char * textv, PNGCANVASP ap, char * yes_text, char * no_text);
 byte aw_multiconfirm(AWINDOWP parent, char * titlev, char * textv, PNGCANVASP ap, AWMENUITEMP mi, int n);
 byte aw_multiconfirm_ex(AWINDOWP parent, char * titlev, char * textv, PNGCANVASP ap, AWMENUITEMP mi, int n, int first_sel);
-void aw_textdialog(AWINDOWP parent,char * title,char * text,char * ok_text);
+void aw_textdialog(AWINDOWP parent, char * title, char * text, char * ok_text);
 
 //
 // AROMA Window Threading Functions
 //
 void ac_regbounce(
   ACONTROLP       ctl,
-  int *           scrollY,
+  int      *      scrollY,
   int             maxScrollY
 );
 void ac_regfling(
   ACONTROLP       ctl,
-  AKINETIC *      akin,
-  int *           scrollY,
+  AKINETIC    *   akin,
+  int      *      scrollY,
   int             maxScrollY
 );
 void ac_regpushwait(
   ACONTROLP     ctl,
-  int *         moveY,
-  int *         flagpointer,
+  int     *     moveY,
+  int     *     flagpointer,
   int           flagvalue
 );
 void ac_regscrollto(
   ACONTROLP       ctl,
-  int *           scrollY,
+  int      *      scrollY,
   int             maxScrollY,
   int             requestY,
-  int *           requestHandler,
+  int      *      requestHandler,
   int             requestValue
 );
 
 //
 // AROMA Controls Functions
 //
-void actext_rebuild(ACONTROLP ctl,int x,int y,int w,int h,char * text,byte isbig,byte toBottom);
-void actext_appendtxt(ACONTROLP ctl,char * txt);
+void actext_rebuild(ACONTROLP ctl, int x, int y, int w, int h, char * text, byte isbig, byte toBottom);
+void actext_appendtxt(ACONTROLP ctl, char * txt);
 ACONTROLP actext(
   AWINDOWP win,
   int x,
@@ -818,7 +821,7 @@ ACONTROLP acbutton(
   byte isbig,
   byte touchmsg
 );
-void acbutton_chtxt(ACONTROLP ctl, char * text,byte isbig);
+void acbutton_chtxt(ACONTROLP ctl, char * text, byte isbig);
 PNGCANVAS * aui_icons(int id);
 
 ACONTROLP imgbtn(
@@ -853,8 +856,8 @@ ACONTROLP accheck(
   int w,
   int h
 );
-byte accheck_add(ACONTROLP ctl,char * title, char * desc, byte checked);
-byte accheck_addgroup(ACONTROLP ctl,char * title, char * desc);
+byte accheck_add(ACONTROLP ctl, char * title, char * desc, byte checked);
+byte accheck_addgroup(ACONTROLP ctl, char * title, char * desc);
 int accheck_itemcount(ACONTROLP ctl);
 byte accheck_ischecked(ACONTROLP ctl, int index);
 byte accheck_isgroup(ACONTROLP ctl, int index);
@@ -869,7 +872,7 @@ ACONTROLP acedit(
 );
 void acedit_addchar(void * x, char c);
 void acedit_backspace(void * x);
-void acedit_movecaret(void * x,byte isright);
+void acedit_movecaret(void * x, byte isright);
 char * acedit_gettext(void * x);
 void acedit_rchar(void * x, char c);
 
@@ -901,16 +904,16 @@ void afbox_setcheckall(ACONTROLP ctl, byte checked);
 void afbox_changeboxtype(ACONTROLP ctl, byte t);
 char * afbox_getselecteddesc(ACONTROLP ctl);
 
-char *  afbox_getselectedfile(ACONTROLP ctl);
+char  * afbox_getselectedfile(ACONTROLP ctl);
 byte    afbox_dtype(ACONTROLP ctl);
-char *  afbox_dperm(ACONTROLP ctl);
+char  * afbox_dperm(ACONTROLP ctl);
 dword   afbox_ddata(ACONTROLP ctl);
 
-byte afbox_add(ACONTROLP ctl,char * title, char * desc, byte checked, PNGCANVAS * img,
-  byte d_type,  char * d_perm, dword d_data, byte selDef);
+byte afbox_add(ACONTROLP ctl, char * title, char * desc, byte checked, PNGCANVAS * img,
+               byte d_type,  char * d_perm, dword d_data, byte selDef);
 void afbox_scrolltoitem(ACONTROLP ctl);
-  
-byte afbox_addgroup(ACONTROLP ctl,char * title, char * desc);
+
+byte afbox_addgroup(ACONTROLP ctl, char * title, char * desc);
 int afbox_itemcount(ACONTROLP ctl);
 byte afbox_ischecked(ACONTROLP ctl, int index);
 byte afbox_isgroup(ACONTROLP ctl, int index);
@@ -925,12 +928,12 @@ ACONTROLP acopt(
   int w,
   int h
 );
-byte acopt_addgroup(ACONTROLP ctl,char * title, char * desc);
-byte acopt_add(ACONTROLP ctl,char * title, char * desc, byte selected);
-int acopt_getselectedindex(ACONTROLP ctl,int group);
+byte acopt_addgroup(ACONTROLP ctl, char * title, char * desc);
+byte acopt_add(ACONTROLP ctl, char * title, char * desc, byte selected);
+int acopt_getselectedindex(ACONTROLP ctl, int group);
 int acopt_getgroupid(ACONTROLP ctl, int index);
-int acopt_getvalue(ACONTROLP ctl,int group);
-char * acopt_getseltitle(ACONTROLP ctl,int group);
+int acopt_getvalue(ACONTROLP ctl, int group);
+char * acopt_getseltitle(ACONTROLP ctl, int group);
 
 ACONTROLP accb(
   AWINDOWP win,
@@ -950,7 +953,7 @@ ACONTROLP acmenu(
   int h,
   byte touchmsg
 );
-byte acmenu_add(ACONTROLP ctl,char * title, char * desc, char * img);
+byte acmenu_add(ACONTROLP ctl, char * title, char * desc, char * img);
 int acmenu_getselectedindex(ACONTROLP ctl);
 
 
@@ -966,7 +969,7 @@ ACONTROLP aclabel(
   byte sigleAligment,
   color cl
 );
-void aclabel_setprop(ACONTROLP ctl, byte isbig, byte vpos,byte sigleAligment,color cl, byte syncnow);
+void aclabel_setprop(ACONTROLP ctl, byte isbig, byte vpos, byte sigleAligment, color cl, byte syncnow);
 void aclabel_settext(ACONTROLP ctl, char * text, byte syncnow);
 char * aclabel_gettext(ACONTROLP ctl);
 

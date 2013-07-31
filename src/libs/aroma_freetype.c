@@ -43,11 +43,15 @@ void aft_waitlock() {
 void aft_unlock() {
   pthread_mutex_unlock(&_afont_mutex);
 }
-AFTFAMILYP aftfnt(byte isbig){
-  if (isbig==2)
+AFTFAMILYP aftfnt(byte isbig) {
+  if (isbig == 2) {
     return &aft_fix;
-  if (isbig==1)
+  }
+  
+  if (isbig == 1) {
     return &aft_big;
+  }
+  
   return &aft_small;
 }
 /*******************************[ RTL FUNCTION ]*******************************/
@@ -442,7 +446,8 @@ byte aft_open() {
   
   aft_big.init = 0;
   aft_small.init = 0;
-  aft_fix.init=0;
+  aft_fix.init = 0;
+  
   if (FT_Init_FreeType( &aft_lib ) == 0) {
     FT_Library_SetLcdFilter(aft_lib, FT_LCD_FILTER_DEFAULT);
     aft_initialized = 1;

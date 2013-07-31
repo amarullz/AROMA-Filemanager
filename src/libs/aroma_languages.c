@@ -29,126 +29,144 @@ AARRAYP aui_deflang = NULL;
 //*
 //* Release Loaded Language
 //*
-void alang_release(){
-  if (alang!=NULL){
+void alang_release() {
+  if (alang != NULL) {
     aarray_free(alang);
-    alang=NULL;
+    alang = NULL;
   }
 }
 
 //*
 //* Get From Custom Lang Value
 //*
-char * alang_get_custom(char * key){
-  if (alang==NULL) return NULL;
-  return aarray_get(alang,key);
+char * alang_get_custom(char * key) {
+  if (alang == NULL) {
+    return NULL;
+  }
+  
+  return aarray_get(alang, key);
 }
 
 //*
 //* Get Lang Value
 //*
-char * alang_get(char * key){
+char * alang_get(char * key) {
   char * lg = alang_get_custom(key);
-  if (lg==NULL){
-    if (aui_deflang==NULL) return NULL;
-    return aarray_get(aui_deflang,key);
+  
+  if (lg == NULL) {
+    if (aui_deflang == NULL) {
+      return NULL;
+    }
+    
+    return aarray_get(aui_deflang, key);
   }
+  
   return lg;
 }
 
 //*
 //* Parse AMS
 //*
-char * alang_ams(const char * str){
+char * alang_ams(const char * str) {
   char   c = 0;
   char  pc = 0;
-  char * r = malloc(1); *r=0;
+  char * r = malloc(1);
+  *r = 0;
   int   rl = 0;
-  byte  state=0;
+  byte  state = 0;
   char key[256];
   int   kp = 0;
   byte tag_type = 0;
   
-  while ((c=*str++)){
-    if (state==0){
-      if ((c=='<')&&(pc!='\\')&&((*str=='~')||(*str=='$'))){
-        tag_type  = (*str=='~')?0:1;
+  while ((c = *str++)) {
+    if (state == 0) {
+      if ((c == '<') && (pc != '\\') && ((*str == '~') || (*str == '$'))) {
+        tag_type  = (*str == '~') ? 0 : 1;
         state     = 1;
         kp        = 0;
         key[0]    = 0;
       }
-      else if ((c=='<')&&(pc=='\\')&&((*str=='~')||(*str=='$'))){
-        r[rl-1] = c;
+      else if ((c == '<') && (pc == '\\') && ((*str == '~') || (*str == '$'))) {
+        r[rl - 1] = c;
         r[rl]   = 0;
       }
-      else{
-        r = realloc(r, rl+2);
+      else {
+        r = realloc(r, rl + 2);
         r[rl++] = c;
         r[rl]   = 0;
       }
     }
-    else if(state==1){
-      if ((c!='>')&&(kp<255)){
+    else if (state == 1) {
+      if ((c != '>') && (kp < 255)) {
         key[kp++] = c;
         key[kp]   = 0;
       }
-      else if (tag_type==0){
+      else if (tag_type == 0) {
         //-- Lang Tags
-        state=0;
-        char * lfound = alang_get(key+1);
-        if (lfound!=NULL){
+        state = 0;
+        char * lfound = alang_get(key + 1);
+        
+        if (lfound != NULL) {
           int addsz = strlen(lfound);
-          r = realloc(r, rl+addsz+1);
-          char * rpos = r+rl;
-          memcpy(rpos,lfound,addsz);
-          rl+=addsz;
+          r = realloc(r, rl + addsz + 1);
+          char * rpos = r + rl;
+          memcpy(rpos, lfound, addsz);
+          rl += addsz;
           r[rl] = 0;
         }
-        else{
-          int addsz = strlen(key+1);
-          r = realloc(r, rl+addsz+1);
-          char * rpos = r+rl;
-          memcpy(rpos,key+1,addsz);
-          rl+=addsz;
+        else {
+          int addsz = strlen(key + 1);
+          r = realloc(r, rl + addsz + 1);
+          char * rpos = r + rl;
+          memcpy(rpos, key + 1, addsz);
+          rl += addsz;
           r[rl] = 0;
         }
       }
-      else{
+      else {
         //-- Variable Tags
-        state=0;
-        char * lfound = aui_getvar(key+1);
-        if (lfound!=NULL){
+        state = 0;
+        char * lfound = aui_getvar(key + 1);
+        
+        if (lfound != NULL) {
           int addsz = strlen(lfound);
-          r = realloc(r, rl+addsz+1);
-          char * rpos = r+rl;
-          memcpy(rpos,lfound,addsz);
-          rl+=addsz;
+          r = realloc(r, rl + addsz + 1);
+          char * rpos = r + rl;
+          memcpy(rpos, lfound, addsz);
+          rl += addsz;
           r[rl] = 0;
           free(lfound);
         }
       }
     }
+    
     pc = c;
   }
+  
   return r;
 }
 
 //*
 //* Load & Parse Language File
 //*
-byte alang_load_ex(AARRAYP * alang_v, char * z){
+byte alang_load_ex(AARRAYP * alang_v, char * z) {
   alang_release();
   *alang_v       = aarray_create();
   char * buf  = aui_readfromzip(z);
   
-  if (buf==NULL) return 0;
+  if (buf == NULL) {
+    return 0;
+  }
+  
   char * vuf  = buf;
-  if (strlen(vuf)>3){
+  
+  if (strlen(vuf) > 3) {
     //-- Check UTF-8 File Header
-    if ((vuf[0]==0xEF)&&(vuf[1]==0xBB)&&(vuf[2]==0xBF)){
-        vuf+=3;
+    if ((vuf[0] == 0xEF) && (vuf[1] == 0xBB) && (vuf[2] == 0xBF)) {
+      vuf += 3;
     }
   }
+  
   byte state  = 0;
   byte slash  = 0;
   char c      = 0;
@@ -156,78 +174,92 @@ byte alang_load_ex(AARRAYP * alang_v, char * z){
   char * key  = NULL;
   char * val  = NULL;
   
-  while ((c=*vuf)){
-    
-    if (state==0){
+  while ((c = *vuf)) {
+    if (state == 0) {
       //-- First State
-      if (!isspace(c)){
+      if (!isspace(c)) {
         key   = vuf;
         state = 2;
       }
-      else if (c=='#')
+      else if (c == '#') {
         state = 1;
-    }
-    else if (state==1){
-      //-- Comment
-      if (c=='\n') state=0;
-    }
-    else if (state==2){
-      if (isspace(c)||(c=='=')||(c=='\n')){
-        *vuf = 0;
-        if (c=='=') state=3;
-        else if (c=='\n') state=0;
       }
     }
-    else if (state==3){
-      if (!isspace(c)){
+    else if (state == 1) {
+      //-- Comment
+      if (c == '\n') {
+        state = 0;
+      }
+    }
+    else if (state == 2) {
+      if (isspace(c) || (c == '=') || (c == '\n')) {
+        *vuf = 0;
+        
+        if (c == '=') {
+          state = 3;
+        }
+        else if (c == '\n') {
+          state = 0;
+        }
+      }
+    }
+    else if (state == 3) {
+      if (!isspace(c)) {
         val = vuf;
-        state=4;
+        state = 4;
         pc  = c;
       }
-      else if (c=='\n') state=0;
+      else if (c == '\n') {
+        state = 0;
+      }
     }
-    else if (state==4){
-      if (((c=='\n')&&(pc!='\\'))||(*(vuf+1)==0)){
-        if ((c=='\n')&&(pc!='\\')) *vuf = 0;
-          
+    else if (state == 4) {
+      if (((c == '\n') && (pc != '\\')) || (*(vuf + 1) == 0)) {
+        if ((c == '\n') && (pc != '\\')) {
+          *vuf = 0;
+        }
+        
         //-- Cleanup backslashes
         int i;
-        int j=0;
-        int l=strlen(val);
-        for (i=0;i<l;i++){
-          if ((val[i]=='\\')&&(val[i+1]=='\n')) continue;
-          val[j++]=val[i];
+        int j = 0;
+        int l = strlen(val);
+        
+        for (i = 0; i < l; i++) {
+          if ((val[i] == '\\') && (val[i + 1] == '\n')) {
+            continue;
+          }
+          
+          val[j++] = val[i];
         }
-        val[j]=0;
         
+        val[j] = 0;
         //-- Save Lang Value
-        aarray_set(*alang_v,key,val);
-        
+        aarray_set(*alang_v, key, val);
         //-- End Of String
         state = 0;
       }
-      pc=c;
+      
+      pc = c;
     }
     
     vuf++;
-    
   }
   
   free(buf);
   return 1;
 }
-byte alang_load(char * z){
-  return alang_load_ex(&alang,z);
+byte alang_load(char * z) {
+  return alang_load_ex(&alang, z);
 }
-void alangd_release(){
-  if (aui_deflang!=NULL){
+void alangd_release() {
+  if (aui_deflang != NULL) {
     aarray_free(aui_deflang);
-    aui_deflang=NULL;
+    aui_deflang = NULL;
   }
 }
-void alangd_init(){
-  alang_load_ex(&aui_deflang,AROMA_DIR "/langs/English/lang.prop");
+void alangd_init() {
+  alang_load_ex(&aui_deflang, AROMA_DIR "/langs/English/lang.prop");
 }
-void alangd_set(char * key, char * val){
-  aarray_set(aui_deflang,key,val);
+void alangd_set(char * key, char * val) {
+  aarray_set(aui_deflang, key, val);
 }

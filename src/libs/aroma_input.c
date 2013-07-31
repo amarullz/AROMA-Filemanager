@@ -55,90 +55,111 @@ static  int       evtouch_y       = 0;  //-- Translated Y (Ready to use)
 static  int       evtouch_code    = 888;//-- Touch Virtual Code
 
 //-- PASS TOUCH STATE FUNCTIONS
-int touchX()  { return evtouch_x; }
-int touchY()  { return evtouch_y; }
-int ontouch() { return ((evtouch_state==0)?0:1); }
+int touchX()  {
+  return evtouch_x;
+}
+int touchY()  {
+  return evtouch_y;
+}
+int ontouch() {
+  return ((evtouch_state == 0) ? 0 : 1);
+}
+
+dword atouch_winmsg_get(byte cleanup) {
+  dword out = 0;
   
-dword atouch_winmsg_get(byte cleanup){
-  dword out=0;
-  if (atouch_winmsg_n>0){
-    out=atouch_winmsg[0];
-    if (cleanup){
-      int i=0;
-      for (i=0;i<atouch_winmsg_n;i++){
-        atouch_winmsg[i]=atouch_winmsg[i+1];
+  if (atouch_winmsg_n > 0) {
+    out = atouch_winmsg[0];
+    
+    if (cleanup) {
+      int i = 0;
+      
+      for (i = 0; i < atouch_winmsg_n; i++) {
+        atouch_winmsg[i] = atouch_winmsg[i + 1];
       }
+      
       atouch_winmsg_n--;
     }
   }
+  
   return out;
 }
-byte atouch_winmsg_push(dword msg){
-  if (atouch_winmsg_n<64){
-    atouch_winmsg[atouch_winmsg_n++]=msg;
+byte atouch_winmsg_push(dword msg) {
+  if (atouch_winmsg_n < 64) {
+    atouch_winmsg[atouch_winmsg_n++] = msg;
     return 1;
   }
+  
   return 0;
 }
 
 //-- VIBRATE FUNCTION
-int vibrate(int timeout_ms){
-    char str[20];
-    int fd;
-    int ret;
-    fd = open("/sys/class/timed_output/vibrator/enable", O_WRONLY);
-    if (fd < 0) return -1;
-    ret = snprintf(str, sizeof(str), "%d", timeout_ms);
-    ret = write(fd, str, ret);
-    close(fd);
-    if (ret < 0)
-       return -1;
-    return 0;
+int vibrate(int timeout_ms) {
+  char str[20];
+  int fd;
+  int ret;
+  fd = open("/sys/class/timed_output/vibrator/enable", O_WRONLY);
+  
+  if (fd < 0) {
+    return -1;
+  }
+  
+  ret = snprintf(str, sizeof(str), "%d", timeout_ms);
+  ret = write(fd, str, ret);
+  close(fd);
+  
+  if (ret < 0) {
+    return -1;
+  }
+  
+  return 0;
 }
 
 //-- KEYPRESS MANAGER
-int ui_key_pressed(int key){
-    return key_pressed[key];
+int ui_key_pressed(int key) {
+  return key_pressed[key];
 }
-void set_key_pressed(int key,char val){
-  key_pressed[key]=val;
+void set_key_pressed(int key, char val) {
+  key_pressed[key] = val;
 }
 
 //-- INPUT EVENT POST MESSAGE
-void ev_post_message(int key, int value){
-  set_key_pressed(key,value);
+void ev_post_message(int key, int value) {
+  set_key_pressed(key, value);
   pthread_mutex_lock(&key_queue_mutex);
   const int queue_max = sizeof(key_queue) / sizeof(key_queue[0]);
-  if (key_queue_len<queue_max){
+  
+  if (key_queue_len < queue_max) {
     key_queue[key_queue_len++] = key;
     pthread_cond_signal(&key_queue_cond);
   }
+  
   pthread_mutex_unlock(&key_queue_mutex);
 }
 
 //-- INPUT CALLBACK
-void ev_input_callback(struct input_event * ev){
-  
-  if (ev->type==EV_KEY){
-    ev_post_message(ev->code,ev->value);
+void ev_input_callback(struct input_event * ev) {
+  if (ev->type == EV_KEY) {
+    ev_post_message(ev->code, ev->value);
   }
   else if (ev->type == EV_ABS) {
     evtouch_x = ev->value >> 16;
     evtouch_y = ev->value & 0xFFFF;
     
-    if ((evtouch_x>0)&&(evtouch_y>0)){
-      if (ev->code==0){
+    if ((evtouch_x > 0) && (evtouch_y > 0)) {
+      if (ev->code == 0) {
         evtouch_state = 0;
       }
-      else if (evtouch_state==0){
+      else if (evtouch_state == 0) {
         evtouch_state = 1;
       }
-      else{
+      else {
         evtouch_state = 2;
       }
-      ev_post_message(evtouch_code,evtouch_state);
+      
+      ev_post_message(evtouch_code, evtouch_state);
     }
-    else{
+    else {
       //-- False Event
       evtouch_state = 0;
       evtouch_x = 0;
@@ -148,7 +169,7 @@ void ev_input_callback(struct input_event * ev){
 }
 
 //-- INPUT THREAD
-static void *ev_input_thread(void *cookie){
+static void * ev_input_thread(void * cookie) {
   //-- Loop for Input
   while (evthread_active) {
     AINPUT_EVENT e;
@@ -159,19 +180,19 @@ static void *ev_input_thread(void *cookie){
     }
     
     if (ret == AINPUT_EV_RET_TOUCH) {
-      
-      if ((e.x>0)&&(e.y>0)){
-        if (e.state==2){
-          int dx = abs(evtouch_x-e.x);
-          int dy = abs(evtouch_y-e.y);
-          if (dx+dy>0){
+      if ((e.x > 0) && (e.y > 0)) {
+        if (e.state == 2) {
+          int dx = abs(evtouch_x - e.x);
+          int dy = abs(evtouch_y - e.y);
+          
+          if (dx + dy > 0) {
             evtouch_x = e.x;
             evtouch_y = e.y;
             evtouch_state = e.state;
             ev_post_message(evtouch_code, evtouch_state);
           }
         }
-        else{ 
+        else {
           evtouch_x = e.x;
           evtouch_y = e.y;
           evtouch_state = e.state;
@@ -193,56 +214,60 @@ static void *ev_input_thread(void *cookie){
   return NULL;
 }
 //-- INIT INPUT DEVICE
-void ui_init(){
+void ui_init() {
   ev_init();
 }
-int ev_init(){
+int ev_init() {
   aipInit();
-  
   //-- Create Watcher Thread
   evthread_active = 1;
   pthread_t input_thread_t;
   pthread_create(&input_thread_t, NULL, ev_input_thread, NULL);
   pthread_detach(input_thread_t);
-  
   return 0;
 }
 
 //-- RELEASE INPUT DEVICE
-void ev_exit(void){
+void ev_exit(void) {
   evthread_active = 0;
   aipRelease();
 }
 
 //-- SEND ATOUCH CUSTOM MESSAGE
-byte atouch_send_message(dword msg){
-  if (atouch_winmsg_push(msg)){
-    ev_post_message(atouch_message_code,0);
+byte atouch_send_message(dword msg) {
+  if (atouch_winmsg_push(msg)) {
+    ev_post_message(atouch_message_code, 0);
     return 1;
   }
+  
   return 0;
 }
 
 //-- Clear Queue
-void ui_clear_key_queue_ex(){
+void ui_clear_key_queue_ex() {
   pthread_mutex_lock(&key_queue_mutex);
   key_queue_len = 0;
   pthread_mutex_unlock(&key_queue_mutex);
-  atouch_winmsg_n=0;
+  atouch_winmsg_n = 0;
 }
 void ui_clear_key_queue() {
   pthread_mutex_lock(&key_queue_mutex);
   key_queue_len = 0;
   pthread_mutex_unlock(&key_queue_mutex);
-  if (atouch_winmsg_n>0) ev_post_message(atouch_message_code,0);
+  
+  if (atouch_winmsg_n > 0) {
+    ev_post_message(atouch_message_code, 0);
+  }
 }
 
 //-- Wait For Key
-int ui_wait_key(){
+int ui_wait_key() {
   pthread_mutex_lock(&key_queue_mutex);
-  while (key_queue_len == 0){
+  
+  while (key_queue_len == 0) {
     pthread_cond_wait(&key_queue_cond, &key_queue_mutex);
   }
+  
   int key = key_queue[0];
   memcpy(&key_queue[0], &key_queue[1], sizeof(int) * --key_queue_len);
   pthread_mutex_unlock(&key_queue_mutex);
@@ -250,18 +275,19 @@ int ui_wait_key(){
 }
 
 //-- AROMA Input Handler
-int atouch_wait(ATEV *atev){
-  return atouch_wait_ex(atev,0);
+int atouch_wait(ATEV * atev) {
+  return atouch_wait_ex(atev, 0);
 }
-int atouch_wait_ex(ATEV *atev, byte calibratingtouch){
+static int volume_down_pressed = 0;
+int atouch_wait_ex(ATEV * atev, byte calibratingtouch) {
   atev->x = -1;
   atev->y = -1;
   
-  while (1){
+  while (1) {
     int key = ui_wait_key();
     
     //-- Custom Message
-    if (key==atouch_message_code){
+    if (key == atouch_message_code) {
       atev->msg = atouch_winmsg_get(1);
       atev->d   = 0;
       atev->x   = 0;
@@ -273,43 +299,81 @@ int atouch_wait_ex(ATEV *atev, byte calibratingtouch){
     atev->d = ui_key_pressed(key);
     atev->k = key;
     
-    if (key==evtouch_code){
-      if ((evtouch_x>0)&&(evtouch_y>0)){
+    if (key == evtouch_code) {
+      if ((evtouch_x > 0) && (evtouch_y > 0)) {
         atev->x = evtouch_x;
         atev->y = evtouch_y;
-        switch(evtouch_state){
-          case 1:  return ATEV_MOUSEDN; break;
-          case 2:  return ATEV_MOUSEMV; break;
-          default: return ATEV_MOUSEUP; break;
+        
+        switch (evtouch_state) {
+          case 1:
+            return ATEV_MOUSEDN;
+            break;
+            
+          case 2:
+            return ATEV_MOUSEMV;
+            break;
+            
+          default:
+            return ATEV_MOUSEUP;
+            break;
         }
       }
     }
-    else if ((key!=0)&&(key==acfg()->ckey_up))      return ATEV_UP;
-    else if ((key!=0)&&(key==acfg()->ckey_down))    return ATEV_DOWN;
-    else if ((key!=0)&&(key==acfg()->ckey_select))  return ATEV_SELECT;
-    else if ((key!=0)&&(key==acfg()->ckey_back))    return ATEV_BACK;
-    else if ((key!=0)&&(key==acfg()->ckey_menu))    return ATEV_MENU;
-    else{
+    else if ((key != 0) && (key == acfg()->ckey_up)) {
+      return ATEV_UP;
+    }
+    else if ((key != 0) && (key == acfg()->ckey_down)) {
+      return ATEV_DOWN;
+    }
+    else if ((key != 0) && (key == acfg()->ckey_select)) {
+      return ATEV_SELECT;
+    }
+    else if ((key != 0) && (key == acfg()->ckey_back)) {
+      return ATEV_BACK;
+    }
+    else if ((key != 0) && (key == acfg()->ckey_menu)) {
+      return ATEV_MENU;
+    }
+    else {
+      if (key == KEY_VOLUMEDOWN) {
+        if (volume_down_pressed != 2) {
+          volume_down_pressed = atev->d;
+        }
+      }
+      
       /* DEFINED KEYS */
-      switch (key){
-        /* RIGHT */
-        case KEY_RIGHT: return ATEV_RIGHT; break;
-        /* LEFT */
-        case KEY_LEFT:  return ATEV_LEFT; break;
-        
-        /* DOWN */
+      switch (key) {
+          /* RIGHT */
+        case KEY_RIGHT:
+          return ATEV_RIGHT;
+          break;
+          
+          /* LEFT */
+        case KEY_LEFT:
+          return ATEV_LEFT;
+          break;
+          
+          /* DOWN */
         case KEY_DOWN:
         case KEY_CAPSLOCK:
-        case KEY_VOLUMEDOWN:
-          return ATEV_DOWN; break;
-        
-        /* UP */
+        case KEY_VOLUMEDOWN: {
+            if (volume_down_pressed != 2) {
+              return ATEV_DOWN;
+            }
+            else if (atev->d == 0) {
+              volume_down_pressed = 0;
+            }
+          }
+          break;
+          
+          /* UP */
         case KEY_UP:
         case KEY_LEFTSHIFT:
         case KEY_VOLUMEUP:
-          return ATEV_UP; break;
-        
-        /* SELECT */
+          return ATEV_UP;
+          break;
+          
+          /* SELECT */
         case KEY_LEFTBRACE:
         case KEY_POWER:
         case KEY_HOME:
@@ -319,22 +383,41 @@ int atouch_wait_ex(ATEV *atev, byte calibratingtouch){
         case KEY_CAMERA:
         case KEY_F21:
         case KEY_SEND:
-        case KEY_END:
-          return ATEV_SELECT; break;
-        
-        /* SHOW MENU */
+        case KEY_END: {
+            if (volume_down_pressed) {
+              if (atev->d) {
+                vibrate(30);
+                LOGS("PRINT SCREEN...\n");
+                ag_takescreenshoot();
+                usleep(200000);
+                vibrate(30);
+                usleep(200000);
+                vibrate(30);
+                volume_down_pressed = 2;
+              }
+            }
+            else {
+              return ATEV_SELECT;
+            }
+          }
+          break;
+          
+          /* SHOW MENU */
         case KEY_SEARCH:
         case 229:
         case KEY_MENU:
-          return ATEV_MENU; break;
-        
-        /* BACK */
+          return ATEV_MENU;
+          break;
+          
+          /* BACK */
         case KEY_BACKSPACE:
         case KEY_BACK:
-          return ATEV_BACK; break;
+          return ATEV_BACK;
+          break;
       }
     }
   }
+  
   return 0;
 }
-//-- 
+//--

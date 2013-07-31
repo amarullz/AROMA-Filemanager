@@ -1064,24 +1064,28 @@ void ag_sync() {
     ag_refreshlock = 1;
     
     if (ag_32 == 1) {
-      #ifdef __ARM_NEON__
-        int y;
-        for (y = 0; y < ag_fbv.yres; y++) {
-          int yp = y * ag_fbv.xres;
-          aBlt32_neon(ag_fbv.xres, (dword *) (ag_bf32 + yp), (word *) (ag_c.data + yp), 0);
+#ifdef __ARM_NEON__
+      int y;
+      
+      for (y = 0; y < ag_fbv.yres; y++) {
+        int yp = y * ag_fbv.xres;
+        aBlt32_neon(ag_fbv.xres, (dword *) (ag_bf32 + yp), (word *) (ag_c.data + yp), 0);
+      }
+      
+#else
+      int x, y;
+      
+      for (y = 0; y < ag_fbv.yres; y++) {
+        int yp = y * ag_fbv.xres;
+      
+        for (x = 0; x < ag_fbv.xres; x++) {
+          int xy  = yp + x;
+          color c = ag_c.data[xy];
+          ag_bf32[xy] = ag_rgb32(ag_r(c), ag_g(c), ag_b(c));
         }
-      #else
-        int x, y;
-        for (y = 0; y < ag_fbv.yres; y++) {
-          int yp = y * ag_fbv.xres;
-          
-          for (x = 0; x < ag_fbv.xres; x++) {
-            int xy  = yp + x;
-            color c = ag_c.data[xy];
-            ag_bf32[xy] = ag_rgb32(ag_r(c), ag_g(c), ag_b(c));
-          }
-        }
-      #endif
+      }
+      
+#endif
     }
     else {
       memcpy(ag_b, ag_c.data, ag_fbsz);
@@ -2090,7 +2094,7 @@ void ag_closefonts() {
 }
 
 //-- Draw Character
-byte ag_drawchar_ex2(CANVAS * _b, int x, int y, int c, color cl, byte isbig, byte underline, byte bold, byte italic,byte lcd) {
+byte ag_drawchar_ex2(CANVAS * _b, int x, int y, int c, color cl, byte isbig, byte underline, byte bold, byte italic, byte lcd) {
   if (!ag_fontready(isbig)) {
     return 0;
   }
@@ -2125,7 +2129,7 @@ byte ag_drawchar_ex2(CANVAS * _b, int x, int y, int c, color cl, byte isbig, byt
   return apng_drawfont(_b, fnt, cd, x, y, cl, underline, bold);
 }
 byte ag_drawchar_ex(CANVAS * _b, int x, int y, int c, color cl, byte isbig, byte underline, byte bold, byte italic) {
-  return ag_drawchar_ex2(_b,x,y,c,cl,isbig,underline,bold,italic,1);
+  return ag_drawchar_ex2(_b, x, y, c, cl, isbig, underline, bold, italic, 1);
 }
 byte ag_drawchar(CANVAS * _b, int x, int y, int c, color cl, byte isbig) {
   return ag_drawchar_ex(_b, x, y, c, cl, isbig, 0, 0, 0);

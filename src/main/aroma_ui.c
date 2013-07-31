@@ -21,7 +21,7 @@
  *
  */
 
-//* 
+//*
 //* MAIN HEADER
 //*
 #include <sys/times.h>
@@ -33,7 +33,7 @@
 #include <errno.h>
 #include "../aroma.h"
 
-//* 
+//*
 //* GLONAL VARIABLES
 //*
 static  byte    aui_isbgredraw    = 0;  //-- Is Background Need Redrawed
@@ -41,42 +41,42 @@ static  int     aui_minY          = 0;  //-- Most Top Allowable UI Draw Position
 static  CANVAS  aui_bg;                 //-- Saved CANVAS for background
 static  CANVAS  aui_win_bg;             //-- Current drawed CANVAS for windows background
 static  byte    aui_is_show_tips  = 1;
-//* 
+//*
 //* UI MAIN STRUCT
 //*
-typedef struct{
+typedef struct {
   AWINDOWP  hWin;
   ACONTROLP hFile;
   
-	ACONTROLP b1;
-	ACONTROLP b2;
-	ACONTROLP b3;
-	ACONTROLP b4;
-	
-	char *    path;
-	char *    selfile;
-	byte      reshow;
-	byte *    state;
-	byte      isRoot;
-	byte      hFileType;
-	
-	int       pad;
-	int       btnY;
-	int       btnW;
-	int       btnH;
-	
-	int       boxH;
-	int       boxY;
-	
-	int       navY;
-	int       navW;
-	
-	int       pthW;
-	int       btnFH;
-	
+  ACONTROLP b1;
+  ACONTROLP b2;
+  ACONTROLP b3;
+  ACONTROLP b4;
+  
+  char   *  path;
+  char   *  selfile;
+  byte      reshow;
+  byte   *  state;
+  byte      isRoot;
+  byte      hFileType;
+  
+  int       pad;
+  int       btnY;
+  int       btnW;
+  int       btnH;
+  
+  int       boxH;
+  int       boxY;
+  
+  int       navY;
+  int       navW;
+  
+  int       pthW;
+  int       btnFH;
+  
 } AUI_VARS, *AUI_VARSP;
 
-//* 
+//*
 //* UI LIBRARIES
 //*
 #include "libs/aroma_fmlib.c"
@@ -101,79 +101,81 @@ typedef struct{
 #include "libs/aroma_uimain.c"
 #include "libs/aroma_handler.c"
 
-//* 
+//*
 //* AROMA START UI
 //*
-byte aui_start(){
-  
+byte aui_start() {
   //-- LOAD CONFIG
   aui_cfg_init();
   aui_cfg_loadcfg();
-  
   //-- CLEANUP THEME:
-  int i=0;
-  for (i=0;i<AROMA_THEME_CNT;i++){
-    acfg()->theme[i]=NULL;
-    acfg()->theme_9p[i]=0;
-  }
-
-  ag_canvas(&aui_bg,agw(),agh());       //-- Initializing background canvas
-  ag_canvas(&aui_win_bg,agw(),agh());   //-- Initializing window background canvas
+  int i = 0;
   
+  for (i = 0; i < AROMA_THEME_CNT; i++) {
+    acfg()->theme[i] = NULL;
+    acfg()->theme_9p[i] = 0;
+  }
+  
+  ag_canvas(&aui_bg, agw(), agh());     //-- Initializing background canvas
+  ag_canvas(&aui_win_bg, agw(), agh()); //-- Initializing window background canvas
   acfg_init();                          //-- Initializing configuration
   aui_load_icons();                     //-- Initializing Icons
   aui_initlang();                       //-- Initializing default language
   aui_cfg_reloadfonts();                //-- Load Fonts
   aui_langreload();                     //-- Load Custom Language
   aui_themereload();                    //-- Load Themes
-
   aui_isbgredraw = 1;                   //-- Set draw status
-  
-   //-- Show calibration tools
-   /*
+  //-- Show calibration tools
+  /*
   if (!aui_cfg_loadcalib()){
-    if (aw_calibtools(NULL))
-      aui_cfg_save();
+   if (aw_calibtools(NULL))
+     aui_cfg_save();
   }
   */
-  
   //-- INIT OPENED PATH
   char * path       = NULL;
   byte tool_state   = 0;
-  aui_setpath(&path, "","",1);
-  
+  aui_setpath(&path, "", "", 1);
   //-- SELECTED FILE
   char selfile[256];
-  snprintf(selfile,256,"");
+  snprintf(selfile, 256, "");
   
-  if (path){
-    
-    if (auic()->automount){
+  if (path) {
+    if (auic()->automount) {
       ag_setbusy_withtext(alang_get("mounting"));
       LOGS("Automount All Partitions\n");
-      alib_exec("/sbin/mount","-a");
+      alib_exec("/sbin/mount", "-a");
     }
     
     //-- MAIN LOOP
     byte back_ani = 0;
-    do{
-      LOGS("Change Folder %s\n",path);
-      
-      byte ret_show = aui_show(&path, &tool_state, selfile,back_ani);
+    
+    do {
+      LOGS("Change Folder %s\n", path);
+      byte ret_show = aui_show(&path, &tool_state, selfile, back_ani);
       back_ani = 0;
-      if (!ret_show) break;
-      else if (ret_show==2){
-        aui_show_setting();
-        back_ani=1;
+      
+      if (!ret_show) {
+        break;
       }
-      else if (ret_show==3) auido_copy(path, &tool_state);
-      else if (ret_show==4) auido_cut(path, &tool_state);
-      else if (ret_show==5) auido_del(path, &tool_state);
-      else if (ret_show==6){
+      else if (ret_show == 2) {
+        aui_show_setting();
+        back_ani = 1;
+      }
+      else if (ret_show == 3) {
+        auido_copy(path, &tool_state);
+      }
+      else if (ret_show == 4) {
+        auido_cut(path, &tool_state);
+      }
+      else if (ret_show == 5) {
+        auido_del(path, &tool_state);
+      }
+      else if (ret_show == 6) {
         /* Terminal */
-        printf("Opening Terminal At : %s\n",path);
+        printf("Opening Terminal At : %s\n", path);
         aui_show_terminal(path);
-        back_ani=1;
+        back_ani = 1;
       }
     }
     while (1);
@@ -190,6 +192,5 @@ byte aui_start(){
   aui_releaselang();        //-- Release Default language
   atheme_releaseall();      //-- Release themes
   aui_cfg_release();        //-- Release Config Array
-  
   return 1;
 }

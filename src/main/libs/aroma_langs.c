@@ -20,23 +20,21 @@
  * AROMA File Manager Language Initializing
  *
  */
-void aui_releaselang()
-{
-	alangd_release();
+void aui_releaselang() {
+  alangd_release();
 }
 
-void aui_initlang()
-{
-	alangd_init();
+void aui_initlang() {
+  alangd_init();
 }
 
-void aui_langreload()
-{
-	alang_release();
-	if (strcmp(auic()->language, "English") != 0) {
-		char langpath[256];
-		snprintf(langpath, 256, "%s/langs/%s/lang.prop", AROMA_DIR,
-			 auic()->language);
-		alang_load(langpath);
-	}
+void aui_langreload() {
+  alang_release();
+  
+  if (strcmp(auic()->language, "English") != 0) {
+    char langpath[256];
+    snprintf(langpath, 256, "%s/langs/%s/lang.prop", AROMA_DIR,
+             auic()->language);
+    alang_load(langpath);
+  }
 }

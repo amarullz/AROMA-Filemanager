@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 //
 // MALLOC WRAPPER
 //
@@ -23,17 +23,17 @@
 #define __CURR_FILE() __FILE__
 #define __CURR_LINE() __LINE__
 
-void *aroma_malloc(size_t size
+void * aroma_malloc(size_t size
 #ifndef _AROMA_NODEBUG
-, long line, char * filename
+                    , long line, char * filename
 #endif
-);
+                   );
 
 void * aroma_realloc(void * x, size_t size
 #ifndef _AROMA_NODEBUG
-, long line, char * filename
+                     , long line, char * filename
 #endif
-);
+                    );
 
 void aroma_memory_parentpid(int parent_pid);
 void aroma_memory_terminate(const char * message);
@@ -41,15 +41,15 @@ void aroma_memory_terminate(const char * message);
 #ifndef malloc
 
 #ifndef _AROMA_NODEBUG
-  #define malloc(x) aroma_malloc(x,__CURR_LINE(), __CURR_FILE())
+#define malloc(x) aroma_malloc(x,__CURR_LINE(), __CURR_FILE())
 #else
-  #define malloc(x) aroma_malloc(x)
+#define malloc(x) aroma_malloc(x)
 #endif
 
 #ifndef _AROMA_NODEBUG
-  #define realloc(x,s) aroma_realloc(x,s,__CURR_LINE(), __CURR_FILE())
+#define realloc(x,s) aroma_realloc(x,s,__CURR_LINE(), __CURR_FILE())
 #else
-  #define realloc(x,s) aroma_realloc(x,s)
+#define realloc(x,s) aroma_realloc(x,s)
 #endif
 
 void aroma_free(void ** x);
@@ -58,8 +58,8 @@ void aroma_free(void ** x);
 #endif
 
 #ifndef _AROMA_NODEBUG
-  void aroma_memory_debug_init();
-  void aroma_dump_malloc();
+void aroma_memory_debug_init();
+void aroma_dump_malloc();
 #endif
 
 #endif

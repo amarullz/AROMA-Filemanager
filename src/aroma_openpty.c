@@ -34,50 +34,57 @@
    this buffer, a sufficiently long buffer is allocated using malloc,
    and returned in PTS.  0 is returned upon success, -1 otherwise.  */
 static int
-pts_name (int fd, char **pts, size_t buf_len)
-{
+pts_name (int fd, char ** pts, size_t buf_len) {
   int rv;
-  char *buf = *pts;
-
-  for (;;)
-    {
-      char *new_buf;
-
-      if (buf_len)
-	{
-	  rv = ptsname_r (fd, buf, buf_len);
-
-	  if (rv != 0 || memchr (buf, '\0', buf_len))
-	    /* We either got an error, or we succeeded and the
-	       returned name fit in the buffer.  */
-	    break;
-
-	  /* Try again with a longer buffer.  */
-	  buf_len += buf_len;	/* Double it */
-	}
-      else
-	/* No initial buffer; start out by mallocing one.  */
-	buf_len = 128;		/* First time guess.  */
-
-      if (buf != *pts)
-	/* We've already malloced another buffer at least once.  */
-	new_buf = realloc (buf, buf_len);
-      else
-	new_buf = malloc (buf_len);
-      if (! new_buf)
-	{
-	  rv = -1;
-	  __set_errno (ENOMEM);
-	  break;
-	}
-      buf = new_buf;
+  char * buf = *pts;
+  
+  for (;;) {
+    char * new_buf;
+    
+    if (buf_len) {
+      rv = ptsname_r (fd, buf, buf_len);
+      
+      if (rv != 0 || memchr (buf, '\0', buf_len))
+        /* We either got an error, or we succeeded and the
+           returned name fit in the buffer.  */
+      {
+        break;
+      }
+      
+      /* Try again with a longer buffer.  */
+      buf_len += buf_len;	/* Double it */
     }
-
-  if (rv == 0)
-    *pts = buf;		/* Return buffer to the user.  */
-  else if (buf != *pts)
-    free (buf);		/* Free what we malloced when returning an error.  */
-
+    else
+      /* No initial buffer; start out by mallocing one.  */
+    {
+      buf_len = 128;  /* First time guess.  */
+    }
+    
+    if (buf != *pts)
+      /* We've already malloced another buffer at least once.  */
+    {
+      new_buf = realloc (buf, buf_len);
+    }
+    else {
+      new_buf = malloc (buf_len);
+    }
+    
+    if (! new_buf) {
+      rv = -1;
+      __set_errno (ENOMEM);
+      break;
+    }
+    
+    buf = new_buf;
+  }
+  
+  if (rv == 0) {
+    *pts = buf;  /* Return buffer to the user.  */
+  }
+  else if (buf != *pts) {
+    free (buf);  /* Free what we malloced when returning an error.  */
+  }
+  
   return rv;
 }
 #endif
@@ -86,15 +93,15 @@ pts_name (int fd, char **pts, size_t buf_len)
    according to TERMP and WINP.  Return handles for both ends in
    AMASTER and ASLAVE, and return the name of the slave end in NAME.  */
 
-int openpty (int *amaster, int *aslave, char *name, struct termios *termp,
-	 struct winsize *winp){
+int openpty (int * amaster, int * aslave, char * name, struct termios * termp,
+             struct winsize * winp) {
 #if 0
 #ifdef PATH_MAX
   char _buf[PATH_MAX];
 #else
   char _buf[512];
 #endif
-  char *buf = _buf;
+  char * buf = _buf;
 #else
 #ifdef PATH_MAX
   char buf[PATH_MAX];
@@ -103,52 +110,66 @@ int openpty (int *amaster, int *aslave, char *name, struct termios *termp,
 #endif
 #endif
   int master, slave;
-
   master = getpt ();
-  if (master == -1)
+  
+  if (master == -1) {
     return -1;
-
-  if (grantpt (master))
+  }
+  
+  if (grantpt (master)) {
     goto fail;
-
-  if (unlockpt (master))
+  }
+  
+  if (unlockpt (master)) {
     goto fail;
-
+  }
+  
 #if 0
+  
   if (pts_name (master, &buf, sizeof (_buf)))
 #else
   if (ptsname_r (master, buf, sizeof buf))
 #endif
     goto fail;
-
+    
   slave = open (buf, O_RDWR | O_NOCTTY);
-  if (slave == -1)
-    {
+  
+  if (slave == -1) {
 #if 0
-      if (buf != _buf)
-	free (buf);
-#endif
-      goto fail;
+  
+    if (buf != _buf) {
+      free (buf);
     }
-
+    
+#endif
+    goto fail;
+  }
+  
   /* XXX Should we ignore errors here?  */
-  if(termp)
+  if (termp) {
     tcsetattr (slave, TCSAFLUSH, termp);
-  if (winp)
+  }
+  
+  if (winp) {
     ioctl (slave, TIOCSWINSZ, winp);
-
+  }
+  
   *amaster = master;
   *aslave = slave;
-  if (name != NULL)
+  
+  if (name != NULL) {
     strcpy (name, buf);
-
+  }
+  
 #if 0
-  if (buf != _buf)
+  
+  if (buf != _buf) {
     free (buf);
+  }
+  
 #endif
   return 0;
-
- fail:
+fail:
   close (master);
   return -1;
 }

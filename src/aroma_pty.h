@@ -24,7 +24,7 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 
-int openpty (int *__amaster, int *__aslave, char *__name,
-		    struct termios *__termp, struct winsize *__winp);
+int openpty (int * __amaster, int * __aslave, char * __name,
+             struct termios * __termp, struct winsize * __winp);
 
 #endif	/* pty.h */
