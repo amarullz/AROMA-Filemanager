@@ -78,7 +78,8 @@ byte INDR_translate_touch(AINPUTP me, INDR_DEVICEP dev,
                       
   /* DUMP RAW EVENTS */
   //ALOGRT("INDR RAW TOUCH: T=%i, C=%i, V=%i",ev->type,ev->code,ev->value);
-  
+  static int use_tracking_id_negative_as_touch_release = 0;
+  static int touchReleaseOnNextSynReport = 0;
   /* Process EV_ABS Event */
   if (ev->type == EV_ABS) {
     switch (ev->code) {
@@ -135,9 +136,19 @@ byte INDR_translate_touch(AINPUTP me, INDR_DEVICEP dev,
           dev->p.x = 0;
           dev->p.y = 0;
         }
-        
         break;
-        
+
+      case ABS_MT_TRACKING_ID:
+        if (ev->value < 0) {
+          /* Screen UnTouched */
+          dev->p.state |= INDR_POS_ST_RLS_NEXT;
+          dev->p.x = 0;
+          dev->p.y = 0;
+          touchReleaseOnNextSynReport = 1;
+          use_tracking_id_negative_as_touch_release = 1;
+        }
+        break;
+
       default:
         /* Unknown Event */
         goto return_none;
@@ -155,8 +166,10 @@ byte INDR_translate_touch(AINPUTP me, INDR_DEVICEP dev,
       goto return_clear_sync;
     }
     
-    if ((dev->p.state & (INDR_POS_ST_LASTSYNC | INDR_POS_ST_RLS_NEXT))) {
+    if (((dev->p.state & (INDR_POS_ST_LASTSYNC | INDR_POS_ST_RLS_NEXT)) && !use_tracking_id_negative_as_touch_release) || 
+            (use_tracking_id_negative_as_touch_release && touchReleaseOnNextSynReport == 1)) {
       /* Set Destination Coordinate */
+      touchReleaseOnNextSynReport = 0;
       dest_ev->x      = dev->p.tx;
       dest_ev->y      = dev->p.ty;
       
