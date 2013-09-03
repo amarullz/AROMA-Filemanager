@@ -162,6 +162,9 @@ int main(int argc, char ** argv) {
     ag_close_thread();
     //* Wait Thread Exit
     usleep(300000);
+    //* Release All Resource
+    LOGS("Starting Release\n");
+    a_release_all();
     
     //* Unmute Parent
     if (parent_pid) {
@@ -171,9 +174,6 @@ int main(int argc, char ** argv) {
     
     //* Wait Until Clean Up
     usleep(200000);
-    //* Release All Resource
-    LOGS("Starting Release\n");
-    a_release_all();
   }
   else {
     LOGE("Cannot Open Archive\n");

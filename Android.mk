@@ -18,7 +18,7 @@ include $(CLEAR_VARS)
   ## VERSIONING
   ##
   AROMA_NAME    := AROMA Filemanager
-  AROMA_VERSION := 1.90
+  AROMA_VERSION := 1.91
   AROMA_BUILD   := $(shell date +%y%m%d%H)
   AROMA_CN      := Degung Gamelan
 
@@ -156,6 +156,13 @@ include $(CLEAR_VARS)
   
   ## INCLUDED LIBRARIES
   LOCAL_STATIC_LIBRARIES        := libm libc
+  
+  ##
+  ## Remove Old Build
+  ##
+  ifeq ($(MAKECMDGOALS),$(LOCAL_MODULE))
+    $(shell rm -rf $(PRODUCT_OUT)/obj/EXECUTABLES/$(LOCAL_MODULE)_intermediates)
+  endif
 
 include $(BUILD_EXECUTABLE)
 

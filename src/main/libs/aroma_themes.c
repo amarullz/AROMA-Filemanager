@@ -21,7 +21,9 @@
  *
  */
 void aui_themereload() {
+  printf("acfg_init_ex() - start\n");
   acfg_init_ex(1);
+  printf("acfg_init_ex() - end\n");
   
   if (strcmp(auic()->theme, "") != 0) {
     //-- Init Theme Prop Path

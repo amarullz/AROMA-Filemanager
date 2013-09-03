@@ -26,10 +26,10 @@ typedef struct {
   byte fontsize;
   byte automount;
   byte showhidden;
-  char fontfamily[128];
-  char iconset[128];
-  char language[128];
-  char theme[128];
+  char fontfamily[256];
+  char iconset[256];
+  char language[256];
+  char theme[256];
 } AUICV, *AUICVP;
 AUICV auicv;
 AUICVP auic() {
@@ -42,10 +42,10 @@ void aui_cfg_init() {
   auicv.automount = 0;
   auicv.showhidden = 0;
   acfg()->fadeframes = 4;
-  snprintf(auicv.fontfamily, 128, "Droid Sans");
-  snprintf(auicv.iconset, 128, "Generic");
-  snprintf(auicv.language, 128, "English");
-  snprintf(auicv.theme, 128, "");
+  snprintf(auicv.fontfamily, 256, "Droid Sans");
+  snprintf(auicv.iconset, 256, "Generic");
+  snprintf(auicv.language, 256, "English");
+  snprintf(auicv.theme, 256, "");
 }
 
 int aui_cfg_btnFH() {
