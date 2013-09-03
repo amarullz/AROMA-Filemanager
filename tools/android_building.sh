@@ -1,22 +1,22 @@
 #!/bin/bash
-AROMA_LOCAL_PATH=$(dirname $(dirname $0))
-AROMA_BINARY="out/aroma_filemanager"
-cd $AROMA_LOCAL_PATH
+AROMA_LOCAL_PATH=$(readlink -f $1)
+AROMA_OUT_PATH=$(readlink -f $2)
+AROMA_BINARY=$AROMA_OUT_PATH/aroma_filemanager
+AROMA_ZIP_FILE=aromafm_$3.zip
 
-#
-# Copy Binary
-#
-if [ ! -x $AROMA_BINARY ]
-then
-  echo "0"
-  exit
+if [ ! -x $AROMA_BINARY ]; then
+    echo "0"
+    exit
 fi
 
-rm -rf out/aromafm.zip
-rm -rf assets/META-INF/com/google/android/update-binary
+rm -rf "$AROMA_OUT_PATH/zip_src"
+rm -f "$AROMA_OUT_PATH/$AROMA_ZIP_FILE"
+mkdir -p "$AROMA_OUT_PATH/zip_src"
 
-cp $AROMA_BINARY assets/META-INF/com/google/android/update-binary
-cd assets
-zip -r9q ../out/aromafm.zip .
-cd ..
-echo "1"
+cp -r $AROMA_LOCAL_PATH/assets/assets $AROMA_OUT_PATH/zip_src
+mkdir -p $AROMA_OUT_PATH/zip_src/META-INF/com/google/android
+mv $AROMA_BINARY $AROMA_OUT_PATH/zip_src/META-INF/com/google/android/update-binary
+
+cd $AROMA_OUT_PATH/zip_src
+zip -r9q $AROMA_OUT_PATH/$AROMA_ZIP_FILE .
+echo 1
