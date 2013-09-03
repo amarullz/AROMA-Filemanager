@@ -1,11 +1,18 @@
 AROMA Filemanager - Android Recovery Based File Manager.
+Author: amarullz
+Edited: by Phil, for PhilZ Touch
 
-* How To Build With Android Build Environment
-  1. Copy whole directory into /external/aroma-installer
-  2. # . build/envsetup.sh
-  3. # lunch full_yourdevice-eng
-  4. # make -j4 aroma_filemanager
-  5. # make aroma_filemanager.zip
+* Build along CM source
+  1. # just lunch and make for your device
+  2. # zip will be under [device out folder]/aromafm_out
+
+* How To Build Only Aroma File Manager Module:
+  1. # . build/envsetup.sh
+  2. # lunch full_yourdevice-eng
+  3. # mmm bootable/recovery/aromafm
+  4. # mmm bootable/recovery/aromafm/tools
+  5. # zip will be under [device out folder]/aromafm_out
+
 
 * Programming Language
   It was application which runs on Android device but not on Android OS 

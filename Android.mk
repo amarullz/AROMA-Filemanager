@@ -25,6 +25,9 @@ include $(CLEAR_VARS)
   ## LOCAL PATH COPY
   AROMAFM_LOCALPATH := $(LOCAL_PATH)
   
+  ## binary output path
+  AROMA_OUT_PATH := $(TARGET_RECOVERY_ROOT_OUT)/../../aromafm_out
+
   ## ZLIB SOURCE FILES
   LOCAL_SRC_FILES := 	\
     libs/zlib/adler32.c \
@@ -135,7 +138,7 @@ include $(CLEAR_VARS)
   
   ## INCLUDES & OUTPUT PATH
   LOCAL_C_INCLUDES              := $(AROMAFM_LOCALPATH)/include
-  LOCAL_MODULE_PATH             := $(AROMAFM_LOCALPATH)/out
+  LOCAL_MODULE_PATH             := $(AROMA_OUT_PATH)
   
   ## COMPILER FLAGS
   LOCAL_CFLAGS                  := -O2 
@@ -157,29 +160,19 @@ include $(CLEAR_VARS)
   ## INCLUDED LIBRARIES
   LOCAL_STATIC_LIBRARIES        := libm libc
   
-  ##
-  ## Remove Old Build
-  ##
-  ifeq ($(MAKECMDGOALS),$(LOCAL_MODULE))
-    $(shell rm -rf $(PRODUCT_OUT)/obj/EXECUTABLES/$(LOCAL_MODULE)_intermediates)
-  endif
+## Remove Old Build
+$(shell rm -rf $(PRODUCT_OUT)/obj/EXECUTABLES/$(LOCAL_MODULE)_intermediates)
+
+## Create zip installer
+AROMA_DEVICE_NAME   := $(shell echo $(TARGET_PRODUCT) | cut -d _ -f 2)
+AROMA_ZIP_FILE      := $(AROMA_OUT_PATH)/aromafm_$(AROMA_DEVICE_NAME).zip
+$(AROMA_ZIP_FILE): aroma_filemanager
+	$(info )
+	$(info Making Aroma Installer Zip...)
+	$(AROMAFM_LOCALPATH)/tools/android_building.sh $(AROMAFM_LOCALPATH) $(AROMA_OUT_PATH) $(AROMA_DEVICE_NAME)
+	$(info Install ----> $(AROMA_ZIP_FILE))
+	$(info )
+
+ALL_DEFAULT_INSTALLED_MODULES += $(AROMA_ZIP_FILE)
 
 include $(BUILD_EXECUTABLE)
-
-
-include $(CLEAR_VARS)
-LOCAL_MODULE        := aroma_filemanager.zip
-LOCAL_MODULE_TAGS   := eng
-ifeq ($(MAKECMDGOALS),aroma_filemanager.zip)
-  $(info ==========================================================================)
-  $(info )
-  $(info MAKING AROMA Installer ZIP)
-  OUTPUT_SH := $(shell $(AROMAFM_LOCALPATH)/tools/android_building.sh)
-  ifeq ($(OUTPUT_SH),0)
-    $(info Please Compile AROMA Installer First, by running: make -j4 aroma_filemanager)
-  else
-    $(info AROMA ZIP is On $(AROMAFM_LOCALPATH)/out/aromafm.zip)
-  endif
-  $(info )
-  $(info ==========================================================================)
-endif
