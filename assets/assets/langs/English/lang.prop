@@ -25,6 +25,7 @@ hours = hours
 remaining = remaining
 
 mounting = Mounting Devices
+umounting = Reverting Devices
 exit.message = Are you sure you want to exit the filemanager?
 
 tools.newfolder = New Folder
@@ -86,6 +87,12 @@ settings.fontsize = Font Size
 settings.fontsize.small = Small
 settings.fontsize.medium = Medium
 settings.fontsize.big = Big
+
+settings.colorspace = Set Color Space
+settings.colorspace.rgba = RGBA (SG Note 3)
+settings.colorspace.abgr = ABGR
+settings.colorspace.argb = ARGB
+settings.colorspace.bgra = BGRA
 
 settings.fontfamily = Font Family
 settings.iconset = Iconset

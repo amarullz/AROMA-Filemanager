@@ -26,6 +26,7 @@ typedef struct {
   byte fontsize;
   byte automount;
   byte showhidden;
+  byte colorspace;
   char fontfamily[256];
   char iconset[256];
   char language[256];
@@ -40,6 +41,7 @@ void aui_cfg_init() {
   auicv.tooltext = 1;
   auicv.fontsize = 2;
   auicv.automount = 0;
+  auicv.colorspace = 1;
   auicv.showhidden = 0;
   acfg()->fadeframes = 4;
   snprintf(auicv.fontfamily, 256, "Droid Sans");
@@ -55,6 +57,24 @@ int aui_cfg_btnFH() {
   
   return ag_fontheight(0);
 }
+
+void aui_cfg_setcolorspace() {
+  if ((auicv.colorspace < 1) || (auicv.colorspace > 4)) {
+    auicv.colorspace = 1;
+  }
+  if (auicv.colorspace == 1) {  //rgba
+      ag_changecolorspace(0, 8, 16, 24);
+    }
+    else if (auicv.colorspace == 2) {   //abgr
+      ag_changecolorspace(24, 16, 8, 0);
+    }
+    else if (auicv.colorspace == 3) {   //argb
+      ag_changecolorspace(8, 16, 24, 0);
+    }
+    else if (auicv.colorspace == 4) {  //bgra
+      ag_changecolorspace(16, 8, 0, 24);
+    }
+  }
 
 void aui_cfg_reloadfonts() {
   byte fszs[3] = { 9, 11, 12 };
@@ -354,6 +374,12 @@ void aui_cfg_fromarray() {
     auic()->automount = atoi(o);
   }
   
+  o = aarray_get(aui_cfg_array, "colorspace");
+  
+  if (o != NULL) {
+    auic()->colorspace = atoi(o);
+  }
+  
   o = aarray_get(aui_cfg_array, "tooltext");
   
   if (o != NULL) {
@@ -424,6 +450,8 @@ void aui_cfg_save() {
   aarray_set(aui_cfg_array, "fontsize", o);
   snprintf(o, 256, "%i", auic()->automount);
   aarray_set(aui_cfg_array, "automount", o);
+  snprintf(o, 256, "%i", auic()->colorspace);
+  aarray_set(aui_cfg_array, "colorspace", o);
   snprintf(o, 256, "%i", acfg()->fadeframes);
   aarray_set(aui_cfg_array, "fadeframes", o);
   aarray_set(aui_cfg_array, "fontfamily", auicv.fontfamily);

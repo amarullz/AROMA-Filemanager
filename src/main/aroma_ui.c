@@ -115,7 +115,6 @@ byte aui_start() {
     acfg()->theme[i] = NULL;
     acfg()->theme_9p[i] = 0;
   }
-  
   ag_canvas(&aui_bg, agw(), agh());     //-- Initializing background canvas
   ag_canvas(&aui_win_bg, agw(), agh()); //-- Initializing window background canvas
   acfg_init();                          //-- Initializing configuration
@@ -150,12 +149,23 @@ byte aui_start() {
     //-- MAIN LOOP
     byte back_ani = 0;
     
+  aui_cfg_setcolorspace();               //-- Force Colorspace
     do {
       LOGS("Change Folder %s\n", path);
       byte ret_show = aui_show(&path, &tool_state, selfile, back_ani);
       back_ani = 0;
       
       if (!ret_show) {
+        if (ismounted("/system")){
+          //* UNMOUNT /SYSTEM
+          ag_setbusy_withtext(alang_get("umounting"));
+          LOGS("Unmounting /system\n");
+          alib_exec("/sbin/umount", "/system");
+          usleep(500000);
+         }
+         else{
+          LOGS("/system wasn't mounted...\n");
+         }
         break;
       }
       else if (ret_show == 2) {
