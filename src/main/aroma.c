@@ -159,12 +159,20 @@ int main(int argc, char ** argv) {
     
     //* Close Graph Thread
     LOGS("Close Graph Thread\n");
-    ag_close_thread();
-    //* Wait Thread Exit
-    usleep(300000);
-    //* Release All Resource
-    LOGS("Starting Release\n");
-    a_release_all();
+    if (ag_close_thread()){
+      LOGS("Thread terminated\n");
+      //* Release All Resource
+      LOGS("Starting Release\n");
+      a_release_all();
+    }
+    else{
+      //* Wait Thread Exit
+      LOGS("witing for thread to terminate\n");
+      usleep(600000);
+      //* Release All Resource
+      LOGS("Starting Release\n");
+      a_release_all();
+     }
     
     //* Unmute Parent
     if (parent_pid) {
@@ -173,23 +181,28 @@ int main(int argc, char ** argv) {
     }
     
     //* Wait Until Clean Up
-    usleep(200000);
+    usleep(600000);
   }
   else {
     LOGE("Cannot Open Archive\n");
   }
-  
   //* REMOVE AROMA TEMPORARY
   LOGS("Cleanup Temporary\n");
-  usleep(500000);
   remove_directory(AROMA_TMP);
+  usleep(500000);
   //* Cleanup PIPE
   LOGS("Closing Recovery Pipe\n");
+  //-- Return Exit Status
+  if (retval){
+    LOGS("Exit Status: 1 - Abnormal\n");
+  }
+  else{
+    LOGS("Exit Status: 0 - Normal\n");
+  }
   fclose(acmd_pipe);
   //* MEMORY DEBUG
 #ifndef _AROMA_NODEBUG
   aroma_dump_malloc();
 #endif
-  //-- Return Exit Status
   return retval;
 }

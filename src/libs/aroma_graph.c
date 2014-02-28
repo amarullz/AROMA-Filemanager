@@ -422,9 +422,14 @@ byte ag_init() {
   
   return 0;
 }
-void ag_close_thread() {
+byte ag_close_thread() {
   ag_isrun = 0;
-  pthread_join(ag_pthread, NULL);
+  if (pthread_join(ag_pthread, NULL) == 0){
+     return 1;
+  }
+  else{
+     return 0;
+  }
   // pthread_detach(ag_pthread);
 }
 color aAlphaB(color scl, byte l) {

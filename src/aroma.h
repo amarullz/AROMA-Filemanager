@@ -572,7 +572,7 @@ byte      ag_isfreetype(byte isbig);
 byte      ag_fontready(byte isbig);
 CANVAS  * agc();          // Get Main AROMA Graph Canvas
 byte      ag_init();      // Init AROMA Graph and Framebuffers
-void      ag_close_thread(); // Close Graph Thread
+byte      ag_close_thread(); // Close Graph Thread
 void      ag_close();     // Close AROMA Graph and Framebuffers
 void      ag_changecolorspace(int r, int g, int b, int a); // Change Color Space
 

@@ -213,6 +213,20 @@ void aui_show_setting() {
             auic()->automount ? 1 : 0);
   acopt_add(v.hFile, alang_get("settings.mount.none"), "",
             auic()->automount ? 0 : 1);
+            
+   
+  //-- colorspace : 9
+  acopt_addgroup(v.hFile, alang_get("settings.colorspace"), "");
+  acopt_add(v.hFile, alang_get("settings.colorspace.rgba"), "",
+            (auic()->colorspace == 1) ? 1 : 0);
+  acopt_add(v.hFile, alang_get("settings.colorspace.abgr"), "",
+            (auic()->colorspace == 2) ? 1 : 0);
+  acopt_add(v.hFile, alang_get("settings.colorspace.argb"), "",
+            (auic()->colorspace == 3) ? 1 : 0);
+  acopt_add(v.hFile, alang_get("settings.colorspace.bgra"), "",
+            (auic()->colorspace == 4) ? 1 : 0);           
+            
+            
   //-- Font size : 8
   /*
      acopt_addgroup(v.hFile,"Automount Partitions","");
@@ -279,6 +293,7 @@ void aui_show_setting() {
   
   if (saveconfig) {
     byte font_reloaded = 0;
+    byte colorspace_refreshed = 0;
     //-- Text on toolbar
     auic()->tooltext = (acopt_getvalue(v.hFile, 1) == 1) ? 1 : 0;
     auic()->automount = (acopt_getvalue(v.hFile, 8) == 1) ? 1 : 0;
@@ -288,6 +303,13 @@ void aui_show_setting() {
     if (newfontsz != auic()->fontsize) {
       auic()->fontsize = newfontsz;
       font_reloaded = 1;
+    }
+    
+    byte newcolorspace = (byte) acopt_getvalue(v.hFile, 9);
+    
+    if (newcolorspace != auic()->colorspace) {
+      auic()->colorspace = newcolorspace;
+      colorspace_refreshed = 1;
     }
     
     //-- Font Family
@@ -343,6 +365,11 @@ void aui_show_setting() {
     //-- Reload Font
     if (font_reloaded) {
       aui_cfg_reloadfonts();
+    }
+    
+    // set new color space
+    if (colorspace_refreshed) {
+      aui_cfg_setcolorspace();
     }
     
     save_to_file = 1;
