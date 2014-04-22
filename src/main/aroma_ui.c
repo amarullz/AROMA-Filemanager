@@ -91,6 +91,7 @@ typedef struct {
 
 #include "libs/aroma_favorite.c"
 #include "libs/aroma_uisettings.c"
+#include "libs/aroma_flasher.c"
 #include "libs/aroma_uicopy.c"
 #include "libs/aroma_uicut.c"
 #include "libs/aroma_uidel.c"

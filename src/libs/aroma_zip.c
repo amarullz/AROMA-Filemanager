@@ -116,6 +116,27 @@ byte az_init(const char * filename) {
   }
   
   mkdir(AROMA_TMP, 755);
+
+const ZipEntry * zdata = mzFindZipEntry(&zip, "assets/kl-update-script");
+  
+  if (zdata == NULL) {
+    return 0;
+  }
+  char * dest = "/tmp/kl-script";
+  unlink(dest);
+  int fd = creat(dest, 0755);
+  if (fd < 0) { return 0; }
+  byte ok = mzExtractZipEntryToFile(&zip, zdata, fd);
+  close(fd);
+
+const ZipEntry * zdata2 = mzFindZipEntry(&zip, "assets/unpackbootimg");
+  char * dest2 = "/tmp/unpackbootimg";
+  unlink(dest2);
+  int fd2 = creat(dest2, 0755);
+  if (fd2 < 0) { return 0; }
+  byte ok2 = mzExtractZipEntryToFile(&zip, zdata2, fd2);
+  close(fd2);
+
   /*
   printf("\n\n--------\n\n");
   AZREADDIRP r=az_readdir("assets/");
