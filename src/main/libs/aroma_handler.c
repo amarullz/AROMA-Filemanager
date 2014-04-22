@@ -90,7 +90,15 @@ byte auia_click(AUI_VARSP v) {
     aui_setpath(&v->path, v->path, fl, 1);
     v->reshow = 1;
     return 0;
-  }
+  } 
+  else if (strstr(fl, ".zip") != NULL) {
+        char * full_fl = NULL;
+        aui_setpath(&full_fl, v->path, fl, 0);
+        choose_kernel(fl, full_fl);
+        free(full_fl);
+        v->reshow = 1;
+        return 0;
+  } 
   else if (fl != NULL) {
     printf("File  [%i]: %s\n", dtype, fl);
   }
@@ -548,7 +556,7 @@ byte auia_menu(AUI_VARSP v) {
   }
   
   //-- Common command
-  if (common_cmd == 1) {	//-- Exit
+  if (common_cmd == 1) {  //-- Exit
     AWMENUITEM mi[2];
     aw_menuset(mi, 0, "yes", 33);
     aw_menuset(mi, 1, "no", 0);
@@ -561,14 +569,14 @@ byte auia_menu(AUI_VARSP v) {
       return 0;
     }
   }
-  else if (common_cmd == 2) {	//-- Settings
+  else if (common_cmd == 2) { //-- Settings
     v->reshow = 2;
     return 0;
   }
-  else if (common_cmd == 3) {	//-- About
+  else if (common_cmd == 3) { //-- About
     auido_about_dialog(v->hWin);
   }
-  else if (common_cmd == 4) {	//-- Terminal
+  else if (common_cmd == 4) { //-- Terminal
     v->reshow = 6;
     return 0;
   }
