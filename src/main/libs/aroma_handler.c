@@ -92,12 +92,24 @@ byte auia_click(AUI_VARSP v) {
     return 0;
   } 
   else if (strstr(fl, ".zip") != NULL) {
-        char * full_fl = NULL;
-        aui_setpath(&full_fl, v->path, fl, 0);
-        choose_kernel(fl, full_fl);
-        free(full_fl);
-        v->reshow = 1;
-        return 0;
+        if (EndsWith(fl,".zip")){
+          char * full_fl = NULL;
+          aui_setpath(&full_fl, v->path, fl, 0);
+          choose_kernel(full_fl, 1);
+          free(full_fl);
+          v->reshow = 1;
+          return 0;
+        }
+  } 
+  else if (strstr(fl, ".img") != NULL) {
+        if (EndsWith(fl,".img")){
+          char * full_fl = NULL;
+          aui_setpath(&full_fl, v->path, fl, 0);
+          choose_kernel(full_fl,0);
+          free(full_fl);
+          v->reshow = 1;
+          return 0;
+      }
   } 
   else if (fl != NULL) {
     printf("File  [%i]: %s\n", dtype, fl);
