@@ -1,0 +1,149 @@
+ok = OK
+yes = Да
+no = Нет
+done = Готово
+cancel = Отмена
+tryagain = Повтор
+exit = Выход
+about = Сведения
+continue = Далее
+select = Перейти
+close = Close
+
+canceling = Отмена…
+finishing = Завершение…
+calculating = Расчёт…
+discovered = Обнаружено %s объектов
+deleting = Удалено %s объектов
+moving = Перемещено %s из %s объектов
+copying = Скопировано %s из %s объектов
+progress.of = %s из %s
+
+seconds = с.
+minutes = м.
+hours = ч.
+remaining = осталось
+
+mounting = Монтирование
+umounting = Размонтирование
+exit.message = Закрыть программу?
+
+tools.newfolder = Папка
+tools.favorite = Закладки
+tools.selectall = Всё
+tools.unselect = Ничего
+tools.copy = Копировать
+tools.cut = Вырезать
+tools.paste = Вставить
+tools.menu = Меню
+tools.delete = Удалить
+tools.details = Свойства
+tools.chmod = Разрешения
+tools.rename = Имя
+tools.favorite.add = Закладка
+tools.favorite.del = Убрать
+tools.hiddenfile = Видимые
+tools.hiddenfile.show = Скрытые 
+tools.terminal = Терминал
+
+file.exists = Имя существует
+file.exists.info = Существует объект с именем:
+overwrite.skip = Пропуск
+overwrite.skipall = Пропуск всех
+overwrite = Замена
+overwrite.all = Замена всех
+
+disk.full = Диск заполнен
+disk.full.info = Диск заполнен, пропустить файл?
+disk.full.info2 = Диск заполнен, действие отменено
+
+newfolder = Новая папка
+newfolder.insertname = Введите имя папки
+newfolder.exist = Объект с таким именем существует.\
+\
+Введите другое имя
+
+paste.location = Выберите папку и нажмите Вставить
+
+dir.root = Root
+dir.filecount = %s объектов
+dir.filecounts = %s объектов
+
+selected.file = %i объектов выбрано
+selected.files = %i объектов выбрано
+
+symlink = Symlink
+symlink.error = Ошибка symlink
+
+settings = Настройки
+settings.calib = Калибровка экрана
+settings.reset = Сброс
+
+settings.toolbar = Панель
+settings.toolbar.icontext = Значки и текст
+settings.toolbar.icononly = Значки
+
+settings.fontsize = Кегль
+settings.fontsize.small = Малый
+settings.fontsize.medium = Средний
+settings.fontsize.big = Большой
+
+settings.colorspace = Пространство цветов
+settings.colorspace.rgba = RGBA (SG Note 3)
+settings.colorspace.abgr = ABGR
+settings.colorspace.argb = ARGB
+settings.colorspace.bgra = BGRA
+
+settings.fontfamily = Шрифт
+settings.iconset = Значки
+settings.themes = Тема
+settings.lang = Язык
+
+settings.trans = Анимация
+settings.trans.0 = Нет
+settings.trans.1 = Быстро
+settings.trans.2 = Нормально
+settings.trans.3 = Плавно
+settings.trans.4 = Очень плавно
+
+settings.mount = Автомонтирование
+settings.mount.all = При запуске
+settings.mount.none = Нет
+
+settings.reset.msg = Сбросить настройки?
+
+newfolder.error = Ошибка создания папки
+
+rename = Переименование
+rename.insertname = Введите новое имя
+rename.exist = Объект с таким именем существует.\
+\
+Введите другое имя
+rename.error = Ошибка переименования
+
+paste.error = Ошибка вставки
+paste.subfolder_paste = Целевая папка является вложенной или текущей.\
+\
+Выберите другую папку
+paste.nofile = Нет объектов
+
+copy.prepare = Подготовка копирования
+move.prepare = Подготовка перемещения
+delete.prepare = Подготовка удаления
+
+delete.title = Удаление
+delete.message = Удалить %s объектов?
+
+tools.chmod.read = R
+tools.chmod.write = W
+tools.chmod.exec = X
+tools.chmod.user = User
+tools.chmod.group = Group
+tools.chmod.others = Others
+tools.chmod.setuid = SUID
+tools.chmod.setgid = SGID
+tools.chmod.sticky = Sticky
+
+tools.terminal.title = Терминал
+tools.terminal.terminate = Завершение
+tools.terminal.terminate_info = Оболочка ещё работает. Завершить?
