@@ -1,56 +1,51 @@
 #!/sbin/sh
 
-if [ "$1" == "zip" ]; then
-klloc=$2
-ZIP=$4
-echo -n -e "Zip $1 $2 $3 $4\n" > /tmp/success.txt
 
-cd /tmp
-
-rm -R $klloc/boot/Kernels/*
-mkdir $klloc/boot
-mkdir $klloc/boot/Kernels
-mkdir $klloc/boot/Kernels/$ZIP
-
-./unpackbootimg boot.img $klloc/boot/Kernels/$ZIP
-
-echo "$klloc/boot/Kernels/$ZIP/boot.img-zImage">$klloc/boot/kernel
-echo "$klloc/boot/Kernels/$ZIP/boot.img-ramdisk.gz">$klloc/boot/ramdisk
-
-chmod 755 $klloc/boot/
-chmod 755 $klloc/boot/Kernels/
-chmod 755 $klloc/boot/Kernels/$ZIP
-chmod 644 $klloc/boot/Kernels/$ZIP/*
-chmod 644 $klloc/boot/kernel
-chmod 644 $klloc/boot/ramdisk
-
-rm $ZIP
-fi
-
-if [ "$1" == "img" ]; then
 klloc=$2
 BootLoc=$3
 BootName=$4
-echo -n -e "IMG $1 $2 $3 $4\n" > /tmp/success.txt
+
+if [ "$1" == "img" ]; then
+	echo -n -e "IMG $1 $2 $3 $4 $5\n" > "/tmp/success.txt"
+else
+	echo -n -e "ZIP $1 $2 $3 $4 $5\n" > "/tmp/success.txt"
+fi
 
 cd /tmp
 
-rm -R $klloc/boot/*
-mkdir $klloc/boot
-mkdir $klloc/boot/Kernels
-mkdir $klloc/boot/Kernels/$BootName
+rm -R "./bootTMP/*"
+mkdir -p "./bootTMP/Kernels/$BootName"
+mkdir -p "$klloc/boot/Kernels/$BootName"
 
-./unpackbootimg $BootLoc $klloc/boot/Kernels/$BootName
-
-echo "$klloc/boot/Kernels/$BootName/$BootName-zImage">$klloc/boot/kernel
-echo "$klloc/boot/Kernels/$BootName/$BootName-ramdisk.gz">$klloc/boot/ramdisk
-
-chmod 755 $klloc/boot/
-chmod 755 $klloc/boot/Kernels/
-chmod 755 $klloc/boot/Kernels/$BootName
-chmod 644 $klloc/boot/Kernels/$BootName/*
-chmod 644 $klloc/boot/kernel
-chmod 644 $klloc/boot/ramdisk
-
+if [ "$1" == "img" ]; then
+	rm boot
+	cp $BootLoc boot
 fi
 
+./unpackbootimg boot "./bootTMP/Kernels/$BootName"
+
+if [ "$5" == 1 ] ; then
+	rm -R "$klloc/boot/*"
+fi
+
+if [ "$5" == 1 ] || [ "$5" == 2 ] ; then
+	rm "$klloc/boot/Kernels/$BootName/boot-zImage"
+	cp "/tmp/bootTMP/Kernels/$BootName/boot-zImage" "$klloc/boot/Kernels/$BootName/boot-zImage"
+	echo "$klloc/boot/Kernels/$BootName/boot-zImage">"$klloc/boot/kernel"
+fi
+
+if [ "$5" == 1 ] || [ "$5" == 3 ] ; then
+	rm "$klloc/boot/Kernels/$BootName/boot-ramdisk.gz"
+	cp "/tmp/bootTMP/Kernels/$BootName/boot-ramdisk.gz" "$klloc/boot/Kernels/$BootName/boot-ramdisk.gz"
+	echo "$klloc/boot/Kernels/$BootName/boot-ramdisk.gz">"$klloc/boot/ramdisk"
+fi
+
+chmod 755 "$klloc/boot/"
+chmod 755 "$klloc/boot/Kernels/"
+chmod 755 "$klloc/boot/Kernels/$BootName"
+chmod 644 "$klloc/boot/Kernels/$BootName/*"
+chmod 644 "$klloc/boot/kernel"
+chmod 644 "$klloc/boot/ramdisk"
+
+rm boot
+rm -R bootTMP

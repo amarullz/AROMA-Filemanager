@@ -1,0 +1,5 @@
+#!/sbin/sh
+
+umount /cache
+make_ext4fs -a /cache -l 315MB /dev/block/mmcblk0p13
+mount /cache
