@@ -8,11 +8,6 @@
 
 #define ASSUMED_UPDATE_BINARY_NAME  "META-INF/com/google/android/update-binary"
 #define ASSUMED_UPDATE_SCRIPT_NAME  "META-INF/com/google/android/update-script"
-static const int VERIFICATION_PROGRESS_TIME = 60;
-static const float VERIFICATION_PROGRESS_FRACTION = 0.25;
-static const float DEFAULT_FILES_PROGRESS_FRACTION = 0.4;
-static const float DEFAULT_IMAGE_PROGRESS_FRACTION = 0.1;
-enum { INSTALL_SUCCESS, INSTALL_ERROR, INSTALL_CORRUPT, INSTALL_UPDATE_SCRIPT_MISSING, INSTALL_UPDATE_BINARY_MISSING };
 
 
  ZipArchive* proczip(ZipArchive *za) {
@@ -32,7 +27,7 @@ void mountit(char* mount) {
 		alib_exec("/sbin/mount", mount);
 	}
 }
-int waitpidv2(int pid,AUI_VARS v) {
+bool waitpidv2(int pid,AUI_VARS v) {
 	int status;
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status)) {
@@ -44,15 +39,15 @@ int waitpidv2(int pid,AUI_VARS v) {
 			aw_multiconfirm_ex(v.hWin, "Success", info, aui_icons(37), mi, 1, 1);
 			fprintf(apipe(), "ui_print\n");
 			fprintf(apipe(), "ui_print Script Executed Successfully!\n");
-			return 1;
+			return true;
 		} else {
 			AWMENUITEM mi[2];
 			aw_menuset(mi, 0, "ok", 33);
 			char info[256];
-			snprintf(info, 256, "Process Failed To Execute Script,\nError: %s,\nPlease Try Again", strerror(WTERMSIG(status)));
+			snprintf(info, 256, "Process Failed To Execute Script,\nError: %s,\nPlease Try Again.", strerror(WTERMSIG(status)));
 			aw_multiconfirm_ex(v.hWin, "Error Has Occured", info, aui_icons(37), mi, 1, 1);
 			fprintf(apipe(), "ui_print\n");
-			fprintf(apipe(), "ui_print Process Failed To Execute Script,\nError: %s,\nPlease Try Again", strerror(WTERMSIG(status)));
+			fprintf(apipe(), "ui_print Process Failed To Execute Script,\nui_print Error: %s,\nui_print Please Try Again.\n", strerror(WTERMSIG(status)));
 		}
 	} else if (WIFSIGNALED(status)) {
 		AWMENUITEM mi[2];
@@ -63,7 +58,7 @@ int waitpidv2(int pid,AUI_VARS v) {
 		fprintf(apipe(), "ui_print\n");
 		fprintf(apipe(), "ui_print Script terminated by signal %d\n", WTERMSIG(status));
 	}
-	return 0;
+	return false;
 }
 
 void test(int status,AUI_VARS v){
@@ -81,6 +76,44 @@ void test2(char* status,AUI_VARS v){
 		aw_multiconfirm_ex(v.hWin, "Error Has Occured", info, aui_icons(37), mi, 1, 1);
 }
 
+void FormatCache(bool isZip, AUI_VARS v){
+
+	if (strcmp(acopt_getseltitle(v.hFile, (isZip) ? 4 : 3),"Yes") == 0){
+
+
+		char* args[]= {"/tmp/wipe-cache", NULL};
+		pid_t pid = fork();
+		if (pid == 0) {
+			execvp("/tmp/wipe-cache", args);
+			fprintf(apipe(), "E:Can't run /tmp/wipe-cache (%s)\n", strerror(errno));
+			_exit(errno);
+		}
+
+
+		int status;
+		waitpid(pid, &status, 0);
+		if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
+			AWMENUITEM mi[2];
+			aw_menuset(mi, 0, "ok", 33);
+			char info[256];
+			snprintf(info, 256, "Cache Format Failed.");
+			aw_multiconfirm_ex(v.hWin, "Fail", info, aui_icons(37), mi, 1, 1);
+			fprintf(apipe(), "ui_print Cache Format Failed.\n");
+			fprintf(apipe(), "ui_print\n");
+			return;
+		} else {
+			AWMENUITEM mi[2];
+			aw_menuset(mi, 0, "ok", 33);
+			char info[256];
+			snprintf(info, 256, "Cache Formated.");
+			aw_multiconfirm_ex(v.hWin, "Success", info, aui_icons(37), mi, 1, 1);
+			fprintf(apipe(), "ui_print Cache Formated.\n");
+			fprintf(apipe(), "ui_print\n");
+		}
+	}
+
+}
+
 static int try_update_binary(const char *path, ZipArchive *zip,AUI_VARS v) {
 
     const ZipEntry* binary_entry =
@@ -93,11 +126,11 @@ static int try_update_binary(const char *path, ZipArchive *zip,AUI_VARS v) {
             LOGE("Amend scripting was deprecated by Google in Android 1.5.\n");
             LOGE("It was necessary to remove it when upgrading to the ClockworkMod 3.0 Gingerbread based recovery.\n");
             LOGE("Please switch to Edify scripting (updater-script and update-binary) to create working update zip packages.\n");
-            return INSTALL_UPDATE_BINARY_MISSING;
+            return 0;
         }
 
         mzCloseZipArchive(zip);
-        return INSTALL_UPDATE_BINARY_MISSING;
+        return 0;
     }
 
     char* binary = "/tmp/update_binary_2";
@@ -205,6 +238,76 @@ static int try_update_binary(const char *path, ZipArchive *zip,AUI_VARS v) {
     return 1;
 }
 
+char* getrepack(AUI_VARS v, int isZip){
+	char* repackv = acopt_getseltitle(v.hFile, (isZip) ? 5 : 4);
+	if (strcmp(repackv,"zImage & Ramdisk") == 0){
+		return "1";
+	} else if (strcmp(repackv,"zImage") == 0){
+		return "2";
+	} else {
+		return "3";
+	}
+}
+
+char* readfile(char* fileName){
+	    int size = 0;
+	    FILE *file = fopen(fileName, "r");
+
+	    if(!file) {
+	        fputs("File error.\n", stderr);
+	        return NULL;
+	    }
+
+	    fseek(file, 0, SEEK_END);
+	    size = ftell(file);
+	    rewind(file);
+
+	    char *result = (char *) malloc(size);
+	    if(!result) {
+	        fputs("Memory error.\n", stderr);
+	        return NULL;
+	    }
+
+	    if(fread(result, 1, size, file) != size) {
+	        fputs("Read error.\n", stderr);
+	        return NULL;
+	    }
+
+	    fclose(file);
+	    return result;
+	}
+
+void DispKernels(AUI_VARS v){
+	static const char *assets[][3] = 
+	{
+ 		{ "/system/boot/", "/data/boot/", "/sdcard/boot/" },
+ 		{ "System", "Data", "SDcard" }
+	};
+    int i = 0;
+	for(i = 0; i < 1; ++i)
+		{
+			char* tmpdata = "";
+			if( access( assets[0][i], F_OK ) != -1 ) {
+				char* files[]={ "", "" };
+				sprintf(files[0],"%skernel", assets[0][i]);
+				sprintf(files[1],"%sramdisk", assets[0][i]);
+				if( access( files[0], F_OK ) != -1 ) {//Kernel Check
+					sprintf(tmpdata, "%s:%s\nzImage: %s", assets[1][i], tmpdata, readfile(files[0]));
+				} else {
+					sprintf(tmpdata, "%s:%s\nzImage: %s", assets[1][i], tmpdata, "NA");
+				}
+				if( access( files[1], F_OK ) != -1 ) {//Ramdisk Check
+					sprintf(tmpdata, "%s\nramdisk: %s", tmpdata,readfile(files[1]));
+				} else {
+					sprintf(tmpdata, "%s\nramdisk: %s", tmpdata, "NA");
+				}
+			} else {
+					sprintf(tmpdata, "%s:Contains No zImage Or Ramdisk", assets[1][i]);
+			}
+			acopt_addgroup(v.hFile, tmpdata, "");
+		}
+}
+
 void choose_kernel(char * full_fl, int isZip) {
 	printf("Choose_kernel_setting\n");
 	//-- REDRAW BG
@@ -289,6 +392,21 @@ void choose_kernel(char * full_fl, int isZip) {
 			acopt_add(v.hFile, "Yes", "Would Flash Modules If Available",1);
 			acopt_add(v.hFile, "No", "",0);
 	}
+
+	//-- Format Cache: 3-4
+	acopt_addgroup(v.hFile, "Format Cache", "");
+	acopt_add(v.hFile, "Yes", "",1);
+	acopt_add(v.hFile, "No", "",0);
+
+	//-- Repack: 4-5
+	acopt_addgroup(v.hFile, "Update:", "For Expert Use Only!!");
+	acopt_add(v.hFile, "zImage & Ramdisk", "",1);
+	acopt_add(v.hFile, "zImage", "",0);
+	acopt_add(v.hFile, "Ramdisk", "Don't Flash Modules.",0);
+
+	//-- Show Installed Kernels
+	//DispKernels(v);
+	
 	//-- TOOLS
 	v.b1 = imgbtn(v.hWin, v.pad, v.btnY - v.btnFH, v.btnW, v.btnH + v.btnFH, &UI_ICONS[33], aui_tbtitle(9), 1, 12);
 	//-- Done
@@ -306,12 +424,13 @@ void choose_kernel(char * full_fl, int isZip) {
 		switch (aw_gm(msg)) {
 			case 12: {
 				if (apply) {
-					char* bootimg = "/tmp/boot.img";
+					char* bootimg = "/tmp/boot";
 					char* klocation = acopt_getseltitle(v.hFile, 1);
+					char* Repack = getrepack(v, isZip);
+					unlink(bootimg);
 					mountit(klocation);
 					if (isZip) {
 						char* imgpath = acopt_getseltitle(v.hFile, 2);
-						unlink(bootimg);
 						int fdk = creat(bootimg, 0755);
 						if (fdk < 0) {
 							LOGE("Can't make /tmp/%s\n", imgpath);
@@ -340,19 +459,18 @@ void choose_kernel(char * full_fl, int isZip) {
 						char* noext;
   						noext=strndup(basename(full_fl), strlen(basename(full_fl))-4);
 						char* args2[]= {
-  								 
-								"useless",(isZip) ? "zip" : "img", klocation, full_fl, noext,NULL
+								"/tmp/kl-update-script" ,(isZip) ? "zip" : "img", klocation, full_fl, noext, Repack, NULL
 							}
 							;
 						/* left for illustration purposes
-			  args2[1] = full_fl;//Zip Location
-			  args2[2] = full_fl;//Zip Name
-			  args2[3] = klocation;//Flash Location
-			  args2[4] = imgpath;//Boot IMG Path
-			  args2[5] = basename(imgpath);// Boot IMG Name
-			  args2[6] = NULL;*/
-						if (execv("/tmp/kl-script", args2)<0) {
-							fprintf(apipe(), "Error Flashing Kernel %s\n", strerror(errno));
+						args2[1] = full_fl;//Zip Location
+						args2[2] = full_fl;//Zip Name
+						args2[3] = klocation;//Flash Location
+						args2[4] = imgpath;//Boot IMG Path
+						args2[5] = basename(imgpath);// Boot IMG Name
+						args2[6] = NULL;*/
+						if (execv(args2[0], args2)<0) {
+							fprintf(apipe(), "ui_print Error Flashing Kernel %s\n", strerror(errno));
 							_exit(errno);
 						}
 						_exit(1);
@@ -381,6 +499,7 @@ void choose_kernel(char * full_fl, int isZip) {
 								}
 							}
 						}
+						FormatCache(isZip, v);
 				}
 				ondispatch = 0;
 			}
