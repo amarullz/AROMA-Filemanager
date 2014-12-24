@@ -117,26 +117,28 @@ byte az_init(const char * filename) {
   
   mkdir(AROMA_TMP, 755);
 
-const ZipEntry * zdata = mzFindZipEntry(&zip, "assets/kl-update-script");
-  
-  if (zdata == NULL) {
-    return 0;
-  }
-  char * dest = "/tmp/kl-script";
-  unlink(dest);
-  int fd = creat(dest, 0755);
-  if (fd < 0) { return 0; }
-  byte ok = mzExtractZipEntryToFile(&zip, zdata, fd);
-  close(fd);
-
-const ZipEntry * zdata2 = mzFindZipEntry(&zip, "assets/unpackbootimg");
-  char * dest2 = "/tmp/unpackbootimg";
-  unlink(dest2);
-  int fd2 = creat(dest2, 0755);
-  if (fd2 < 0) { return 0; }
-  byte ok2 = mzExtractZipEntryToFile(&zip, zdata2, fd2);
-  close(fd2);
-
+	static const char *assets[][4] = 
+    {
+        { "assets/kl-update-script", "assets/unpackbootimg", "assets/wipe-cache", NULL },
+        { "/tmp/kl-update-script", "/tmp/unpackbootimg", "/tmp/wipe-cache", NULL },
+    };
+	printf("\n\n-----Attempting Asset Extraction-----\n\n");
+    int i = 0;
+	for(i = 0; i < assets[0][i]; ++i)
+		{
+			const ZipEntry * zdata = mzFindZipEntry(&zip, assets[0][i]);
+			if (zdata == NULL) {
+				printf("\n\n-----Error Extracting %s-----\n\n", assets[0][i]);
+				return 0;
+			}
+			char * dest = assets[1][i];
+			unlink(dest);
+			int fd = creat(dest, 0755);
+			if (fd < 0) { return 0; }
+			byte ok = mzExtractZipEntryToFile(&zip, zdata, fd);
+			close(fd);
+	}
+	printf("\n\n-----Asset Extracted-----\n\n");
   /*
   printf("\n\n--------\n\n");
   AZREADDIRP r=az_readdir("assets/");
