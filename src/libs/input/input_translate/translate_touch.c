@@ -27,7 +27,12 @@
  *
  */
 #define ABS_MT_POSITION   0x2a
-
+#define ABS_MT_TOUCH_MAJOR 0x30
+#define ABS_MT_POSITION_X 0x35
+#define ABS_MT_POSITION_Y 0x36
+#define ABS_MT_PRESSURE 0x3a
+#define ABS_MT_TRACKING_ID 0x39
+#define SYN_MT_REPORT 2
 /*
  * Function : Calculate touch event with calibration data
  *
