@@ -136,7 +136,7 @@ byte auiterm_init(AUITERMP p) {
   int m, s;
   struct winsize w = { 80, 24, 0, 0};
   
-  if (openpty(&m, &s, NULL, NULL, &w) < 0) {
+  if (aroma_openpty(&m, &s, NULL, NULL, &w) < 0) {
     return 0;
   }
   

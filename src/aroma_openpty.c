@@ -93,7 +93,7 @@ pts_name (int fd, char ** pts, size_t buf_len) {
    according to TERMP and WINP.  Return handles for both ends in
    AMASTER and ASLAVE, and return the name of the slave end in NAME.  */
 
-int openpty (int * amaster, int * aslave, char * name, struct termios * termp,
+int aroma_openpty (int * amaster, int * aslave, char * name, struct termios * termp,
              struct winsize * winp) {
 #if 0
 #ifdef PATH_MAX
