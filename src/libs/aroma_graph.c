@@ -1019,7 +1019,7 @@ void ag_refreshrate() {
       ag32fbufcopy(ag_bz32);
       ag_busyprogress();
     }
-    else if (ag_lastbusy < alib_tick() - 26) {
+    else if (ag_lastbusy < alib_tick() - 500) {
       ag_copybusy("Please Wait...");
       ag_isbusy = 2;
     }
@@ -1049,7 +1049,7 @@ void ag_refreshrate() {
       
       ag_busyprogress();
     }
-    else if (ag_lastbusy < alib_tick() - 26) {
+    else if (ag_lastbusy < alib_tick() - 500) {
       ag_copybusy("Please Wait...");
       ag_isbusy = 2;
     }

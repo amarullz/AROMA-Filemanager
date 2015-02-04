@@ -89,7 +89,7 @@ settings.fontsize.medium = Medium
 settings.fontsize.big = Big
 
 settings.colorspace = Set Color Space
-settings.colorspace.rgba = RGBA (SG Note 3)
+settings.colorspace.rgba = RGBA
 settings.colorspace.abgr = ABGR
 settings.colorspace.argb = ARGB
 settings.colorspace.bgra = BGRA
