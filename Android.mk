@@ -18,7 +18,7 @@ include $(CLEAR_VARS)
   ## VERSIONING
   ##
   AROMA_NAME    := AROMA Filemanager
-  AROMA_VERSION := 1.91
+  AROMA_VERSION := 1.92
   AROMA_BUILD   := $(shell date +%y%m%d%H)
   AROMA_CN      := Degung Gamelan
 

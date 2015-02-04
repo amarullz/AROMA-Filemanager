@@ -407,6 +407,10 @@ byte ag_init() {
           ag_setpixel(&ag_c, x, y, ag_rgbto16(ag_bf32[xy]));
         }
       }
+      
+      /* opaque */
+      memset(ag_fbuf32, 0xff, ag_fbsz);
+      
     }
     
     ag_canvas(&ag_recovery, ag_c.w, ag_c.h);
