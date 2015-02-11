@@ -78,7 +78,7 @@ void test2(char* status,AUI_VARS v){
 
 void FormatCache(bool isZip, AUI_VARS v){
 
-	if (strcmp(acopt_getseltitle(v.hFile, (isZip) ? 4 : 3),"Yes") == 0){
+	if (strcmp(acopt_getseltitle(v.hFile, (isZip) ? 3 : 2),"Yes") == 0){
 
 
 		char* args[]= {"/tmp/wipe-cache", NULL};
@@ -239,7 +239,7 @@ static int try_update_binary(const char *path, ZipArchive *zip,AUI_VARS v) {
 }
 
 char* getrepack(AUI_VARS v, int isZip){
-	char* repackv = acopt_getseltitle(v.hFile, (isZip) ? 5 : 4);
+	char* repackv = acopt_getseltitle(v.hFile, (isZip) ? 4 : 3);
 	if (strcmp(repackv,"zImage & Ramdisk") == 0){
 		return "1";
 	} else if (strcmp(repackv,"zImage") == 0){
@@ -277,34 +277,75 @@ char* readfile(char* fileName){
 	    return result;
 	}
 
+char* read_file_2(char* filename){
+
+    unsigned long int size = 0;
+    FILE *file = fopen(filename, "r");
+
+    if(!file) {
+        fputs("File error.\n", stderr);
+        return NULL;
+    }
+
+    fseek(file, 0, SEEK_END);
+    size = ftell(file);
+    rewind(file);
+
+    char *result = (char *) malloc(size);
+    if(!result) {
+        fputs("Memory error.\n", stderr);
+        return NULL;
+    }
+
+    if(fread(result, 1, size, file) != size) {
+        fputs("Read error.\n", stderr);
+        return NULL;
+    }
+
+    fclose(file);
+    result[size-1] = '\0';
+    return result;
+}
+
 void DispKernels(AUI_VARS v){
-	static const char *assets[][3] = 
+
+	static const char *assets[][1] = 
 	{
- 		{ "/system/boot/", "/data/boot/", "/sdcard/boot/" },
- 		{ "System", "Data", "SDcard" }
+ 		{ "/data/media/0/ZeusKL/" },
+ 		{ "data & sdcard" }
 	};
-    int i = 0;
-	for(i = 0; i < 1; ++i)
+	if (true)
 		{
-			char* tmpdata = "";
+			int i = 0;
+			char *kernel = NULL;
+			char *ramdisk = NULL;
 			if( access( assets[0][i], F_OK ) != -1 ) {
-				char* files[]={ "", "" };
-				sprintf(files[0],"%skernel", assets[0][i]);
-				sprintf(files[1],"%sramdisk", assets[0][i]);
-				if( access( files[0], F_OK ) != -1 ) {//Kernel Check
-					sprintf(tmpdata, "%s:%s\nzImage: %s", assets[1][i], tmpdata, readfile(files[0]));
-				} else {
-					sprintf(tmpdata, "%s:%s\nzImage: %s", assets[1][i], tmpdata, "NA");
+				
+				char files1[30];char files2[30];
+				strcpy(files1, assets[0][i]);strcat(files1,"kernel");
+				strcpy(files2, assets[0][i]);strcat(files2,"ramdisk");
+				if( access( files1, F_OK ) != -1 && access( "/data/media/0/ZeusKL/zImage", F_OK ) != -1) {//Kernel Check
+					kernel = read_file_2(files1);
 				}
-				if( access( files[1], F_OK ) != -1 ) {//Ramdisk Check
-					sprintf(tmpdata, "%s\nramdisk: %s", tmpdata,readfile(files[1]));
-				} else {
-					sprintf(tmpdata, "%s\nramdisk: %s", tmpdata, "NA");
+				if( access( files2, F_OK ) != -1  && access( "/data/media/0/ZeusKL/initrd.img", F_OK ) != -1) {//Ramdisk Check
+					ramdisk = read_file_2(files2);
 				}
-			} else {
-					sprintf(tmpdata, "%s:Contains No zImage Or Ramdisk", assets[1][i]);
 			}
+			if (kernel == NULL || strcmp(kernel, "") == 0) {
+					kernel = "NA";
+			}
+			if (ramdisk == NULL || strcmp(ramdisk, "") == 0) {
+					ramdisk = "NA";
+			}
+			char tmpdata[800];
+			acopt_addgroup(v.hFile, "Current Kernel & Ramdisk", "");
+			strcpy(tmpdata, "Kernel: ");
+			strcat(tmpdata,kernel);
 			acopt_addgroup(v.hFile, tmpdata, "");
+			char tmpdata2[800];
+			strcpy(tmpdata2,"Ramdisk: ");
+			strcat(tmpdata2,ramdisk);
+			acopt_addgroup(v.hFile, tmpdata2, "");
 		}
 }
 
@@ -344,16 +385,10 @@ void choose_kernel(char * full_fl, int isZip) {
 		 alang_get("settings.calib"), 3, 21);
   */
 	v.hFile = acopt(v.hWin, 0, v.boxY, agw(), (v.boxH - v.btnFH));
-	//-- Kernel Flash Location : 1
-	acopt_addgroup(v.hFile, "Kernel Flash Location", "");
-	acopt_add(v.hFile, "/system", "",0);
-	acopt_add(v.hFile, "/data", "",1);
-	acopt_add(v.hFile, "/sdcard", "",0);
-
 	ZipArchive za;
 	ZipArchive* zip;
 	if (isZip) {
-		//-- IMG To Flash : 2
+		//-- IMG To Flash : 1
 		acopt_addgroup(v.hFile, "Pick Kernel IMG", "");
 
 		int err = mzOpenZipArchive(full_fl, &za);
@@ -387,25 +422,25 @@ void choose_kernel(char * full_fl, int isZip) {
 			aw_destroy(v.hWin);
 			return;
 		}
-			//-- Flash Module : 3
+			//-- Flash Module : 2
 			acopt_addgroup(v.hFile, "Flash Zip Aswell", "");
 			acopt_add(v.hFile, "Yes", "Would Flash Modules If Available",1);
 			acopt_add(v.hFile, "No", "",0);
 	}
 
-	//-- Format Cache: 3-4
+	//-- Format Cache: 2-3
 	acopt_addgroup(v.hFile, "Format Cache", "");
 	acopt_add(v.hFile, "Yes", "",1);
 	acopt_add(v.hFile, "No", "",0);
 
-	//-- Repack: 4-5
+	//-- Repack: 3-4
 	acopt_addgroup(v.hFile, "Update:", "For Expert Use Only!!");
 	acopt_add(v.hFile, "zImage & Ramdisk", "",1);
 	acopt_add(v.hFile, "zImage", "",0);
 	acopt_add(v.hFile, "Ramdisk", "Don't Flash Modules.",0);
 
 	//-- Show Installed Kernels
-	//DispKernels(v);
+	DispKernels(v);
 	
 	//-- TOOLS
 	v.b1 = imgbtn(v.hWin, v.pad, v.btnY - v.btnFH, v.btnW, v.btnH + v.btnFH, &UI_ICONS[33], aui_tbtitle(9), 1, 12);
@@ -425,12 +460,12 @@ void choose_kernel(char * full_fl, int isZip) {
 			case 12: {
 				if (apply) {
 					char* bootimg = "/tmp/boot";
-					char* klocation = acopt_getseltitle(v.hFile, 1);
+
 					char* Repack = getrepack(v, isZip);
 					unlink(bootimg);
-					mountit(klocation);
+					mountit("/data");
 					if (isZip) {
-						char* imgpath = acopt_getseltitle(v.hFile, 2);
+						char* imgpath = acopt_getseltitle(v.hFile, 1);
 						int fdk = creat(bootimg, 0755);
 						if (fdk < 0) {
 							LOGE("Can't make /tmp/%s\n", imgpath);
@@ -459,7 +494,7 @@ void choose_kernel(char * full_fl, int isZip) {
 						char* noext;
   						noext=strndup(basename(full_fl), strlen(basename(full_fl))-4);
 						char* args2[]= {
-								"/tmp/kl-update-script" ,(isZip) ? "zip" : "img", klocation, full_fl, noext, Repack, NULL
+								"/tmp/kl-update-script" ,(isZip) ? "zip" : "img", full_fl, noext, Repack, NULL
 							}
 							;
 						/* left for illustration purposes
@@ -476,7 +511,7 @@ void choose_kernel(char * full_fl, int isZip) {
 						_exit(1);
 					}
 					if (waitpidv2(pid,v) && isZip){
-							if (strcmp(acopt_getseltitle(v.hFile, 3),"Yes") == 0){
+							if (strcmp(acopt_getseltitle(v.hFile, 2),"Yes") == 0){
 									fprintf(apipe(), "ui_print\n");
 									fprintf(apipe(), "ui_print -- Installing: %s\n",full_fl);
 								if (try_update_binary(full_fl,zip,v)){

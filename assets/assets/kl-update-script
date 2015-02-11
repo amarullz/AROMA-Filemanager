@@ -1,9 +1,9 @@
 #!/sbin/sh
 
 
-klloc=$2
-BootLoc=$3
-BootName=$4
+klloc="/data/media/0/ZeusKL"
+BootLoc=$2
+BootName=$3
 
 if [ "$1" == "img" ]; then
 	echo -n -e "IMG $1 $2 $3 $4 $5\n" > "/tmp/success.txt"
@@ -14,38 +14,34 @@ fi
 cd /tmp
 
 rm -R "./bootTMP/*"
-mkdir -p "./bootTMP/Kernels/$BootName"
-mkdir -p "$klloc/boot/Kernels/$BootName"
+mkdir -p "./bootTMP/"
+mkdir -p "$klloc/"
 
 if [ "$1" == "img" ]; then
 	rm boot
 	cp $BootLoc boot
 fi
 
-./unpackbootimg boot "./bootTMP/Kernels/$BootName"
+./unpackbootimg boot "./bootTMP/"
 
-if [ "$5" == 1 ] ; then
-	rm -R "$klloc/boot/*"
+if [ "$4" == 1 ] ; then
+	rm -R "$klloc/*"
 fi
 
-if [ "$5" == 1 ] || [ "$5" == 2 ] ; then
-	rm "$klloc/boot/Kernels/$BootName/boot-zImage"
-	cp "/tmp/bootTMP/Kernels/$BootName/boot-zImage" "$klloc/boot/Kernels/$BootName/boot-zImage"
-	echo "$klloc/boot/Kernels/$BootName/boot-zImage">"$klloc/boot/kernel"
+if [ "$4" == 1 ] || [ "$4" == 2 ] ; then
+	rm "$klloc/zImage"
+	cp "/tmp/bootTMP/boot-zImage" "$klloc/zImage"
+	echo "$BootName">"$klloc/kernel"
 fi
 
-if [ "$5" == 1 ] || [ "$5" == 3 ] ; then
-	rm "$klloc/boot/Kernels/$BootName/boot-ramdisk.gz"
-	cp "/tmp/bootTMP/Kernels/$BootName/boot-ramdisk.gz" "$klloc/boot/Kernels/$BootName/boot-ramdisk.gz"
-	echo "$klloc/boot/Kernels/$BootName/boot-ramdisk.gz">"$klloc/boot/ramdisk"
+if [ "$4" == 1 ] || [ "$4" == 3 ] ; then
+	rm "$klloc/initrd.img"
+	cp "/tmp/bootTMP/boot-ramdisk.gz" "$klloc/initrd.img"
+	echo "$BootName">"$klloc/ramdisk"
 fi
 
-chmod 755 "$klloc/boot/"
-chmod 755 "$klloc/boot/Kernels/"
-chmod 755 "$klloc/boot/Kernels/$BootName"
-chmod 644 "$klloc/boot/Kernels/$BootName/*"
-chmod 644 "$klloc/boot/kernel"
-chmod 644 "$klloc/boot/ramdisk"
+chmod 755 "$klloc/"
+chmod 644 "$klloc/*"
 
 rm boot
 rm -R bootTMP
