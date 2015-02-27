@@ -86,6 +86,18 @@ settings.fontsize.small = Kecil
 settings.fontsize.medium = Sedang
 settings.fontsize.big = Besar
 
+settings.colorspace = Pengaturan Warna Layar
+settings.colorspace.rgba = RGBA
+settings.colorspace.abgr = ABGR
+settings.colorspace.argb = ARGB
+settings.colorspace.bgra = BGRA
+
+settings.vibration = Intensitas Getaran
+settings.vibration.none = Tanpa Getar
+settings.vibration.low = Pelan
+settings.vibration.medium = Sedang
+settings.vibration.high = Besar
+
 settings.fontfamily = Jenis Huruf
 settings.iconset = Icon Pilihan
 settings.themes = Tema

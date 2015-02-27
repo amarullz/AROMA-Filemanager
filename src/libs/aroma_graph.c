@@ -28,23 +28,18 @@
 #include <pthread.h>
 #include "../aroma.h"
 
+static int colorspace_positions[4] = {0, 0, 0, 0};
+#include "fb/fb.c"
+
 /*****************************[ GLOBAL VARIABLES ]*****************************/
-static int                             ag_fb   = 0;       //-- FrameBuffer Handler
 static dword                           ag_fbsz = 0;
 static word              *             ag_fbuf = NULL;    //-- FrameBuffer Direct Memory
-static byte              *             ag_fbuf32 = NULL;
 static word              *             ag_b = NULL;       //-- FrameBuffer Cache Memory
-static dword             *             ag_bf32 = NULL;
 static word              *             ag_bz = NULL;      //-- FrameBuffer Cache Memory
-static dword             *             ag_bz32 = NULL;
 static CANVAS                          ag_c;           //-- FrameBuffer Main Canvas
 static CANVAS                          ag_recovery;    //-- Saved Recovery Screen
-static struct fb_fix_screeninfo        ag_fbf;         //-- FrameBuffer Info
-static struct fb_var_screeninfo        ag_fbv;
-static byte                            ag_32;          //-- FrameBuffer Type 32/16bit
 static pthread_t                       ag_pthread;     //-- FrameBuffer Thread Variables
 static byte                            ag_isrun;
-static byte                            ag_16strd;
 static int                             ag_16w;
 static PNGFONTS                        AG_SMALL_FONT;  //-- Fonts Variables
 static PNGFONTS                        AG_BIG_FONT;
@@ -56,6 +51,7 @@ static byte                            ag_font_onload = 0;
 static byte                            ag_oncopybusy = 0;
 static int                             ag_caret[4] = {0, 0, 0, 0}; //-- Caret, x,y,h,status
 static int                             screenshoot_cnt = 1;
+static int ag_line_length=0;
 /*
  RG B0 RG B0
  B0 RG B0 RG
@@ -94,67 +90,11 @@ static const byte dither_tresshold_b[64] = {
   7, 1, 5, 3, 8, 0, 6, 2,
   1, 7, 3, 5, 0, 8, 2, 6
 };
-/*
-static const byte dither_tresshold_r[64]={
-   0, 6, 2, 8, 0, 6, 2, 8,
-   4, 2, 6, 4, 4, 2, 6, 4,
-   1, 7, 1, 7, 1, 7, 1, 7,
-   5, 3, 5, 3, 5, 3, 5, 3,
-   0, 6, 2, 8, 0, 6, 2, 8,
-   4, 2, 6, 4, 4, 2, 6, 4,
-   1, 7, 1, 7, 1, 7, 1, 7,
-   5, 3, 5, 3, 5, 3, 5, 3
-};
-static const byte dither_tresshold_g[64]={
-   0, 3, 1, 4, 0, 3, 1, 4,
-   2, 1, 3, 2, 2, 1, 3, 2,
-   1, 4, 0, 3, 1, 4, 0, 3,
-   3, 2, 2, 1, 3, 2, 2, 1,
-   0, 3, 1, 4, 0, 3, 1, 4,
-   2, 1, 3, 2, 2, 1, 3, 2,
-   1, 4, 0, 3, 1, 4, 0, 3,
-   3, 2, 2, 1, 3, 2, 2, 1
-};
-static const byte dither_tresshold_b[64]={
-   0, 6, 2, 8, 0, 6, 2, 8,
-   4, 2, 6, 4, 4, 2, 6, 4,
-   1, 7, 1, 7, 1, 7, 1, 7,
-   5, 3, 5, 3, 5, 3, 5, 3,
-   0, 6, 2, 8, 0, 6, 2, 8,
-   4, 2, 6, 4, 4, 2, 6, 4,
-   1, 7, 1, 7, 1, 7, 1, 7,
-   5, 3, 5, 3, 5, 3, 5, 3
-};
-*/
-static int colorspace_positions[4] = {0, 0, 0, 0};
 int * ag_getcolorspace() {
   return colorspace_positions;
 }
 void ag_changecolorspace(int r, int g, int b, int a) {
-  if (ag_32) {
-    //-- Try Force 32bit standard color mode
-    colorspace_positions[0] = r;
-    colorspace_positions[1] = g;
-    colorspace_positions[2] = b;
-    colorspace_positions[3] = a;
-    ag_blank(NULL); //-- 32bit Use Blank
-    int x, y;
-    
-    for (y = 0; y < ag_fbv.yres; y++) {
-      int yp = y * ag_fbv.xres;
-      int yd = (ag_fbf.line_length * y);
-      
-      for (x = 0; x < ag_fbv.xres; x++) {
-        int xy = yp + x;
-        int dxy = yd + (x * agclp);
-        ag_bf32[xy] = ag_rgb32(
-                        ag_fbuf32[dxy + (colorspace_positions[0] >> 3)],
-                        ag_fbuf32[dxy + (colorspace_positions[1] >> 3)],
-                        ag_fbuf32[dxy + (colorspace_positions[2] >> 3)]);
-        ag_setpixel(&ag_c, x, y, ag_rgbto16(ag_bf32[xy]));
-      }
-    }
-  }
+  LINUXFBDR_setrgbpos(libaroma_fb(),r,g,b);
 }
 color ag_dodither_rgb(int x, int y, byte sr, byte sg, byte sb) {
   byte dither_xy = ((y & 7) << 3) + (x & 7);
@@ -199,47 +139,6 @@ color ag_calculatecontrast(color c, float intensity) {
            (byte) min(ag_b(c) * intensity, 255)
          );
 }
-//-- Calculate 2 Pixel
-color ag_calculatealpha(color dcl, color scl, byte l) {
-  if (scl == dcl) {
-    return scl;
-  }
-  else if (l == 0) {
-    return dcl;
-  }
-  else if (l == 255) {
-    return scl;
-  }
-  
-  color na = l + (l >> 7);
-  color fa = 256 - na;
-  /* Calculate Alpha per channel */
-  return
-    (color) (
-      (((ag_r(dcl) * fa) + (ag_r(scl) * na)) >> 11 << 11) |
-      (((ag_g(dcl) * fa) + (ag_g(scl) * na)) >> 10 << 5) |
-      (((ag_b(dcl) * fa) + (ag_b(scl) * na)) >> 11)
-    );
-}
-/*
-color ag_calculatealpha(color dcl, color scl, byte l) {
-  if (scl == dcl) {
-    return scl;
-  }
-  else if (l == 0) {
-    return dcl;
-  }
-  else if (l == 255) {
-    return scl;
-  }
-
-  byte  ralpha = 255 - l;
-  byte r = (byte) (((((int) ag_r(dcl)) * ralpha) + (((int) ag_r(scl)) * l)) >> 8);
-  byte g = (byte) (((((int) ag_g(dcl)) * ralpha) + (((int) ag_g(scl)) * l)) >> 8);
-  byte b = (byte) (((((int) ag_b(dcl)) * ralpha) + (((int) ag_b(scl)) * l)) >> 8);
-  return ag_rgb(r, g, b);
-}
-*/
 dword ag_calculatealpha32(dword dcl, dword scl, byte l) {
   if (scl == dcl) {
     return scl;
@@ -257,25 +156,6 @@ dword ag_calculatealpha32(dword dcl, dword scl, byte l) {
   byte b = (byte) (((((int) ag_b32(dcl)) * ralpha) + (((int) ag_b32(scl)) * l)) >> 8);
   return ag_rgb32(r, g, b);
 }
-
-dword ag_calculatealphaTo32(color dcl, color scl, byte l) {
-  if (scl == dcl) {
-    return ag_rgbto32(scl);
-  }
-  else if (l == 0) {
-    return ag_rgbto32(dcl);
-  }
-  else if (l == 255) {
-    return ag_rgbto32(scl);
-  }
-  
-  byte  ralpha = 255 - l;
-  byte r = (byte) (((((int) ag_r(dcl)) * ralpha) + (((int) ag_r(scl)) * l)) >> 8);
-  byte g = (byte) (((((int) ag_g(dcl)) * ralpha) + (((int) ag_g(scl)) * l)) >> 8);
-  byte b = (byte) (((((int) ag_b(dcl)) * ralpha) + (((int) ag_b(scl)) * l)) >> 8);
-  return ag_rgb32(r, g, b);
-}
-
 dword ag_calculatealpha16to32(color dcl, dword scl, byte l) {
   if (scl == ag_rgbto32(dcl)) {
     return scl;
@@ -297,134 +177,29 @@ dword ag_calculatealpha16to32(color dcl, dword scl, byte l) {
 /*********************************[ FUNCTIONS ]********************************/
 //-- INITIALIZING AMARULLZ GRAPHIC
 byte ag_init() {
-  if (ag_fb > 0) {
+  if (!libaroma_fb_init()){
     return 0;
   }
   
-  //-- Open Framebuffer
-  ag_fb = open(AROMA_FRAMEBUFFER, O_RDWR, 0);
-  
-  if (ag_fb > 0) {
-    //-- Init Info from IO
-    ioctl(ag_fb, FBIOGET_FSCREENINFO, &ag_fbf);
-    ioctl(ag_fb, FBIOGET_VSCREENINFO, &ag_fbv);
-    //-- Init 32 Buffer
-    ag_canvas(&ag_c, ag_fbv.xres, ag_fbv.yres);
-    ag_dp = floor( min(ag_fbv.xres, ag_fbv.yres) / 160);
-    //-- Init Frame Buffer Size
-    agclp    = (ag_fbv.bits_per_pixel >> 3);
-    ag_fbsz  = (ag_fbv.xres * ag_fbv.yres * ((agclp == 3) ? 4 : agclp));
+  ag_canvas(&ag_c, libaromafb()->w, libaromafb()->h);
+  ag_dp = floor( min(libaromafb()->w, libaromafb()->h) / 160);
+  agclp = 2;
+  ag_fbsz = libaromafb()->sz*2;
+  ag_fbuf = libaromafb()->canvas;
+  ag_b    = (word *) malloc(ag_fbsz);
+  ag_bz   = (word *) malloc(ag_fbsz);
+  ag_16w  = libaromafb()->w / 2;
+  ag_line_length = libaromafb()->w*2;
+  memcpy(ag_b, ag_fbuf, ag_fbsz);
+  memcpy(ag_c.data, ag_fbuf, ag_fbsz);
     
-    //-- Init Frame Buffer
-    if (ag_fbv.bits_per_pixel == 16) {
-      ag_32   = 0;
-      ag_fbuf = (word *) mmap(0, ag_fbf.smem_len, PROT_READ | PROT_WRITE, MAP_SHARED, ag_fb, 0);
-      ag_b    = (word *) malloc(ag_fbsz);
-      ag_bz   = (word *) malloc(ag_fbsz);
-      //-- Resolution with Stride
-      ag_16strd = 0;
-      ag_16w    = ag_fbf.line_length / 2;
-      
-      if (ag_16w != ag_fbv.xres) {
-        if (ag_16w / 2 == ag_fbv.xres) {
-          ag_fbf.line_length = ag_fbf.line_length / 2;
-          ag_16strd          = 0;
-          ag_16w             = ag_fbv.xres;
-        }
-        else {
-          ag_16strd = 1;
-        }
-      }
-      
-      if (ag_16strd == 0) {
-        //-- Can Use memcpy
-        memcpy(ag_b, ag_fbuf, ag_fbsz);
-        memcpy(ag_c.data, ag_fbuf, ag_fbsz);
-      }
-      else {
-        //-- Should Bit per bit
-        int x, y;
-        
-        for (y = 0; y < ag_fbv.yres; y++) {
-          int yp = y * ag_fbv.xres;
-          int yd = (ag_16w * y);
-          
-          for (x = 0; x < ag_fbv.xres; x++) {
-            int xy = yp + x;
-            int dxy = yd + x;
-            ag_b[xy] = ag_fbuf[dxy];
-            ag_setpixel(&ag_c, x, y, ag_b[xy]);
-          }
-        }
-      }
-    }
-    else {
-      ag_32     = 1;
-      /*
-      //-- Try Force 32bit standard color mode
-      ag_fbv.red.offset         = 16;
-      ag_fbv.red.length         = 8;
-      ag_fbv.red.msb_right      = 0;
-      ag_fbv.green.offset       = 8;
-      ag_fbv.green.length       = 8;
-      ag_fbv.green.msb_right    = 0;
-      ag_fbv.blue.offset        = 0;
-      ag_fbv.blue.length        = 8;
-      ag_fbv.blue.msb_right     = 0;
-      ag_fbv.transp.offset      = 24;
-      ag_fbv.transp.length      = 8;
-      ag_fbv.transp.msb_right   = 0;
-      //-- Activating
-      ag_fbv.activate |= FB_ACTIVATE_NOW | FB_ACTIVATE_FORCE;
-      ioctl(ag_fb, FBIOPUT_VSCREENINFO, &ag_fbv);
-      //-- Get Forced Data
-      ioctl(ag_fb, FBIOGET_FSCREENINFO, &ag_fbf);
-      ioctl(ag_fb, FBIOGET_VSCREENINFO, &ag_fbv);
-      */
-      //-- Memory Allocation
-      ag_fbuf32 = (byte *) mmap(0, ag_fbf.smem_len, PROT_READ | PROT_WRITE, MAP_SHARED, ag_fb, 0);
-      ag_bf32   = (dword *) malloc(ag_fbsz);
-      ag_bz32   = (dword *) malloc(ag_fbsz);
-      memset(ag_bf32, 0, ag_fbsz);
-      colorspace_positions[0] = 16;
-      colorspace_positions[1] = 8;
-      colorspace_positions[2] = 0;
-      colorspace_positions[3] = 24;
-      ag_blank(NULL); //-- 32bit Use Blank
-      int x, y;
-      
-      for (y = 0; y < ag_fbv.yres; y++) {
-        int yp = y * ag_fbv.xres;
-        int yd = (ag_fbf.line_length * y);
-        
-        for (x = 0; x < ag_fbv.xres; x++) {
-          int xy = yp + x;
-          int dxy = yd + (x * agclp);
-          ag_bf32[xy] = ag_rgb32(
-                          ag_fbuf32[dxy + (colorspace_positions[0] >> 3)],
-                          ag_fbuf32[dxy + (colorspace_positions[1] >> 3)],
-                          ag_fbuf32[dxy + (colorspace_positions[2] >> 3)]);
-          ag_setpixel(&ag_c, x, y, ag_rgbto16(ag_bf32[xy]));
-        }
-      }
-      
-      /* opaque */
-      memset(ag_fbuf32, 0xff, ag_fbsz);
-      
-    }
-    
-    ag_canvas(&ag_recovery, ag_c.w, ag_c.h);
-    ag_draw(&ag_recovery, &ag_c, 0, 0);
-    //-- Refresh Draw Lock Thread
-    ag_isrun = 1;
-    pthread_create(&ag_pthread, NULL, ag_thread, NULL);
-    //-- Init FreeType
-    LOGS("Opening Freetype\n");
-    aft_open();
-    return 1;
-  }
-  
-  return 0;
+  ag_canvas(&ag_recovery, ag_c.w, ag_c.h);
+  ag_draw(&ag_recovery, &ag_c, 0, 0);
+  ag_isrun = 1;
+  pthread_create(&ag_pthread, NULL, ag_thread, NULL);
+  LOGS("Opening Freetype\n");
+  aft_open();
+  return 1;
 }
 byte ag_close_thread() {
   ag_isrun = 0;
@@ -434,7 +209,6 @@ byte ag_close_thread() {
   else{
      return 0;
   }
-  // pthread_detach(ag_pthread);
 }
 color aAlphaB(color scl, byte l) {
   if (l == 0) {
@@ -611,15 +385,20 @@ byte ag_draw_opa(
     word * p = s->data + (y + dy) * s->w + dx;
     
     if (withdest) {
+      libaroma_alpha_const(sw, t, t, p, alpha);
+      /*
       for (x = 0; x < sw; x++) {
         *t = ag_calculatealpha(*t, *p++, alpha);
         *t++;
       }
+      */
     }
     else {
+      libaroma_alpha_black(sw, t, p, alpha);
+      /*
       for (x = 0; x < sw; x++) {
         *t++ = aAlphaB(*p++, alpha);
-      }
+      }*/
     }
   }
   
@@ -628,91 +407,57 @@ byte ag_draw_opa(
 
 //-- RELEASE AMARULLZ GRAPHIC
 void ag_close() {
-  if (ag_fb > 0) {
-    int fadesz = acfg()->fadeframes;
+  int fadesz = acfg()->fadeframes;
+  if (fadesz > 0) {
+    CANVAS cbg;
+    ag_canvas(&cbg, agw(), agh());
+    ag_draw(&cbg, agc(), 0, 0);
+    int xc    = agw() / 2;
+    int yc    = agh() / 2;
+    int i;
+    CANVAS * tmpb = (CANVAS *) malloc(sizeof(CANVAS) * fadesz);
+    memset(tmpb, 0, sizeof(CANVAS)*fadesz);
     
-    if (fadesz > 0) {
-      CANVAS cbg;
-      ag_canvas(&cbg, agw(), agh());
-      ag_draw(&cbg, agc(), 0, 0);
-      int xc    = agw() / 2;
-      int yc    = agh() / 2;
-      int i;
-      CANVAS * tmpb = (CANVAS *) malloc(sizeof(CANVAS) * fadesz);
-      memset(tmpb, 0, sizeof(CANVAS)*fadesz);
-      
-      for (i = 1; i <= fadesz; i++) {
-        byte scale  = 0xff - ((i * 0xff) / fadesz);
-        int wtarget = (agw() * scale) >> 8;
-        int htarget = (agh() * scale) >> 8;
-        ag_canvas(&tmpb[i - 1], agw(), agh());
-        ag_draw(&tmpb[i - 1], &ag_recovery, 0, 0);
-        ag_draw_strecth_ex(
-          &tmpb[i - 1],
-          &cbg,
-          xc - wtarget / 2, yc - htarget / 2, wtarget, htarget,
-          0, 0, agw(), agh(), scale, 1
-        );
-      }
-      
-      ag_ccanvas(&cbg);
-      
-      for (i = 0; i < fadesz; i++) {
-        ag_draw(NULL, &tmpb[i], 0, 0);
-        ag_ccanvas(&tmpb[i]);
-        ag_sync();
-      }
-      
-      free(tmpb);
+    for (i = 1; i <= fadesz; i++) {
+      byte scale  = 0xff - ((i * 0xff) / fadesz);
+      int wtarget = (agw() * scale) >> 8;
+      int htarget = (agh() * scale) >> 8;
+      ag_canvas(&tmpb[i - 1], agw(), agh());
+      ag_draw(&tmpb[i - 1], &ag_recovery, 0, 0);
+      ag_draw_strecth_ex(
+        &tmpb[i - 1],
+        &cbg,
+        xc - wtarget / 2, yc - htarget / 2, wtarget, htarget,
+        0, 0, agw(), agh(), scale, 1
+      );
+    }
+    ag_ccanvas(&cbg);
+    for (i = 0; i < fadesz; i++) {
+      ag_draw(NULL, &tmpb[i], 0, 0);
+      ag_ccanvas(&tmpb[i]);
+      ag_sync();
     }
     
-    /*
-    
-    
-      int anisz = floor(((float) agh()) / acfg()->fadeframes);
-      int i;
-      for (i = 1; i <= acfg()->fadeframes; i++) {
-        ag_draw(NULL, &ag_recovery, 0, (anisz * i));
-        ag_sync();
-      }
-    }
-    */
-    ag_draw(&ag_c, &ag_recovery, 0, 0);
-    ag_ccanvas(&ag_recovery);
-    ag_sync();
+    free(tmpb);
+  }
+  ag_draw(&ag_c, &ag_recovery, 0, 0);
+  ag_ccanvas(&ag_recovery);
+  ag_sync();
+
+  if (ag_b != NULL) {
+    free(ag_b);
   }
   
-  if (ag_fbv.bits_per_pixel != 16) {
-    if (ag_bf32 != NULL) {
-      free(ag_bf32);
-    }
-    
-    if (ag_bz32 != NULL) {
-      free(ag_bz32);
-    }
-    
-    if (ag_fbuf32 != NULL) {
-      munmap(ag_fbuf32, ag_fbsz);
-    }
+  if (ag_bz != NULL) {
+    free(ag_bz);
   }
-  else if (ag_fbv.bits_per_pixel == 16) {
-    if (ag_b != NULL) {
-      free(ag_b);
-    }
-    
-    if (ag_bz != NULL) {
-      free(ag_bz);
-    }
-    
-    if (ag_fbuf != NULL) {
-      munmap(ag_fbuf, ag_fbsz);
-    }
+  
+  if (ag_fbuf != NULL) {
+    munmap(ag_fbuf, ag_fbsz);
   }
   
   //-- Cleanup Canvas & FrameBuffer
   ag_ccanvas(&ag_c);
-  close(ag_fb);
-  ag_fb = 0;
   //-- Cleanup Freetype
   LOGS("Closing Freetype\n");
   aft_close();
@@ -733,7 +478,6 @@ static void * ag_thread(void * cookie) {
         ag_caret[3] = (ag_caret[3]) ? 0 : 1;
         ag_refreshrate();
       }
-      
       usleep(132800);
     }
     else {
@@ -752,11 +496,9 @@ void ag_copybusy(char * wait) {
   ag_canvas(&tmpc, agw(), agh());
   ag_draw(&tmpc, &ag_c, 0, 0);
   ag_rectopa(&tmpc, 0, 0, agw(), agh(), 0x0000, 180);
-  
   while (!(ag_fontready(0))) {
     usleep(50);
   }
-  
   ag_oncopybusy = 1;
   //char * wait = "Please Wait...";
   int pad     = agdp() * 50;
@@ -764,51 +506,10 @@ void ag_copybusy(char * wait) {
   int txtH    = ag_fontheight(0);
   int txtX    = (agw() / 2) - (txtW / 2);
   int txtY    = (agh() / 2) - (txtH / 2) - (agdp() * 2);
-  int winH    = txtH + (pad * 2);
-  int winY    = (agh() / 2) - (winH / 2);
-  int winH2   = winH / 2;
   ag_busywinW = agw() / 3;
-  int i;
-  
-  for (i = 0; i < winH; i++) {
-    int alp;
-    
-    if (i < winH2) {
-      alp = ((i * 255) / winH2);
-    }
-    else {
-      alp = (((winH - i) * 255) / winH2);
-    }
-    
-    alp = min(alp, 255);
-    ag_rectopa(&tmpc, 0, winY + i, agw(), 1, 0x0000, alp);
-  }
-  
   ag_text(&tmpc, txtW, txtX, txtY, wait, 0xffff, 0);
   ag_oncopybusy = 0;
-  int bs_x = (agw() / 2) - (ag_busywinW / 2);
-  int bs_y = (agh() / 2) + ag_fontheight(0) - (agdp() * 2);
-  int bs_h = agdp() * 2;
-  ag_roundgrad(&tmpc, bs_x - 3, bs_y - 3, ag_busywinW + 6, bs_h + 6, ag_rgb(140, 140, 140), ag_rgb(90, 90, 90), 3);
-  ag_roundgrad(&tmpc, bs_x - 2, bs_y - 2, ag_busywinW + 4, bs_h + 4, 0, 0, 2);
-  
-  if (ag_32 == 1) {
-    int x, y;
-    
-    for (y = 0; y < ag_fbv.yres; y++) {
-      int yp = y * ag_fbv.xres;
-      
-      for (x = 0; x < ag_fbv.xres; x++) {
-        int xy  = yp + x;
-        color c = tmpc.data[xy];
-        ag_bz32[xy] = ag_rgb32(ag_r(c), ag_g(c), ag_b(c));
-      }
-    }
-  }
-  else {
-    memcpy(ag_bz, tmpc.data, ag_fbsz);
-  }
-  
+  memcpy(ag_bz, tmpc.data, ag_fbsz);
   ag_ccanvas(&tmpc);
 }
 void ag_setbusy() {
@@ -825,144 +526,74 @@ void ag_busyprogress() {
   if (!ag_isbusy) {
     return;
   }
-  
-  ag_busypos--; //=agdp();
-  
-  if (ag_busypos < 0) {
-    ag_busypos = ag_busywinW;
+  ag_busypos++;
+  if (ag_busypos>80) {
+    ag_busypos = 0;
   }
+  libaroma_alpha_const(
+    libaromafb()->sz,
+    ag_fbuf,ag_fbuf,ag_bz,255-ag_busypos);
   
+  /*
   int bs_x = (agw() / 2) - (ag_busywinW / 2);
   int bs_y = (agh() / 2) + ag_fontheight(0) - (agdp() * 2);
   int bs_h = agdp() * 2;
   int bs_w = ag_busywinW;
   int bs_w2 = bs_w / 2;
   int x, y;
-  
-  if (ag_32 == 1) {
-    for (x = bs_x; x < bs_x + bs_w; x++) {
-      if ((x + ag_busypos) % (bs_h * 2) < bs_h) {
-        int i = x - bs_x;
-        int alp;
-        
-        if (i < bs_w2) {
-          alp = ((i * 255) / bs_w2);
-        }
-        else {
-          alp = (((bs_w - i) * 255) / bs_w2);
-        }
-        
-        alp = min(alp, 255);
-        
-        for (y = bs_y; y < bs_y + bs_h; y++) {
-          int yp = y * ag_fbv.xres;
-          int xy  = yp + x;
-          int dxy = (ag_fbf.line_length * y) + (x * agclp);
-          *((dword *) (ag_fbuf32 + dxy)) =
-            (alp << colorspace_positions[0]) |
-            (alp << colorspace_positions[1]) |
-            (alp << colorspace_positions[2]);
-        }
+  for (x = bs_x; x < bs_x + bs_w; x++) {
+    if ((x + ag_busypos) % (bs_h * 2) < bs_h) {
+      int i = x - bs_x;
+      int alp;
+      
+      if (i < bs_w2) {
+        alp = ((i * 255) / bs_w2);
+      }
+      else {
+        alp = (((bs_w - i) * 255) / bs_w2);
+      }
+      
+      alp = min(alp, 255);
+      
+      for (y = bs_y; y < bs_y + bs_h; y++) {
+        int yp = y * ag_16w;
+        int xy  = yp + x;
+        ag_fbuf[xy] = ag_rgb(alp, alp, alp);
       }
     }
-  }
-  else {
-    for (x = bs_x; x < bs_x + bs_w; x++) {
-      if ((x + ag_busypos) % (bs_h * 2) < bs_h) {
-        int i = x - bs_x;
-        int alp;
-        
-        if (i < bs_w2) {
-          alp = ((i * 255) / bs_w2);
-        }
-        else {
-          alp = (((bs_w - i) * 255) / bs_w2);
-        }
-        
-        alp = min(alp, 255);
-        
-        for (y = bs_y; y < bs_y + bs_h; y++) {
-          int yp = y * ag_16w;
-          int xy  = yp + x;
-          ag_fbuf[xy] = ag_rgb(alp, alp, alp);
-        }
-      }
-    }
-  }
+  }*/
   
   if (!ag_isbusy) {
     ag_sync();
   }
 }
-#ifdef __ARM_NEON__
-#include "neon/blt_neon.c"
-#endif
-void ag32fbufcopy(dword * bfbz) {
-  int x, y;
-#ifdef __ARM_NEON__
-  
-  for (y = 0; y < ag_fbv.yres; y++) {
-    int yp = y * ag_fbv.xres;
-    int yd = (ag_fbf.line_length * y);
-    aMemcpyColorPos_neon(
-      (dword *) (ag_fbuf32 + yd),
-      (dword *) bfbz + yp, ag_fbv.xres, 0);
-  }
-  
-#else
-  
-  for (y = 0; y < ag_fbv.yres; y++) {
-    int yp = y * ag_fbv.xres;
-    int yd = (ag_fbf.line_length * y);
-  
-    for (x = 0; x < ag_fbv.xres; x++) {
-      int xy = yp + x;
-      *((dword *) (ag_fbuf32 + yd + (x * agclp))) =
-        (ag_r32(bfbz[xy]) << colorspace_positions[0]) |
-        (ag_g32(bfbz[xy]) << colorspace_positions[1]) |
-        (ag_b32(bfbz[xy]) << colorspace_positions[2]);
-    }
-  }
-  
-#endif
-}
 void ag16fbufcopy(word * bfbz) {
+  memcpy(ag_fbuf,bfbz,ag_fbsz);
+  /*
   int x, y;
-  
-  for (y = 0; y < ag_fbv.yres; y++) {
-    int yp    = y * ag_fbv.xres;
-    int ypos  = y * ag_fbf.line_length;
+  for (y = 0; y < libaromafb()->h; y++) {
+    int yp    = y * libaromafb()->w;
+    int ypos  = y * ag_line_length;
     
-    for (x = 0; x < ag_fbv.xres; x++) {
+    for (x = 0; x < libaromafb()->w; x++) {
       int xy = yp + x;
       int xp = ypos + (x * agclp);
-      // word * fbf = (word *) (((byte *) ag_fbuf) +xp);
       ag_fbuf[xp / 2] = bfbz[xy];
     }
-  }
+  }*/
 }
 void ag_drawcaret() {
   if (ag_caret[2] > 0) {
     if (ag_caret[3] != 0) {
       int i    = 0;
       int crw  = ceil(((float) agdp()) / 2.0);
-      
       for (i = 0; i < ag_caret[2]; i++) {
-        int ypos = ag_fbf.line_length * (ag_caret[1] + i);
+        int ypos = ag_line_length * (ag_caret[1] + i);
         int j;
-        
         for (j = 0; j < crw; j++) {
           int xpos = ypos + ((ag_caret[0] + j) * agclp);
-          
           if (xpos >= 0) {
-            if (ag_32 == 1) {
-              if (xpos < (ag_fbf.smem_len - 4)) {
-                ag_fbuf32[xpos + (colorspace_positions[0] >> 3)]   = 255 - ag_fbuf32[xpos + (16 >> 3)];
-                ag_fbuf32[xpos + (colorspace_positions[1] >> 3)] = 255 - ag_fbuf32[xpos + (8 >> 3)];
-                ag_fbuf32[xpos + (colorspace_positions[2] >> 3)]  = 255 - ag_fbuf32[xpos + (0 >> 3)];
-              }
-            }
-            else if (xpos < (ag_fbf.smem_len - 2)) {
+            if (xpos < (ag_fbsz - 2)) {
               int  xp     = xpos / 2;
               word fbc    = ag_fbuf[xp];
               byte nr     = 255 - ag_r(fbc);
@@ -1007,60 +638,28 @@ void ag_setcaret(int x, int y, int h) {
   ag_caret[2] = h;
   ag_caret[3] = 1;
 }
+
+byte ag_have_sync = 0;
 void ag_refreshrate() {
-  //-- Copy Data
-  if (ag_32 == 1) {
-    if (ag_isbusy == 0) {
-      ag32fbufcopy(ag_bf32);
-      ag_drawcaret();
-      //memcpy(ag_fbuf32,ag_bf32,ag_fbsz);
-    }
-    else if (ag_isbusy == 2) {
-      ag32fbufcopy(ag_bz32);
-      ag_busyprogress();
-    }
-    else if (ag_lastbusy < alib_tick() - 500) {
-      ag_copybusy("Please Wait...");
-      ag_isbusy = 2;
-    }
+  if (ag_isbusy == 0) {
+    memcpy(ag_fbuf, ag_b, ag_fbsz);
+    ag_drawcaret();
+    libaroma_sync();
   }
-  else {
-    if (ag_isbusy == 0) {
-      if (ag_16strd == 0) {
-        //-- Can Use memcpy
-        memcpy(ag_fbuf, ag_b, ag_fbsz);
-        // ag16fbufcopy(ag_b);
-      }
-      else {
-        ag16fbufcopy(ag_b);
-      }
-      
-      ag_drawcaret();
-    }
-    else if (ag_isbusy == 2) {
-      if (ag_16strd == 0) {
-        //-- Can Use memcpy
-        memcpy(ag_fbuf, ag_bz, ag_fbsz);
-        // ag16fbufcopy(ag_bz);
-      }
-      else {
-        ag16fbufcopy(ag_bz);
-      }
-      
-      ag_busyprogress();
-    }
-    else if (ag_lastbusy < alib_tick() - 500) {
-      ag_copybusy("Please Wait...");
-      ag_isbusy = 2;
-    }
+  else if (ag_isbusy == 2) {
+    memcpy(ag_fbuf, ag_bz, ag_fbsz);
+    ag_busyprogress();
+    libaroma_sync();
   }
-  
-  //-- Wait For Draw
-  fsync(ag_fb);
-  //-- Force Refresh Display
-  ag_fbv.yoffset   = 0;
-  ag_fbv.activate |= FB_ACTIVATE_NOW | FB_ACTIVATE_FORCE;
-  ioctl(ag_fb, FBIOPUT_VSCREENINFO, &ag_fbv);
+  else if (ag_lastbusy < alib_tick() - 500) {
+    ag_copybusy("Please Wait...");
+    ag_isbusy = 2;
+    libaroma_sync();
+  }
+  else if (ag_have_sync){
+    ag_have_sync=0;
+    libaroma_sync();
+  }
 }
 
 byte ag_sync_locked = 0;
@@ -1071,35 +670,8 @@ void ag_sync() {
   
   if (!ag_sync_locked) {
     ag_refreshlock = 1;
-    
-    if (ag_32 == 1) {
-#ifdef __ARM_NEON__
-      int y;
-      
-      for (y = 0; y < ag_fbv.yres; y++) {
-        int yp = y * ag_fbv.xres;
-        aBlt32_neon(ag_fbv.xres, (dword *) (ag_bf32 + yp), (word *) (ag_c.data + yp), 0);
-      }
-      
-#else
-      int x, y;
-      
-      for (y = 0; y < ag_fbv.yres; y++) {
-        int yp = y * ag_fbv.xres;
-      
-        for (x = 0; x < ag_fbv.xres; x++) {
-          int xy  = yp + x;
-          color c = ag_c.data[xy];
-          ag_bf32[xy] = ag_rgb32(ag_r(c), ag_g(c), ag_b(c));
-        }
-      }
-      
-#endif
-    }
-    else {
-      memcpy(ag_b, ag_c.data, ag_fbsz);
-    }
-    
+    ag_have_sync = 1;
+    memcpy(ag_b, ag_c.data, ag_fbsz);
     ag_refreshrate();
     ag_refreshlock = 0;
   }
@@ -1108,94 +680,70 @@ void ag_sync_force() {
   if (ag_sync_locked) {
     ag_sync_locked = 0;
   }
-  else {
-    ag_sync();
-  }
+  ag_sync();
 }
 static void * ag_sync_fade_thread(void * cookie) {
   int frame = (int) cookie;
   ag_isbusy = 0;
   ag_sync_locked = 1;
   ag_refreshlock = 1;
+
+  int i, x, y;
   
-  if (ag_32 == 0) {
-    int i, x, y;
-    
-    for (i = 0; (i < (frame / 2)) && ag_sync_locked; i++) {
-      byte perc = (255 / frame) * i;
-      byte ralpha = 255 - perc;
+  for (i = 0; (i < (frame / 2)) && ag_sync_locked; i++) {
+    byte perc = (255 / frame) * i;
+    /*
+    byte ralpha = 255 - perc;
+    for (y = 0; y < agh(); y++) {
+      int yp = y * agw();
+      byte er = 0;
+      byte eg = 0;
+      byte eb = 0;
       
-      for (y = 0; y < agh(); y++) {
-        int yp = y * agw();
-        byte er = 0;
-        byte eg = 0;
-        byte eb = 0;
+      for (x = 0; x < agw(); x++) {
+        int xy = yp + x;
+        color * s = agxy(NULL, x, y);
+        color   d = ag_b[xy];
         
-        for (x = 0; x < agw(); x++) {
-          int xy = yp + x;
-          color * s = agxy(NULL, x, y);
-          color   d = ag_b[xy];
-          
-          if (s[0] != d) {
-            byte r = min(((byte) (((((int) ag_r(d)) * ralpha) + (((int) ag_r(s[0])) * perc)) >> 8)) + er, 255);
-            byte g = min(((byte) (((((int) ag_g(d)) * ralpha) + (((int) ag_g(s[0])) * perc)) >> 8)) + eg, 255);
-            byte b = min(((byte) (((((int) ag_b(d)) * ralpha) + (((int) ag_b(s[0])) * perc)) >> 8)) + eb, 255);
-            byte nr = ag_close_r(r);
-            byte ng = ag_close_g(g);
-            byte nb = ag_close_b(b);
-            ag_b[xy] = ag_rgb(nr, ng, nb);
-            er     = r - nr;
-            eg     = g - ng;
-            eb     = b - nb;
-          }
-          else {
-            er = 0;
-            eg = 0;
-            eb = 0;
-          }
+        if (s[0] != d) {
+          byte r = min(((byte) (((((int) ag_r(d)) * ralpha) + (((int) ag_r(s[0])) * perc)) >> 8)) + er, 255);
+          byte g = min(((byte) (((((int) ag_g(d)) * ralpha) + (((int) ag_g(s[0])) * perc)) >> 8)) + eg, 255);
+          byte b = min(((byte) (((((int) ag_b(d)) * ralpha) + (((int) ag_b(s[0])) * perc)) >> 8)) + eb, 255);
+          byte nr = ag_close_r(r);
+          byte ng = ag_close_g(g);
+          byte nb = ag_close_b(b);
+          ag_b[xy] = ag_rgb(nr, ng, nb);
+          er     = r - nr;
+          eg     = g - ng;
+          eb     = b - nb;
+        }
+        else {
+          er = 0;
+          eg = 0;
+          eb = 0;
         }
       }
-      
-      ag_refreshrate();
-    }
+    } */
+    libaroma_alpha_const(libaromafb()->sz,
+      ag_b, ag_b, ag_c.data, perc);
+    ag_have_sync = 1;
+    ag_refreshrate();
+    usleep(16000);
   }
-  else {
-    int i, x, y;
-    
-    for (i = 0; (i < (frame / 2)) && (ag_sync_locked); i++) {
-      int perc = (255 / frame) * i;
-      
-      for (y = 0; y < agh(); y++) {
-        int yp = y * agw();
-        
-        for (x = 0; x < agw(); x++) {
-          int xy = yp + x;
-          color * s = agxy(NULL, x, y);
-          dword   d = ag_bf32[xy];
-          ag_bf32[xy]  = ag_calculatealpha16to32(s[0], d, 255 - perc);
-        }
-      }
-      
-      ag_refreshrate();
-    }
-  }
-  
   ag_refreshlock = 0;
   ag_sync_locked = 0;
   ag_sync();
   return NULL;
 }
 void ag_sync_fade_wait(int frame) {
-  // ag_sync_fade_thread((void *) frame);
-  ag_sync();
+  ag_sync_fade_thread((void *) frame);
+  //ag_sync();
 }
 void ag_sync_fade(int frame) {
-  /*
   pthread_t threadsyncfade;
   pthread_create(&threadsyncfade, NULL, ag_sync_fade_thread, (void *) frame);
   pthread_detach(threadsyncfade);
-  */
-  ag_sync();
+  // ag_sync();
 }
 byte ag_blur_h(CANVAS * d, CANVAS * s, int radius) {
   if (radius < 1) {
@@ -1397,12 +945,12 @@ void ag_blank(CANVAS * c) {
 
 //-- Width
 int agw() {
-  return ag_fbv.xres;
+  return libaromafb()->w;
 }
 
 //-- Height
 int agh() {
-  return ag_fbv.yres;
+  return libaromafb()->h;
 }
 
 int agdp() {
@@ -1414,31 +962,7 @@ void set_agdp(int dp) {
 
 //-- Convert String to Color
 color strtocolor(char * c) {
-  if (c[0] != '#') {
-    return 0;
-  }
-  
-  char out[9] = {'0', 'x'};
-  int  i;
-  
-  if (strlen(c) == 7) {
-    for (i = 1; i < 7; i++) {
-      out[i + 1] = c[i];
-    }
-  }
-  else if (strlen(c) == 4) {
-    for (i = 0; i < 3; i++) {
-      out[(i * 2) + 2] = c[i + 1];
-      out[(i * 2) + 3] = c[i + 1];
-    }
-  }
-  else {
-    return 0;
-  }
-  
-  out[8] = 0;
-  dword ul = strtoul(out, NULL, 0);
-  return ag_rgb(ag_r32(ul), ag_g32(ul), ag_b32(ul));
+  return libaroma_rgb_from_string(c);
 }
 
 //-- Draw Canvas To Canvas Extra
@@ -1446,64 +970,52 @@ byte ag_draw_ex(CANVAS * dc, CANVAS * sc, int dx, int dy, int sx, int sy, int sw
   if (sc == NULL) {
     return 0;
   }
-  
   if (dc == NULL) {
     dc = &ag_c;
   }
-  
   if (dx >= dc->w) {
     return 0;
   }
-  
   if (dy >= dc->h) {
     return 0;
   }
-  
   if (sx < 0) {
     dx += abs(sx);
     sw -= abs(sx);
     sx = 0;
   }
-  
   if (sy < 0) {
     dy += abs(sy);
     sh -= abs(sy);
     sy = 0;
   }
-  
   if (sw + sx >= sc->w) {
     sw -= (sw + sx) - sc->w;
   }
-  
   if (sh + sy >= sc->h) {
     sh -= (sh + sy) - sc->h;
   }
-  
   if ((sw <= 0) || (sh <= 0)) {
     return 0;
   }
-  
   int sr_w = sw;
   int sr_h = sh;
   int sr_x = sx;
   int sr_y = sy;
   int ds_x = dx;
   int ds_y = dy;
-  
   if (dx < 0) {
     int ndx = abs(dx);
     sr_x += abs(ndx);
     sr_w -= ndx;
     ds_x = 0;
   }
-  
   if (dy < 0) {
     int ndy = abs(dy);
     sr_y += ndy;
     sr_h -= ndy;
     ds_y = 0;
   }
-  
   if (sr_w + dx > dc->w) {
     sr_w -= (sr_w + dx) - dc->w;
   }
@@ -1537,7 +1049,6 @@ byte ag_draw(CANVAS * dc, CANVAS * sc, int dx, int dy) {
   if (sc == NULL) {
     return 0;
   }
-  
   return ag_draw_ex(dc, sc, dx, dy, 0, 0, sc->w, sc->h);
 }
 
@@ -1682,14 +1193,16 @@ byte ag_rect(CANVAS * _b, int x, int y, int w, int h, color cl) {
   w = x2 - x;
   h = y2 - y;
   //-- LOOPS
-  int xx, yy;
+  int yy;
   
   for (yy = y; yy < y2; yy++) {
-    int i = yy * _b->w;
-    
+    int i = yy * _b->w + x;
+    libaroma_color_set(_b->data+i, cl, x2-x);
+    /*
     for (xx = x; xx < x2; xx++) {
       _b->data[i + xx] = cl;
     }
+    */
   }
   
   return 1;
@@ -1723,21 +1236,28 @@ byte ag_rectopa(CANVAS * _b, int x, int y, int w, int h, color cl, byte l) {
   
   w = x2 - x;
   h = y2 - y;
+  /*
   byte ll = 255 - l;
   int sr  = ag_r(cl);
   int sg  = ag_g(cl);
   int sb  = ag_b(cl);
+  */
   //-- LOOPS
-  int xx, yy;
+  int yy;
   
   for (yy = y; yy < y2; yy++) {
+    int i = yy * _b->w + x;
+    libaroma_alpha_rgba_fill(x2-x,_b->data+i,_b->data+i,cl,l);
+    
+    /*
     byte er = 0;
     byte eg = 0;
     byte eb = 0;
-    
+    libaroma_color_set(_b->data+i, cl, x2-x);
+    */
+    /*
     for (xx = x; xx < x2; xx++) {
       color * cv = agxy(_b, xx, yy);
-      
       if (cv[0] != cl) {
         byte  ralpha = 255 - l;
         byte r = min(((byte) (((((int) ag_r(cv[0])) * ll) + (sr * l)) >> 8)) + er, 255);
@@ -1756,7 +1276,7 @@ byte ag_rectopa(CANVAS * _b, int x, int y, int w, int h, color cl, byte l) {
         eg = 0;
         eb = 0;
       }
-    }
+    }*/
   }
   
   return 1;

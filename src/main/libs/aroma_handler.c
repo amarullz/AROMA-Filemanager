@@ -268,6 +268,33 @@ byte auia_hold(AUI_VARSP v) {
     aw_menuset(mi, cp++, "tools.cut", 3);
     aw_menuset(mi, cp++, "tools.delete", 4);
     aw_menuset(mi, cp++, "tools.chmod", 1);
+    
+    byte is_zip = 0;
+    byte set_shell = 0;
+    char * extzip = fl+strlen(fl)-4;
+    if (strcmp(extzip,".zip")==0){
+      is_zip=1;
+      aw_menuset(mi, cp++, "tools.extract", 26);
+    }
+    else if ((dtype == 8) || (dtype == 28)) {
+      //-- Run Shell
+      char * prm=afbox_dperm(v->hFile);
+      if (strlen(prm)==9){
+        if (prm[2]=='x'){
+          set_shell = 1;
+        }
+      }
+      if (!set_shell){
+        char * ext = fl + strlen(fl) - 3;
+        if (strcmp(ext,".sh")==0){
+          set_shell=2;
+        }
+      }
+      if (set_shell){
+        aw_menuset(mi, cp++, "tools.shell", 40);
+      }
+    }
+    
     byte ret = aw_menu(v->hWin, fl, mi, cp);
     
     if ((!onfav) && (ret > 0)) {
@@ -314,6 +341,19 @@ byte auia_hold(AUI_VARSP v) {
         
         LOGS("Add To Favorite: %s\n", full_fl);
         free(full_fl);
+      }
+    }
+    else if (ret==7){
+      if (is_zip){
+        v->reshow=9;
+        snprintf(v->selfile,256,"%s",fl);
+        return 0;
+      }
+      else{
+        // OPEN CONSOLE
+        v->reshow = 6+set_shell;
+        snprintf(v->selfile,256,"%s",fl);
+        return 0;
       }
     }
   }

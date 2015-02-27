@@ -27,6 +27,7 @@ typedef struct {
   byte automount;
   byte showhidden;
   byte colorspace;
+  byte vibration;
   char fontfamily[256];
   char iconset[256];
   char language[256];
@@ -42,6 +43,7 @@ void aui_cfg_init() {
   auicv.fontsize = 2;
   auicv.automount = 0;
   auicv.colorspace = 1;
+  auicv.vibration = 2;
   auicv.showhidden = 0;
   acfg()->fadeframes = 4;
   snprintf(auicv.fontfamily, 256, "Droid Sans");
@@ -56,6 +58,13 @@ int aui_cfg_btnFH() {
   }
   
   return ag_fontheight(0);
+}
+
+void aui_cfg_setvibration(){
+  if ((auicv.vibration<0)||(auicv.vibration>3)) {
+    auicv.vibration = 2;
+  }
+  set_vibrate_intensity(auicv.vibration);
 }
 
 void aui_cfg_setcolorspace() {
@@ -380,6 +389,12 @@ void aui_cfg_fromarray() {
     auic()->colorspace = atoi(o);
   }
   
+  o = aarray_get(aui_cfg_array, "vibration");
+  
+  if (o != NULL) {
+    auic()->vibration = atoi(o);
+  }
+  
   o = aarray_get(aui_cfg_array, "tooltext");
   
   if (o != NULL) {
@@ -452,6 +467,8 @@ void aui_cfg_save() {
   aarray_set(aui_cfg_array, "automount", o);
   snprintf(o, 256, "%i", auic()->colorspace);
   aarray_set(aui_cfg_array, "colorspace", o);
+  snprintf(o, 256, "%i", auic()->vibration);
+  aarray_set(aui_cfg_array, "vibration", o);
   snprintf(o, 256, "%i", acfg()->fadeframes);
   aarray_set(aui_cfg_array, "fadeframes", o);
   aarray_set(aui_cfg_array, "fontfamily", auicv.fontfamily);

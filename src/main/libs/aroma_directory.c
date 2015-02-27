@@ -235,28 +235,39 @@ int aui_fetch(char * path, ACONTROLP FB, char * selfile) {
           char perm[10];
           aui_fileperm(perm, full_path);
           aui_filesize(dsz, full_path);
+          int icon_id=21;
+          char * ext = dname+strlen(dname)-4;
+          if (strcmp(ext,".zip")==0){
+            icon_id=26;
+          }
           snprintf(desc, 256, "<@right>%s</@>",
                    dsz);
           afbox_add(FB, dname, desc, 0,
-                    &UI_ICONS[21], dtype, perm, 0,
+                    &UI_ICONS[icon_id], dtype, perm, 0,
                     selectedDefault);
         }
         //-- LINK FILE / DIR
         else if ((dtype == 28) || (dtype == 24)) {
-          char * desc = NULL;
+          char desc[256]="";
           char buf[4096];
+          char perm[10]="---------";
           int len =
             readlink(full_path, buf,
                      sizeof(buf));
                      
           if (len >= 0) {
+            aui_fileperm(perm, full_path);
             buf[len] = 0;
-            desc =
+            char * dsz =
               aui_strip(buf,
                         agw() -
                         (agdp() * 46), 0);
+            if (dsz != NULL) {
+              snprintf(desc, 256, "<@right>-> <#selectbg_g>%s</#></@>",
+                   dsz);
+              free(dsz);
+            }
           }
-          
           afbox_add(FB, dname,
                     ((desc ==
                       NULL) ?
@@ -264,12 +275,10 @@ int aui_fetch(char * path, ACONTROLP FB, char * selfile) {
                      desc), 0,
                     &UI_ICONS[(dtype ==
                                24) ? 25 : 24],
-                    dtype, "", 0,
+                    dtype, perm, 0,
                     selectedDefault);
                     
-          if (desc != NULL) {
-            free(desc);
-          }
+          
         }
         //-- ERROR LINK
         else if (dtype == 10) {

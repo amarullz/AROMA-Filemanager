@@ -33,7 +33,7 @@ AC_CONFIG * acfg() {
 }
 void acfg_init_ex(byte themeonly) {
   acfg_var.winbg        = ag_rgb(0xf0, 0xf0, 0xf0);
-  acfg_var.winbg_g      = ag_rgb(0xee, 0xee, 0xee);
+  acfg_var.winbg_g      = ag_rgb(0xf0, 0xf0, 0xf0);
   acfg_var.dialogbg     = acfg_var.winbg;
   acfg_var.dialogbg_g   = acfg_var.winbg_g;
   acfg_var.textbg       = ag_rgb(0xff, 0xff, 0xff);
@@ -42,8 +42,8 @@ void acfg_init_ex(byte themeonly) {
   acfg_var.winfg_gray   = acfg_var.textfg_gray;
   acfg_var.winfg        = acfg_var.textfg;
   acfg_var.dialogfg     = acfg_var.textfg;
-  acfg_var.controlbg    = ag_rgb(0xf5, 0xf5, 0xf5);
-  acfg_var.controlbg_g  = ag_rgb(0xdf, 0xdf, 0xdf);
+  acfg_var.controlbg    = ag_rgb(0xee, 0xee, 0xee);
+  acfg_var.controlbg_g  = ag_rgb(0xee, 0xee, 0xee);
   acfg_var.controlfg    = ag_rgb(0x44, 0x44, 0x44);
   acfg_var.selectbg     = ag_rgb(158, 228, 32);
   acfg_var.selectbg_g   = ag_rgb(106, 160, 44);
@@ -55,14 +55,14 @@ void acfg_init_ex(byte themeonly) {
   acfg_var.dlgtitlebg_g = acfg_var.titlebg_g;
   acfg_var.dlgtitlefg   = acfg_var.titlefg;
   acfg_var.navbg        = ag_rgb(0xf5, 0xf5, 0xf5);
-  acfg_var.navbg_g      = ag_rgb(0xdf, 0xdf, 0xdf);
+  acfg_var.navbg_g      = ag_rgb(0xee, 0xee, 0xee);
   acfg_var.scrollbar    = ag_rgb(0x66, 0x66, 0x66);
-  acfg_var.border       = ag_rgb(0xcc, 0xcc, 0xcc);
-  acfg_var.border_g     = ag_rgb(0x99, 0x99, 0x99);
+  acfg_var.border       = ag_rgb(0xbb, 0xbb, 0xbb);
+  acfg_var.border_g     = ag_rgb(0xbb, 0xbb, 0xbb);
   acfg_var.progressglow = acfg_var.selectbg;
-  acfg_var.winroundsz   = 3;
-  acfg_var.roundsz      = 2;
-  acfg_var.btnroundsz   = 2;
+  acfg_var.winroundsz   = 2;
+  acfg_var.roundsz      = 1;
+  acfg_var.btnroundsz   = 1;
   snprintf(acfg_var.themename, 64, "");
   
   if (themeonly == 0) {

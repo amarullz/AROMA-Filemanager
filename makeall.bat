@@ -12,13 +12,13 @@ echo.
 
 D:\DevelTools\linaro\bin\arm-linux-gnueabihf-gcc.exe ^
   -O3 -save-temps ^
-  ^
+  -ftree-vectorize -mvectorize-with-neon-quad ^
   -static -fdata-sections -ffunction-sections -Wl,--gc-sections ^
   -fPIC -DPIC  -Wl,-s -Werror ^
   -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_DEBUG ^
   -DFT2_BUILD_LIBRARY=1 -DDARWIN_NO_CARBON ^
   ^
-  -DAROMA_WITH_OPENMP -D_AROMA_NODEBUG ^
+   -D_AROMA_NODEBUG ^
   ^
     -DAROMA_NAME="\"AROMA Filemanager\"" ^
     -DAROMA_VERSION="\"1.92\"" ^
@@ -115,8 +115,7 @@ D:\DevelTools\linaro\bin\arm-linux-gnueabihf-gcc.exe ^
   -I../include ^
   -I../src ^
   -o ../out/aromafm ^
-  -fopenmp ^
-  -lm -lpthread
+  -lm -lpthread -lrt
 
 echo.
 echo * Cleanup AROMA Installer objects

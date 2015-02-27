@@ -304,8 +304,11 @@ void acmenu_ondraw(void * x) {
       add_t_y = agdp();
     }
     
+    /*
     for (i = 0; i < agdpX; i++) {
-      byte alph = 255 - round((((float) (i + 1)) / ((float) agdpX)) * 230);
+      byte alph = 80 - round((((float) (i + 1)) / ((float) agdpX)) * 80);
+      ag_rectopa(pc, ctl->x, ctl->y + i + add_t_y, ctl->w, 1, 
+        ag_rgb(55,55,55), alph);
       
       if (isST) {
         ag_rectopa(pc, ctl->x + agdp3, ctl->y + i + add_t_y, ctl->w - agdpX, 1, acfg()->textbg, alph);
@@ -314,7 +317,7 @@ void acmenu_ondraw(void * x) {
       if (isSB) {
         ag_rectopa(pc, ctl->x + agdp3, ((ctl->y + ctl->h) - (add_t_y)) - (i + 1), ctl->w - agdpX, 1, acfg()->textbg, alph);
       }
-    }
+    }*/
     
     //-- Scrollbar
     int newh = ctl->h - agdp6;
@@ -632,12 +635,12 @@ ACONTROLP acmenu(
   d->client.data = NULL;
   //-- Draw Control
   ag_draw_ex(&d->control, &win->c, 0, 0, x, y, w, h);
-  ag_roundgrad(&d->control, 0, 0, w, h, acfg()->border, acfg()->border_g, (agdp()*acfg()->roundsz));
-  ag_roundgrad(&d->control, 1, 1, w - 2, h - 2, acfg()->textbg, acfg()->textbg, (agdp()*acfg()->roundsz) - 1);
+  ag_roundgrad(&d->control, 0, 0, w, h, acfg()->border, acfg()->border_g, 0);
+  ag_roundgrad(&d->control, 1, 1, w - 2, h - 2, acfg()->textbg, acfg()->textbg, 0);
   //-- Draw Focused Control
   ag_draw_ex(&d->control_focused, &win->c, 0, 0, x, y, w, h);
-  ag_roundgrad(&d->control_focused, 0, 0, w, h, acfg()->selectbg, acfg()->selectbg_g, (agdp()*acfg()->roundsz));
-  ag_roundgrad(&d->control_focused, agdp(), agdp(), w - (agdp() * 2), h - (agdp() * 2), acfg()->textbg, acfg()->textbg, (agdp() * (acfg()->roundsz - 1)));
+  ag_roundgrad(&d->control_focused, 0, 0, w, h, acfg()->selectbg, acfg()->selectbg_g, 0);
+  ag_roundgrad(&d->control_focused, agdp(), agdp(), w - (agdp() * 2), h - (agdp() * 2), acfg()->textbg, acfg()->textbg,0);
   //-- Set Scroll Value
   d->scrollY     = 0;
   d->maxScrollY  = 0;

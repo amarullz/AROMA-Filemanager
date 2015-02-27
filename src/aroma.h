@@ -29,6 +29,7 @@
 //
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <math.h>
 #include <string.h>
 #include <unistd.h>
@@ -68,11 +69,29 @@
 //
 // Common Data Type
 //
+/*
 #define byte              unsigned char
 #define dword             unsigned int
 #define word              unsigned short
 #define color             unsigned short
+*/
 
+/* primitive unsigneds */
+typedef uint8_t byte;
+typedef uint16_t word;
+typedef uint16_t color;
+typedef uint32_t dword;
+
+/* primitive pointers */
+typedef color * colorp;
+typedef byte * bytep;
+typedef word * wordp;
+typedef dword * dwordp;
+typedef void * voidp;
+
+/* unicode char */
+typedef uint32_t uchar;
+typedef uchar * ucharp;
 
 //
 // AROMA Main Configurations
@@ -87,7 +106,7 @@
 #define AROMA_BUILD_L     "Bandung - Indonesia"
 #define AROMA_BUILD_A     "<support@amarullz.com>"
 #define AROMA_BUILD_URL   "http://www.amarullz.com/"
-#define AROMA_COPY        "(c) 2013 by amarullz xda-developers"
+#define AROMA_COPY        "(c) 2013-2015 by amarullz.com"
 
 //-- Main Definitions
 #define AROMA_TMP                 "/tmp/aroma-fm"
@@ -237,6 +256,8 @@ typedef struct {
 
 int max(int a, int b);
 int min(int a, int b);
+#define MIN(a,b) min(a,b)
+#define MAX(a,b) max(a,b)
 int div2ceil(int a);
 int div2floor(int a);
 // #define max(a,b) ((a>=b)?a:b)
@@ -626,7 +647,9 @@ color ag_dodither_rgb(int x, int y, byte sr, byte sg, byte sb);
 // AROMA Color Calculator Functions
 //
 color     ag_subpixelget(CANVAS * _b, int x, int y, color cl, byte l); // Calculate Color Opacity with Canvas Pixel
-color     ag_calculatealpha(color dcl, color scl, byte l);            // Calculate 2 Colors with Opacity
+//color     ag_calculatealpha(color dcl, color scl, byte l);            // Calculate 2 Colors with Opacity
+#define ag_calculatealpha(d,s,a) libaroma_alpha(d,s,a)
+#define ag_calculatealphaTo32(d,s,a) libaroma_alpha32(d,s,a)
 color     strtocolor(char * c);                                       // Convert String Hex Color #fff,#ffffff to color
 dword     ag_calchighlight(color c1, color c2);
 dword     ag_calcpushlight(color c1, color c2);
@@ -673,6 +696,7 @@ int     atouch_wait(ATEV * atev);
 int     atouch_wait_ex(ATEV * atev, byte calibratingtouch);
 byte    atouch_send_message(dword msg);
 int     vibrate(int timeout_ms);
+void set_vibrate_intensity(int i);
 void    ui_init();
 int     ev_init(void);
 void    ev_exit(void);
@@ -1011,4 +1035,9 @@ int aconsole_isescape(ACONTROLP ctl);
 #endif
 #define STRINGIFY(x) #x
 #define EXPAND(x) STRINGIFY(x)
+
+
+#include "libs/fb/engine.h"
+#include "libs/fb/fb.h"
+
 #endif // __AROMA_H__

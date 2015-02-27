@@ -290,8 +290,8 @@ void afbox_redrawitem_ex(ACONTROLP ctl, int index) {
       if (!atheme_draw("img.selection.push", c, 0, p->y + 1, d->clientWidth, p->h - 2)) {
         color pshad = ag_calpushad(acfg()->selectbg_g);
         dword hl1 = ag_calcpushlight(acfg()->selectbg, pshad);
-        ag_roundgrad(c, 0, p->y + 1, d->clientWidth, p->h - 3, acfg()->selectbg, pshad, (agdp() * 2));
-        ag_roundgrad(c, 0, p->y + 1, d->clientWidth, (p->h - 3) / 2, LOWORD(hl1), HIWORD(hl1), (agdp() * 2));
+        ag_roundgrad(c, 0, p->y + 1, d->clientWidth, p->h - 3, acfg()->selectbg, pshad, (agdp()));
+        ag_roundgrad(c, 0, p->y + 1, d->clientWidth, (p->h - 3) / 2, LOWORD(hl1), HIWORD(hl1), (agdp()));
       }
       
       graycolor = txtcolor = acfg()->selectfg;
@@ -300,8 +300,8 @@ void afbox_redrawitem_ex(ACONTROLP ctl, int index) {
     else if ((index == d->focusedItem) && (d->focused)) {
       if (!atheme_draw("img.selection", c, 0, p->y + 1, d->clientWidth, p->h - 2)) {
         dword hl1 = ag_calchighlight(acfg()->selectbg, acfg()->selectbg_g);
-        ag_roundgrad(c, 0, p->y + 1, d->clientWidth, p->h - 3, acfg()->selectbg, acfg()->selectbg_g, (agdp() * 2));
-        ag_roundgrad(c, 0, p->y + 1, d->clientWidth, (p->h - 3) / 2, LOWORD(hl1), HIWORD(hl1), (agdp() * 2));
+        ag_roundgrad(c, 0, p->y + 1, d->clientWidth, p->h - 3, acfg()->selectbg, acfg()->selectbg_g, (agdp()));
+        ag_roundgrad(c, 0, p->y + 1, d->clientWidth, (p->h - 3) / 2, LOWORD(hl1), HIWORD(hl1), (agdp()));
       }
       
       graycolor = txtcolor = acfg()->selectfg;
@@ -682,10 +682,12 @@ void afbox_ondraw(void * x) {
     byte isST = (d->scrollY > 0) ? 1 : 0;
     byte isSB = (d->scrollY < d->maxScrollY) ? 1 : 0;
     int add_t_y = 1;
-    
+    /*
     for (i = 0; i < agdpX; i++) {
-      byte alph = 255 - round((((float) (i + 1)) / ((float) agdpX)) * 230);
-      
+      byte alph = 80 - round((((float) (i + 1)) / ((float) agdpX)) * 80);
+      ag_rectopa(pc, ctl->x, ctl->y + i + add_t_y, ctl->w, 1, 
+        ag_rgb(55,55,55), alph);
+        
       if (isST) {
         ag_rectopa(pc, ctl->x, ctl->y + i + add_t_y, ctl->w, 1, acfg()->textbg, alph);
       }
@@ -693,7 +695,7 @@ void afbox_ondraw(void * x) {
       if (isSB) {
         ag_rectopa(pc, ctl->x, ((ctl->y + ctl->h) - (add_t_y)) - (i + 1), ctl->w, 1, acfg()->textbg, alph);
       }
-    }
+    }*/
     
     //-- Scrollbar
     int newh = ctl->h - agdp6;

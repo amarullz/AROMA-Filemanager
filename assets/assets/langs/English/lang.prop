@@ -18,6 +18,7 @@ deleting = Deleting %s Files
 moving = Moving %s of %s Files
 copying = Copying %s of %s Files
 progress.of = %s of %s
+permission.denied = Permission Denied
 
 seconds = seconds
 minutes = minutes
@@ -45,6 +46,8 @@ tools.favorite.del = Remove from favorites
 tools.hiddenfile = Hide hidden files
 tools.hiddenfile.show = Show hidden files 
 tools.terminal = Open Console
+tools.shell = Run in Shell
+tools.extract = Extract Zip
 
 file.exists = File already exists
 file.exists.info = There is already a file with the same name in this location.
@@ -94,6 +97,12 @@ settings.colorspace.abgr = ABGR
 settings.colorspace.argb = ARGB
 settings.colorspace.bgra = BGRA
 
+settings.vibration = Haptic Feedback Intensity
+settings.vibration.none = No Vibration
+settings.vibration.low = Low Vibration
+settings.vibration.medium = Medium Vibration
+settings.vibration.high = High Vibration
+
 settings.fontfamily = Font Family
 settings.iconset = Iconset
 settings.themes = Themes
@@ -133,6 +142,13 @@ delete.prepare = Preparing to Delete
 
 delete.title = Delete File
 delete.message = Are you sure you want to permanently delete %s items?
+
+extract.error = Extract Error
+extract.invalidfile = Selected file is not valid zip archive
+extract.extractfile = Extracting Zip
+extract.extractof = Extracting %i of %i
+extract.preparing = Preparing to Extract
+extract.cancelmsg = Are you sure you want to cancel extraction process?
 
 tools.chmod.read = Read
 tools.chmod.write = Write

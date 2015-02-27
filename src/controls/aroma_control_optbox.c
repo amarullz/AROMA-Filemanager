@@ -441,10 +441,12 @@ void acopt_ondraw(void * x) {
     byte isST = (d->scrollY > 0) ? 1 : 0;
     byte isSB = (d->scrollY < d->maxScrollY) ? 1 : 0;
     int add_t_y = 1;
-    
+    /*
     for (i = 0; i < agdpX; i++) {
-      byte alph = 255 - round((((float) (i + 1)) / ((float) agdpX)) * 230);
-      
+      byte alph = 80 - round((((float) (i + 1)) / ((float) agdpX)) * 80);
+      ag_rectopa(pc, ctl->x, ctl->y + i + add_t_y, ctl->w, 1, 
+        ag_rgb(55,55,55), alph);
+        
       if (isST) {
         ag_rectopa(pc, ctl->x, ctl->y + i + add_t_y, ctl->w, 1, acfg()->textbg, alph);
       }
@@ -452,7 +454,7 @@ void acopt_ondraw(void * x) {
       if (isSB) {
         ag_rectopa(pc, ctl->x, ((ctl->y + ctl->h) - (add_t_y)) - (i + 1), ctl->w, 1, acfg()->textbg, alph);
       }
-    }
+    }*/
     
     //-- Scrollbar
     int newh = ctl->h - agdp6;

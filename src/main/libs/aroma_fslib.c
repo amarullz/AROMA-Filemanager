@@ -51,6 +51,43 @@ typedef struct {
   pthread_cond_t ovrCond;
 } AFSDT, *AFSDTP;
 
+int mkpath(const char *s, mode_t mode){
+        char *q, *r = NULL, *path = NULL, *up = NULL;
+        int rv;
+
+        rv = -1;
+        if (strcmp(s, ".") == 0 || strcmp(s, "/") == 0)
+                return (0);
+
+        if ((path = strdup(s)) == NULL)
+                exit(1);
+     
+        if ((q = strdup(s)) == NULL)
+                exit(1);
+
+        if ((r = dirname(q)) == NULL)
+                goto out;
+        
+        if ((up = strdup(r)) == NULL)
+                exit(1);
+
+        if ((mkpath(up, mode) == -1) && (errno != EEXIST))
+                goto out;
+
+        if ((mkdir(path, mode) == -1) && (errno != EEXIST))
+                rv = -1;
+        else
+                rv = 0;
+
+out:
+        if (up != NULL)
+                free(up);
+        free(q);
+        free(path);
+        return (rv);
+}
+
+
 void
 afs_setoftitle(char * buf, char * format, int v1, int v2, char * sv1, char * sv2) {
   char st1[64];

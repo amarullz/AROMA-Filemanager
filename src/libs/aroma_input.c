@@ -93,8 +93,16 @@ byte atouch_winmsg_push(dword msg) {
   return 0;
 }
 
+int vibrate_intensity = 2;
+void set_vibrate_intensity(int i){
+  vibrate_intensity=i;
+}
+
 //-- VIBRATE FUNCTION
 int vibrate(int timeout_ms) {
+  if (vibrate_intensity==0){
+    return 0;
+  }
   char str[20];
   int fd;
   int ret;
@@ -103,6 +111,8 @@ int vibrate(int timeout_ms) {
   if (fd < 0) {
     return -1;
   }
+  
+  timeout_ms = ((timeout_ms * vibrate_intensity) * 2) / 5;
   
   ret = snprintf(str, sizeof(str), "%d", timeout_ms);
   ret = write(fd, str, ret);

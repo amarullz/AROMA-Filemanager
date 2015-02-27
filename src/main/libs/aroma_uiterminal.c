@@ -131,7 +131,7 @@ void auiterm_send(AUITERMP p, char c, byte iscursor) {
 }
 
 /* Init Shell and Pipes */
-byte auiterm_init(AUITERMP p) {
+byte auiterm_init(AUITERMP p, const char * arg, const char * run_command) {
   /* Init Pipe */
   int m, s;
   struct winsize w = { 80, 24, 0, 0};
@@ -154,17 +154,16 @@ byte auiterm_init(AUITERMP p) {
     close(m);
     /* Change Current Path */
     chdir(p->basepath);
-    /* Try All Possible Shell */
-    execlp("/bin/bash", "bash", "-i", NULL);
-    execlp("/sbin/bash", "bash", "-i", NULL);
-    execlp("/system/bin/bash", "bash", "-i", NULL);
-    execlp("/system/xbin/bash", "bash", "-i", NULL);
-    execlp("/system/sbin/bash", "bash", "-i", NULL);
-    execlp("/bin/sh", "sh", "-i", NULL);
-    execlp("/sbin/sh", "sh", "-i", NULL);
-    execlp("/system/bin/sh", "sh", "-i", NULL);
-    execlp("/system/xbin/sh", "sh", "-i", NULL);
-    execlp("/system/sbin/sh", "sh", "-i", NULL);
+    execlp("/bin/bash", "bash", arg, run_command, NULL);
+    execlp("/sbin/bash", "bash", arg, run_command, NULL);
+    execlp("/system/bin/bash", "bash", arg, run_command, NULL);
+    execlp("/system/xbin/bash", "bash", arg, run_command, NULL);
+    execlp("/system/sbin/bash", "bash", arg, run_command, NULL);
+    execlp("/bin/sh", "sh", arg, run_command, NULL);
+    execlp("/sbin/sh", "sh", arg, run_command, NULL);
+    execlp("/system/bin/sh", "sh", arg, run_command, NULL);
+    execlp("/system/xbin/sh", "sh", arg, run_command, NULL);
+    execlp("/system/sbin/sh", "sh", arg, run_command, NULL);
     _exit(-1);
   }
   
@@ -191,7 +190,7 @@ void auiterm_inittitle() {
 }
 
 /* Show Interface */
-void aui_show_terminal(const char * basepath) {
+void aui_show_terminal(const char * basepath, const char * arg, const char * run_command) {
   auiterm_inittitle();
   /* Calculating */
   int pad  = agdp() * 2;
@@ -225,7 +224,7 @@ void aui_show_terminal(const char * basepath) {
   p.drawnow = 0;
   p.basepath = basepath;
   p.console = aconsole(hWin, 0, conY, agw(), conH);
-  auiterm_init(&p);
+  auiterm_init(&p, arg, run_command);
   aconsole_setwindowsize(p.console, p.fd);
   /* Show Window */
   aw_show_ex(hWin, 2, 0, p.console);
