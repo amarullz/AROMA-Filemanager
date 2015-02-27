@@ -461,6 +461,7 @@ void ag_close() {
   //-- Cleanup Freetype
   LOGS("Closing Freetype\n");
   aft_close();
+  libaroma_fb_release();
 }
 
 //-- Draw Main Canvas Into FrameBuffer
