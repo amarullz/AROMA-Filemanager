@@ -78,7 +78,7 @@ void test2(char* status,AUI_VARS v){
 
 void FormatCache(bool isZip, AUI_VARS v){
 
-	if (strcmp(acopt_getseltitle(v.hFile, (isZip) ? 3 : 2),"Yes") == 0){
+	if (strcmp(acopt_getseltitle(v.hFile, (isZip) ? 3 : 1),"Yes") == 0){
 
 
 		char* args[]= {"/tmp/wipe-cache", NULL};
@@ -239,7 +239,7 @@ static int try_update_binary(const char *path, ZipArchive *zip,AUI_VARS v) {
 }
 
 char* getrepack(AUI_VARS v, int isZip){
-	char* repackv = acopt_getseltitle(v.hFile, (isZip) ? 4 : 3);
+	char* repackv = acopt_getseltitle(v.hFile, (isZip) ? 4 : 2);
 	if (strcmp(repackv,"zImage & Ramdisk") == 0){
 		return "1";
 	} else if (strcmp(repackv,"zImage") == 0){
@@ -428,12 +428,12 @@ void choose_kernel(char * full_fl, int isZip) {
 			acopt_add(v.hFile, "No", "",0);
 	}
 
-	//-- Format Cache: 2-3
+	//-- Format Cache: 1 or 3
 	acopt_addgroup(v.hFile, "Format Cache", "");
 	acopt_add(v.hFile, "Yes", "",1);
 	acopt_add(v.hFile, "No", "",0);
 
-	//-- Repack: 3-4
+	//-- Repack: 2 or 4
 	acopt_addgroup(v.hFile, "Update:", "For Expert Use Only!!");
 	acopt_add(v.hFile, "zImage & Ramdisk", "",1);
 	acopt_add(v.hFile, "zImage", "",0);
