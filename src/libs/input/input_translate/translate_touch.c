@@ -111,19 +111,20 @@ byte INDR_translate_touch(
       case ABS_MT_POSITION:
         /* multitouch xy event */
         dev->p.state |= INDR_POS_ST_SYNC_X | INDR_POS_ST_SYNC_Y;
-        
-        if (ev->value == (1 << 31)) {
-          dev->p.state |= INDR_POS_ST_LASTSYNC;
-          /*dev->p.x = -1;
-          dev->p.y = -1;*/
+        if (dev->p.x != 0 && dev->p.y != 0) {
+          if (ev->value == (1 << 31)) {
+            dev->p.state |= INDR_POS_ST_LASTSYNC;
+            /*dev->p.x = -1;
+            dev->p.y = -1;*/
+          }
+          else {
+            dev->p.state  &= ~INDR_POS_ST_LASTSYNC;
+            dev->p.x = (ev->value & 0x7FFF0000) >> 16;
+            dev->p.y = (ev->value & 0xFFFF);
+          }
+          ev->type = EV_SYN;
+          ev->code = SYN_REPORT;
         }
-        else {
-          dev->p.state  &= ~INDR_POS_ST_LASTSYNC;
-          dev->p.x = (ev->value & 0x7FFF0000) >> 16;
-          dev->p.y = (ev->value & 0xFFFF);
-        }
-        ev->type = EV_SYN;
-        ev->code = SYN_REPORT;
         break;
         
       case ABS_MT_TOUCH_MAJOR:

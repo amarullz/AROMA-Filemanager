@@ -14,6 +14,7 @@ D:\DevelTools\linaro\bin\arm-linux-gnueabihf-gcc.exe ^
   -fPIC -DPIC  -Wl,-s -Werror ^
   -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_DEBUG ^
   -DFT2_BUILD_LIBRARY=1 -DDARWIN_NO_CARBON ^
+  -fopenmp -DLIBAROMA_CONFIG_OPENMP=1 ^
   ^
     -D_AROMA_NODEBUG ^
   ^

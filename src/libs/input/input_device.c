@@ -19,13 +19,6 @@
  * Input Event Hook and Manager
  *
  */
-#define ALOGE(...) LOGE(__VA_ARGS__); fprintf(stdout, "\n");
-#define ALOGI(...) LOGS(__VA_ARGS__); fprintf(stdout, "\n");
-#define ALOGS(...) LOGS(__VA_ARGS__); fprintf(stdout, "\n");
-#define ALOGW(...) LOGW(__VA_ARGS__);
-#define ALOGV(...) LOGV(__VA_ARGS__);
-#define ALOGT(...) LOGD(__VA_ARGS__);
-#define ALOGRT(...) LOGD(__VA_ARGS__);
 
 /* Touch Key Code */
 #define AINPUT_KEYCODE_MAX      0x200

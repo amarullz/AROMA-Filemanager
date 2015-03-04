@@ -69,7 +69,6 @@ struct _LIBAROMA_FB{
   LIBAROMA_FBCB_CONFIG config;
   
   /* Optional - DPI */
-  byte driver_canvas;
   int dpi;
   byte bigscreen;
   

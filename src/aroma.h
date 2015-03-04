@@ -1033,6 +1033,29 @@ int aconsole_isescape(ACONTROLP ctl);
 #define LOGV(...) /**/
 #define LOGD(...) /**/
 #endif
+#define ALOGT(...)
+#define ALOGRT(...)
+
+//**********[ AROMA LOGGING - LIBAROMA STYLE ]**********//
+#define ALOGE(...) \
+  fprintf(stdout, _AROMA_DEBUG_TAG "[E] " __VA_ARGS__); \
+  fprintf(stdout, "\n");
+#define ALOGI(...) \
+  fprintf(stdout, _AROMA_DEBUG_TAG "[I] " __VA_ARGS__); \
+  fprintf(stdout, "\n");
+#define ALOGS(...) \
+  fprintf(stdout, _AROMA_DEBUG_TAG "[S] " __VA_ARGS__); \
+  fprintf(stdout, "\n");
+#define ALOGW(...) \
+  fprintf(stdout, _AROMA_DEBUG_TAG "[W] " __VA_ARGS__); \
+  fprintf(stdout, "\n");
+#define ALOGV(...) \
+  fprintf(stdout, _AROMA_DEBUG_TAG "[V] " __VA_ARGS__); \
+  fprintf(stdout, "\n");
+
+
+
+
 #define STRINGIFY(x) #x
 #define EXPAND(x) STRINGIFY(x)
 

@@ -210,7 +210,7 @@ byte aui_start() {
         char absfile[512];
         snprintf(absfile,512,"%s%s",path,selfile);
         printf("Extract File : %s\n", absfile);
-        auido_extract(absfile,selfile,path);
+        auido_extract(absfile,selfile,&path);
       }
     }
     while (1);

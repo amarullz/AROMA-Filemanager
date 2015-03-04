@@ -379,26 +379,18 @@ byte ag_draw_opa(
   sw = (dx + sw > d->w) ? d->w - dx : sw;
   sh = (dy + sh > d->h) ? d->h - dy : sh;
   int x, y;
-  
+
+#ifdef LIBAROMA_CONFIG_OPENMP
+  #pragma omp parallel for
+#endif
   for (y = 0; y < sh; y++) {
     word * t = d->data + (y + sy) * d->w + sx;
     word * p = s->data + (y + dy) * s->w + dx;
-    
     if (withdest) {
       libaroma_alpha_const(sw, t, t, p, alpha);
-      /*
-      for (x = 0; x < sw; x++) {
-        *t = ag_calculatealpha(*t, *p++, alpha);
-        *t++;
-      }
-      */
     }
     else {
       libaroma_alpha_black(sw, t, p, alpha);
-      /*
-      for (x = 0; x < sw; x++) {
-        *t++ = aAlphaB(*p++, alpha);
-      }*/
     }
   }
   
@@ -495,7 +487,8 @@ static void * ag_thread(void * cookie) {
 void ag_copybusy(char * wait) {
   CANVAS tmpc;
   ag_canvas(&tmpc, agw(), agh());
-  ag_draw(&tmpc, &ag_c, 0, 0);
+  // ag_draw(&tmpc, &ag_c, 0, 0);
+  memcpy(tmpc.data, ag_b, ag_fbsz);
   ag_rectopa(&tmpc, 0, 0, agw(), agh(), 0x0000, 180);
   while (!(ag_fontready(0))) {
     usleep(50);
@@ -527,61 +520,31 @@ void ag_busyprogress() {
   if (!ag_isbusy) {
     return;
   }
-  ag_busypos++;
-  if (ag_busypos>80) {
+  ag_busypos+=10;
+  if (ag_busypos>180) {
     ag_busypos = 0;
   }
-  libaroma_alpha_const(
-    libaromafb()->sz,
-    ag_fbuf,ag_fbuf,ag_bz,255-ag_busypos);
-  
-  /*
-  int bs_x = (agw() / 2) - (ag_busywinW / 2);
-  int bs_y = (agh() / 2) + ag_fontheight(0) - (agdp() * 2);
-  int bs_h = agdp() * 2;
-  int bs_w = ag_busywinW;
-  int bs_w2 = bs_w / 2;
-  int x, y;
-  for (x = bs_x; x < bs_x + bs_w; x++) {
-    if ((x + ag_busypos) % (bs_h * 2) < bs_h) {
-      int i = x - bs_x;
-      int alp;
-      
-      if (i < bs_w2) {
-        alp = ((i * 255) / bs_w2);
-      }
-      else {
-        alp = (((bs_w - i) * 255) / bs_w2);
-      }
-      
-      alp = min(alp, 255);
-      
-      for (y = bs_y; y < bs_y + bs_h; y++) {
-        int yp = y * ag_16w;
-        int xy  = yp + x;
-        ag_fbuf[xy] = ag_rgb(alp, alp, alp);
-      }
-    }
-  }*/
-  
+  byte alp=0;
+  if (ag_busypos>90){
+    alp=255-(ag_busypos-90);
+  }
+  else{
+    alp=(255-90)+ag_busypos;
+  }
+  int y;
+#ifdef LIBAROMA_CONFIG_OPENMP
+  #pragma omp parallel for
+#endif
+  for (y=0;y<libaromafb()->h;y++){
+    int p=y*libaromafb()->w;
+    libaroma_alpha_const_line(y, libaromafb()->w,ag_fbuf+p,ag_b+p,ag_bz+p,alp);
+  }
   if (!ag_isbusy) {
     ag_sync();
   }
 }
 void ag16fbufcopy(word * bfbz) {
   memcpy(ag_fbuf,bfbz,ag_fbsz);
-  /*
-  int x, y;
-  for (y = 0; y < libaromafb()->h; y++) {
-    int yp    = y * libaromafb()->w;
-    int ypos  = y * ag_line_length;
-    
-    for (x = 0; x < libaromafb()->w; x++) {
-      int xy = yp + x;
-      int xp = ypos + (x * agclp);
-      ag_fbuf[xp / 2] = bfbz[xy];
-    }
-  }*/
 }
 void ag_drawcaret() {
   if (ag_caret[2] > 0) {
@@ -652,9 +615,10 @@ void ag_refreshrate() {
     ag_busyprogress();
     libaroma_sync();
   }
-  else if (ag_lastbusy < alib_tick() - 500) {
+  else if (ag_lastbusy < alib_tick() - 50) {
     ag_copybusy("Please Wait...");
     ag_isbusy = 2;
+    memcpy(ag_fbuf, ag_bz, ag_fbsz);
     libaroma_sync();
   }
   else if (ag_have_sync){
@@ -693,38 +657,6 @@ static void * ag_sync_fade_thread(void * cookie) {
   
   for (i = 0; (i < (frame / 2)) && ag_sync_locked; i++) {
     byte perc = (255 / frame) * i;
-    /*
-    byte ralpha = 255 - perc;
-    for (y = 0; y < agh(); y++) {
-      int yp = y * agw();
-      byte er = 0;
-      byte eg = 0;
-      byte eb = 0;
-      
-      for (x = 0; x < agw(); x++) {
-        int xy = yp + x;
-        color * s = agxy(NULL, x, y);
-        color   d = ag_b[xy];
-        
-        if (s[0] != d) {
-          byte r = min(((byte) (((((int) ag_r(d)) * ralpha) + (((int) ag_r(s[0])) * perc)) >> 8)) + er, 255);
-          byte g = min(((byte) (((((int) ag_g(d)) * ralpha) + (((int) ag_g(s[0])) * perc)) >> 8)) + eg, 255);
-          byte b = min(((byte) (((((int) ag_b(d)) * ralpha) + (((int) ag_b(s[0])) * perc)) >> 8)) + eb, 255);
-          byte nr = ag_close_r(r);
-          byte ng = ag_close_g(g);
-          byte nb = ag_close_b(b);
-          ag_b[xy] = ag_rgb(nr, ng, nb);
-          er     = r - nr;
-          eg     = g - ng;
-          eb     = b - nb;
-        }
-        else {
-          er = 0;
-          eg = 0;
-          eb = 0;
-        }
-      }
-    } */
     libaroma_alpha_const(libaromafb()->sz,
       ag_b, ag_b, ag_c.data, perc);
     ag_have_sync = 1;
@@ -1034,6 +966,9 @@ byte ag_draw_ex(CANVAS * dc, CANVAS * sc, int dx, int dy, int sx, int sy, int sw
   byte * src   = ((byte *) sc->data);
   byte * dst   = ((byte *) dc->data);
   
+#ifdef LIBAROMA_CONFIG_OPENMP
+  #pragma omp parallel for
+#endif
   for (y = 0; y < sr_h; y++) {
     memcpy(
       dst + ((ds_y + y)*pos_dc_w) + pos_ds_x,
@@ -1195,15 +1130,12 @@ byte ag_rect(CANVAS * _b, int x, int y, int w, int h, color cl) {
   h = y2 - y;
   //-- LOOPS
   int yy;
-  
+#ifdef LIBAROMA_CONFIG_OPENMP
+  #pragma omp parallel for
+#endif
   for (yy = y; yy < y2; yy++) {
     int i = yy * _b->w + x;
     libaroma_color_set(_b->data+i, cl, x2-x);
-    /*
-    for (xx = x; xx < x2; xx++) {
-      _b->data[i + xx] = cl;
-    }
-    */
   }
   
   return 1;
@@ -1245,39 +1177,12 @@ byte ag_rectopa(CANVAS * _b, int x, int y, int w, int h, color cl, byte l) {
   */
   //-- LOOPS
   int yy;
-  
+#ifdef LIBAROMA_CONFIG_OPENMP
+  #pragma omp parallel for
+#endif
   for (yy = y; yy < y2; yy++) {
     int i = yy * _b->w + x;
     libaroma_alpha_rgba_fill(x2-x,_b->data+i,_b->data+i,cl,l);
-    
-    /*
-    byte er = 0;
-    byte eg = 0;
-    byte eb = 0;
-    libaroma_color_set(_b->data+i, cl, x2-x);
-    */
-    /*
-    for (xx = x; xx < x2; xx++) {
-      color * cv = agxy(_b, xx, yy);
-      if (cv[0] != cl) {
-        byte  ralpha = 255 - l;
-        byte r = min(((byte) (((((int) ag_r(cv[0])) * ll) + (sr * l)) >> 8)) + er, 255);
-        byte g = min(((byte) (((((int) ag_g(cv[0])) * ll) + (sg * l)) >> 8)) + eg, 255);
-        byte b = min(((byte) (((((int) ag_b(cv[0])) * ll) + (sb * l)) >> 8)) + eb, 255);
-        byte nr = ag_close_r(r);
-        byte ng = ag_close_g(g);
-        byte nb = ag_close_b(b);
-        er     = r - nr;
-        eg     = g - ng;
-        eb     = b - nb;
-        cv[0]  = ag_rgb(nr, ng, nb);
-      }
-      else {
-        er = 0;
-        eg = 0;
-        eb = 0;
-      }
-    }*/
   }
   
   return 1;
@@ -1394,10 +1299,8 @@ byte ag_roundgrad_ex(CANVAS * _b, int x, int y, int w, int h, color cl1, color c
     for (rndy = 0; rndy < roundsz; rndy++) {
       byte alpy = 0;
       byte alpf = 0;
-      
       for (rndx = 0; rndx < roundsz; rndx++) {
         byte alpx = rndata[rndx + rndy * roundsz];
-        
         if ((alpy < alpx) && (!alpf)) {
           alpy = alpx;
         }

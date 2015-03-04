@@ -31,7 +31,7 @@ void LINUXFBDR_init_16bit(LIBAROMA_FBP me) {
   if (me == NULL) {
     return;
   }
-  LOGS("LINUXFBDR Init 16bit Colorspace\n");
+  ALOGS("LINUXFBDR Init 16bit Colorspace");
   LINUXFBDR_INTERNALP mi = (LINUXFBDR_INTERNALP) me->internal;
   
   /* fix not standard 16bit framebuffer */
@@ -55,12 +55,11 @@ byte LINUXFBDR_sync_16bit(
     return 0;
   }
   LINUXFBDR_INTERNALP mi = (LINUXFBDR_INTERNALP) me->internal;
-  
-  if ((w > 0) && (h > 0)) {
-    /* defined area only */
+  pthread_mutex_lock(&mi->mutex);
+  if ((w > 0) && (h > 0) && (!mi->double_buffering)) {
     int copy_stride = me->w-w;
     wordp copy_dst =
-      (wordp)  (((bytep) mi->buffer) + (mi->line * y) + (x * mi->pixsz));
+      (wordp)  (((bytep) mi->current_buffer) + (mi->line * y) + (x * mi->pixsz));
     wordp copy_src =
       (wordp) (src + (me->w * y) + x);
     libaroma_blt_align16(copy_dst, copy_src, w, h,
@@ -69,12 +68,13 @@ byte LINUXFBDR_sync_16bit(
     );
   }
   else {
-    /* whole screen */
-    libaroma_blt_align16((wordp) mi->buffer,
+    libaroma_blt_align16((wordp) mi->current_buffer,
       (wordp) src,
       me->w, me->h, mi->stride, 0
     );
   }
+  pthread_cond_signal(&mi->cond);
+  pthread_mutex_unlock(&mi->mutex);
   return 1;
 }
 

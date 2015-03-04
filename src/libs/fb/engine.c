@@ -598,6 +598,9 @@ void libaroma_blt_align16(wordp dst, wordp src,
   int ss = w2 + src_stride;
   bytep d = (bytep) dst;
   bytep s = (bytep) src;
+#ifdef LIBAROMA_CONFIG_OPENMP
+  #pragma omp parallel for
+#endif
   for (i = 0; i < h; i++) {
     memcpy(
       d+ds*i, s+ss*i, w2
@@ -609,6 +612,9 @@ void libaroma_blt_align32_to16(wordp dst, dwordp src,
   int i;
   int dline = w+(dst_stride>>1);
   int sline = w+(src_stride>>2);
+#ifdef LIBAROMA_CONFIG_OPENMP
+  #pragma omp parallel for
+#endif
   for (i = 0; i < h; i++) {
     libaroma_dither_line(
       i, w, dst+dline*i, src+sline*i
@@ -620,6 +626,9 @@ void libaroma_blt_align16_to32(dwordp dst, wordp src,
   int i;
   int dline = w+(dst_stride>>2);
   int sline = w+(src_stride>>1);
+#ifdef LIBAROMA_CONFIG_OPENMP
+  #pragma omp parallel for
+#endif
   for (i = 0; i < h; i++) {
     libaroma_btl32(
       w,dst+dline*i,src+sline*i
@@ -634,6 +643,9 @@ void libaroma_blt_align32(dwordp dst, dwordp src,
   int ss = w4 + src_stride;
   bytep d = (bytep) dst;
   bytep s = (bytep) src;
+#ifdef LIBAROMA_CONFIG_OPENMP
+  #pragma omp parallel for
+#endif
   for (i = 0; i < h; i++) {
     memcpy(
       d+ds*i, s+ss*i, w4
@@ -646,6 +658,9 @@ void libaroma_blt_align_to32_pos(dwordp dst, wordp src,
   int i;
   int dline = w+(dst_stride>>2);
   int sline = w+(src_stride>>1);
+#ifdef LIBAROMA_CONFIG_OPENMP
+  #pragma omp parallel for
+#endif
   for (i = 0; i < h; i++) {
     libaroma_color_copy32(
       dst+dline*i, src+sline*i, w, rgb_pos
@@ -658,6 +673,9 @@ void libaroma_blt_align_to16_pos(wordp dst, dwordp src,
   int i;
   int dline = w+(dst_stride>>1);
   int sline = w+(src_stride>>2);
+#ifdef LIBAROMA_CONFIG_OPENMP
+  #pragma omp parallel for
+#endif
   for (i = 0; i < h; i++) {
     libaroma_color_copy16(
       dst+dline*i, src+sline*i, w, rgb_pos

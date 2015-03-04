@@ -33,10 +33,6 @@ void LINUXFBDR_setrgbpos(LIBAROMA_FBP me, byte r, byte g, byte b) {
   }
   LINUXFBDR_INTERNALP mi = (LINUXFBDR_INTERNALP) me->internal;
   /* save color position */
-  colorspace_positions[0]=r;
-  colorspace_positions[1]=g;
-  colorspace_positions[2]=b;
-  colorspace_positions[3]=0;
   mi->rgb_pos[0] = r;
   mi->rgb_pos[1] = g;
   mi->rgb_pos[2] = b;
@@ -52,7 +48,7 @@ void LINUXFBDR_init_32bit(LIBAROMA_FBP me) {
   if (me == NULL) {
     return;
   }
-  LOGS("LINUXFBDR Init 32bit Colorspace\n");
+  ALOGS("LINUXFBDR Init 32bit Colorspace");
   LINUXFBDR_INTERNALP mi = (LINUXFBDR_INTERNALP) me->internal;
   
   mi->stride = mi->line - (me->w * mi->pixsz); /* calculate stride size */
@@ -80,12 +76,11 @@ byte LINUXFBDR_sync_32bit(
     return 0;
   }
   LINUXFBDR_INTERNALP mi = (LINUXFBDR_INTERNALP) me->internal;
-  mi->synced++;
-  if ((w > 0) && (h > 0)) {
-    /* defined area only */
+  pthread_mutex_lock(&mi->mutex);
+  if ((w > 0) && (h > 0) && (!mi->double_buffering)) {
     int copy_stride = me->w - w;
     dwordp copy_dst =
-      (dwordp) (((bytep) mi->buffer) + (mi->line * y) + (x * mi->pixsz));
+      (dwordp) (((bytep) mi->current_buffer) + (mi->line * y) + (x * mi->pixsz));
     wordp copy_src =
       (wordp) (src + (me->w * y) + x);
     libaroma_blt_align_to32_pos(
@@ -96,14 +91,13 @@ byte LINUXFBDR_sync_32bit(
     );
   }
   else {
-    /* whole screen */
     libaroma_blt_align_to32_pos(
-      (dwordp) mi->buffer, src,
+      (dwordp) mi->current_buffer, src,
       me->w, me->h, mi->stride, 0,
       mi->rgb_pos);
   }
-  mi->synced--;
-  /* set synced flag */
+  pthread_cond_signal(&mi->cond);
+  pthread_mutex_unlock(&mi->mutex);
   return 1;
 }
 

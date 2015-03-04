@@ -24,7 +24,7 @@
 typedef struct{
   char * zip_path;
   char * bname;
-  char * path;
+  char ** path;
   char desttarget[256];
   char currfile[256];
   int count;
@@ -44,9 +44,9 @@ static pthread_mutex_t _aui_extract_mutex = PTHREAD_MUTEX_INITIALIZER;
 #define EXTRACT_DIRMODE 0755
 #define EXTRACT_FILEMODE 0644
 
-void aui_extract_find_name(char * out, int sz, char * path, char * bname){
+void aui_extract_find_name(char * out, int sz, char ** path, char * bname){
   char fmname[512];
-  snprintf(fmname,512,"%s%s",path,bname);
+  snprintf(fmname,512,"%s%s",*path,bname);
   fmname[strlen(fmname)-4]=0;
   snprintf(out,sz,"%s",fmname);
   int try_num = 2;
@@ -109,13 +109,18 @@ static void * aui_extract_thread(void * cookie){
       return NULL;
     }
     
+    // snprintf(uix->path,256,"%s/",uix->desttarget);
+    aui_setpath(uix->path, "", uix->desttarget, 1);
+    
     uix->count=mzZipEntryCount(&fzip);
     int i;
     for (i=0;((i<uix->count)&&(uix->status>0));i++){
       const ZipEntry* ze = mzGetZipEntryAt(&fzip,i);
       char filename[1024];
+      char dest_filename[1024];
       memcpy(filename,ze->fileName,ze->fileNameLen);
       filename[ze->fileNameLen]=0;
+      snprintf(dest_filename,1024,"%s",filename);
       char * dsz = aui_strip(filename, uix->maxw, 0);
       if (dsz != NULL) {
         snprintf(filename, 1024,"%s",dsz);
@@ -128,7 +133,7 @@ static void * aui_extract_thread(void * cookie){
       
       /* extract */
       char abs_entry[1024];
-      snprintf(abs_entry,1024,"%s/%s",uix->desttarget,filename);
+      snprintf(abs_entry,1024,"%s/%s",uix->desttarget,dest_filename);
       if (ze->fileName[ze->fileNameLen-1]=='/'){
         /* directory */
         mkpath(abs_entry, EXTRACT_DIRMODE);
@@ -189,7 +194,7 @@ static void * aui_extract_thread(void * cookie){
   }
   return NULL;
 }
-void auido_show_extract(char * zip_path, char * bname, char * path) {
+void auido_show_extract(char * zip_path, char * bname, char ** path) {
   //-- Init Dialog Window
   CANVAS * tmpc = aw_muteparent(NULL);
   aw_set_on_dialog(2);
@@ -401,18 +406,28 @@ void auido_show_extract(char * zip_path, char * bname, char * path) {
         break;
       case 103:{
           /* error */
+          pthread_mutex_lock(&_aui_extract_mutex);
+          acprog_setonwait(ovrProg, 0);
+          acprog_setvalue(ovrProg,0, 0);
+          uix.status=0;
           aw_alert(NULL, alang_get("extract.error"),
                alang_get("extract.invalidfile"),
                aui_icons(37), alang_get("close"));
           ondispatch=0;
+          pthread_mutex_unlock(&_aui_extract_mutex);
         }
         break;
       case 104:{
           /* error */
-          aw_alert(NULL, alang_get("extract.error"),
+          pthread_mutex_lock(&_aui_extract_mutex);
+          acprog_setonwait(ovrProg, 0);
+          acprog_setvalue(ovrProg,0, 0);
+          uix.status=0;
+          aw_alert(hWin, alang_get("extract.error"),
                alang_get("permission.denied"),
                aui_icons(37), alang_get("close"));
           ondispatch=0;
+          pthread_mutex_unlock(&_aui_extract_mutex);
         }
         break;
     }
@@ -426,7 +441,7 @@ void auido_show_extract(char * zip_path, char * bname, char * path) {
   aw_unmaskparent(NULL, tmpc, maskc, winX - 1, winY - 1, winW + 2, winH + 2);
 }
 
-void auido_extract(char * zip_path, char * bname, char * path) {
+void auido_extract(char * zip_path, char * bname, char ** path) {
   ag_setbusy();
   auido_show_extract(zip_path,bname,path);
   return;

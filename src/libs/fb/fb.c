@@ -33,6 +33,24 @@
  */
 static LIBAROMA_FBP _libaroma_fb=NULL;
 
+void libaroma_runtime_activate_cores(int num_cores){
+  int i;
+  FILE * fp;
+  struct stat st;
+  char path[256];
+  for (i=0;i<num_cores;i++){
+    snprintf(path,256,"/sys/devices/system/cpu/cpu%i/online",i);
+    if (stat(path,&st)<0) {
+      break;
+    }
+    fp = fopen(path, "w+");
+    if(fp){
+      fputc('1',fp);
+      fclose(fp);
+    }
+  }
+} /* End of libaroma_runtime_activate_cores */
+
 /*
  * Function    : libaroma_fb
  * Return Value: LIBAROMA_FBP
@@ -53,6 +71,8 @@ LIBAROMA_FBP libaroma_fb_init() {
     LOGE("libaroma_fb_init framebuffer already initialized\n");
     return NULL;
   }
+  
+  libaroma_runtime_activate_cores(8);
   
   /* allocating instance memory */
   LOGV("libaroma_fb_init allocating framebuffer instance\n");
@@ -101,10 +121,8 @@ LIBAROMA_FBP libaroma_fb_init() {
   _libaroma_fb->bigscreen = (dpMinWH >= 600); 
   
   /* create framebuffer canvas */
-  if (!_libaroma_fb->driver_canvas){
-    _libaroma_fb->canvas  = (wordp) malloc(_libaroma_fb->sz*2);
-    memset(_libaroma_fb->canvas,0,_libaroma_fb->sz*2);
-  }
+  _libaroma_fb->canvas  = (wordp) malloc(_libaroma_fb->sz*2);
+  memset(_libaroma_fb->canvas,0,_libaroma_fb->sz*2);
 
   /* Show Information */
   LOGS("Framebuffer Initialized (%ix%ipx - %i dpi)\n",
@@ -136,9 +154,7 @@ byte libaroma_fb_release() {
   
   /* Free display canvas */
   LOGV("Releasing Canvas\n");
-  if (!_libaroma_fb->driver_canvas){
-    free(_libaroma_fb->canvas);
-  }
+  free(_libaroma_fb->canvas);
   
   /* Release Framebuffer Driver */
   LOGV("Releasing Framebuffer Driver\n");
