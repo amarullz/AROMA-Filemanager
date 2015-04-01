@@ -1,0 +1,165 @@
+﻿ok = OK
+yes = Tak
+no = Nie
+done = Gotowe
+cancel = Anuluj
+tryagain = Spróbuj ponownie
+exit = Wyjście
+about = Informacje
+continue = Kontynuj
+select = Wybierz
+close = Zamknij
+
+canceling = Trwa anulowanie...
+finishing = Kończenie...
+calculating = Obliczanie
+discovered = Odkryto %s plików
+deleting = Usuwanie %s plików
+moving = Przenoszenie %s z %s plików
+copying = Kopiowanie %s z %s plików
+progress.of = %s z %s
+permission.denied = Odmowa uprawnień
+
+seconds = sekund
+minutes = minut
+hours = godzin
+remaining = Pozostało
+
+mounting = Montowanie
+umounting = Odmontowywanie
+exit.message = Czy na pewno chcesz zamknąć Aroma FM?
+
+tools.newfolder = Nowy folder
+tools.favorite = Ulubione
+tools.selectall = Zaznacz wszystko
+tools.unselect = Odznacz
+tools.copy = Kopiuj
+tools.cut = Wytnij
+tools.paste = Wklej
+tools.menu = Menu
+tools.delete = Usuń
+tools.details = Szczegóły
+tools.chmod = Zmiana uprawnień
+tools.rename = Zmień nazwę
+tools.favorite.add = Dodaj do ulubionych
+tools.favorite.del = Usuń z ulubionych
+tools.hiddenfile = Niepokazuj ukrytych plików
+tools.hiddenfile.show = Pokaż ukryte pliki 
+tools.terminal = Otwórz terminal
+tools.shell = Otwórz w Shell'u
+tools.extract = Wyodrębnij plik ZIP
+
+file.exists = Plik już istnieje
+file.exists.info = Istnieje już plik o tej samej nazwie w tej lokalizacji.
+overwrite.skip = Pomiń
+overwrite.skipall = Pomiń wszystkie
+overwrite = Nadpisz
+overwrite.all = Nadpisz wszystko
+
+disk.full = Pamięć pełna
+disk.full.info = Pamięć jest juz pełna, czy chcesz pominąć ten plik?
+disk.full.info2 = Pamięć jest juz pełna, nie można wykonać żądanego zadania.
+
+newfolder = Utwórz nowy folder
+newfolder.insertname = Proszę wpisać nazwę, aby utworzyć nowy folder
+newfolder.exist = Istnieje już folder o takiej samej nazwie, jak nazwa folderu która została podana.\
+\
+Wprowadź inną nazwę.
+
+paste.location = Wybierz lokalizację i naciśnij wklej
+
+dir.root = Root
+dir.filecount = %s plik
+dir.filecounts = %s plików
+
+selected.file = %i zaznaczony plik
+selected.files = %i zaznaczonych plików
+
+symlink = Dowiązanie symboliczne
+symlink.error = Błąd dowiązania symbolicznego
+
+settings = Ustawienia
+settings.calib = Kalibracja wyświetlacza
+settings.reset = Resetuj ustawienia
+
+settings.toolbar = Styl Toolbara
+settings.toolbar.icontext = Ikony i tekst
+settings.toolbar.icononly = Tylko ikony
+
+settings.fontsize = Rozmiar czcionki
+settings.fontsize.small = Mała
+settings.fontsize.medium = Średnia
+settings.fontsize.big = Duża
+
+settings.colorspace = Ustawianie przestrzeni kolorów
+settings.colorspace.rgba = RGBA
+settings.colorspace.abgr = ABGR
+settings.colorspace.argb = ARGB
+settings.colorspace.bgra = BGRA
+
+settings.vibration = Intensywność wibracji
+settings.vibration.none = Brak wibracji
+settings.vibration.low = Słabe wibracje
+settings.vibration.medium = Średnie wibracje
+settings.vibration.high = Intensywne wibracje
+
+settings.fontfamily = Czcionki
+settings.iconset = Zestawy ikon
+settings.themes = Motywy
+settings.lang = Języki
+
+settings.trans = Animacje przejścia
+settings.trans.0 = Brak przejścia
+settings.trans.1 = Szybkie
+settings.trans.2 = Normalne
+settings.trans.3 = Gładkie
+settings.trans.4 = Extra Gładkie
+
+settings.mount = Konfiguracja montowania
+settings.mount.all = Automontowanie wszystkich urządzeń przy starcie
+settings.mount.none = Brak
+
+settings.reset.msg=Czy na pewno chcesz zresetować ustawienia?
+
+newfolder.error = Nie można utworzyć nowego folderu
+
+rename = Zmień nazwę pliku
+rename.insertname = Wprowadź nowa nazwę pliku
+rename.exist = Istnieje już plik lub folder o takiej samej nazwie, jak nazwa elementu która została podana.\
+\
+Podaj inna nazwę.
+rename.error = Nie można zmienić nazwy pliku
+
+paste.error = Błąd przy wklejaniu
+paste.subfolder_paste = Folder docelowy jest podfolderem folderu źródłowego.\
+\
+Spróbuj wkleić go w innym miejscu.
+paste.nofile = Nie ma pliku do wklejenia tutaj
+
+copy.prepare = Przygotowanie do kopiowania
+move.prepare = Przygotowanie do przeniesienia
+delete.prepare = Przygotowanie do usunięcia
+
+delete.title = Usuń plik
+delete.message = Czy na pewno chcesz trwale usunąć %s elementów?
+
+extract.error = Błąd przy wyodrębnianiu
+extract.invalidfile = Wybrany plik nie jest poprawnym archiwum ZIP
+extract.extractfile = Wyodrębnianie pliku ZIP
+extract.extractof = Wyodrębnianie %i z %i
+extract.preparing = Przygotowywanie do wyodrębniania
+extract.cancelmsg = Czy na pewno chcesz anulować proces wyodrębniania?
+
+tools.chmod.read = Odczyt
+tools.chmod.write = Zapis
+tools.chmod.exec = Wykonanie
+tools.chmod.user = Użytkownik
+tools.chmod.group = Grupa
+tools.chmod.others = Inni
+tools.chmod.setuid = SetUID
+tools.chmod.setgid = SetGID
+tools.chmod.sticky = Sticky
+
+tools.terminal.title = Terminal
+tools.terminal.terminate = Zakończ
+tools.terminal.terminate_info = Terminal jest wciąż uruchomiony ... Czy na pewno chcesz zakończyć jego działanie?
