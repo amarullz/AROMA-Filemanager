@@ -36,7 +36,11 @@ fi
 
 if [ "$4" == 1 ] || [ "$4" == 3 ] ; then
 	rm "$klloc/initrd.img"
-	cp "/tmp/bootTMP/boot-ramdisk.gz" "$klloc/initrd.img"
+	mkdir /tmp/bootTMP/ramdisk/
+	cd /tmp/bootTMP/ramdisk/
+	gunzip -c "/tmp/bootTMP/boot-ramdisk.gz" | cpio -i
+	sed -i -e "s/restorecon_recursive \/data//" ./init.rc
+	find . | cpio -o -H newc | gzip > "$klloc/initrd.img"
 	echo "$BootName">"$klloc/ramdisk"
 fi
 
@@ -44,4 +48,4 @@ chmod 755 "$klloc/"
 chmod 644 "$klloc/*"
 
 rm boot
-rm -R bootTMP
+rm -Rf bootTMP
