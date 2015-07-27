@@ -1,0 +1,166 @@
+﻿ok = OK
+yes = Ja
+no = Nein
+done = Fertig
+cancel = Abbruch
+tryagain = Wiederholen
+exit = Beenden
+about = Über
+continue = Weiter
+select = Auswählen
+close = Schließen
+
+canceling = Abbrechen...
+finishing = Fertigstellen...
+calculating = Berechnung
+discovered = %s Dateien entdeckt
+deleting = gelöscht, %s Dateien
+moving = verschoben, %s von %s Dateien
+copying = kopiert, %s von %s Dateien
+progress.of = %s von %s
+permission.denied = Zugriff Verweigert
+
+seconds = sekunden
+minutes = minuten
+hours = stunden
+remaining = verbleibend
+
+mounting = Geräte einbinden
+umounting = Geräte aushängen
+exit.message = Sind Sie sicher, Sie wollen den Dateimanager verlassen?
+
+tools.newfolder = Neuer Ordner
+tools.favorite = Favoriten
+tools.selectall = Alle wählen
+tools.unselect = Abwählen
+tools.copy = Kopieren
+tools.cut = Ausschneiden
+tools.paste = Einfügen
+tools.menu = Menü
+tools.delete = Löschen
+tools.details = Details
+tools.chmod = Rechte ändern
+tools.rename = Umbennen
+tools.favorite.add = Favoriten hinzufügen
+tools.favorite.del = Favoriten entfernen
+tools.hiddenfile = Versteckte Dateien verstecken
+tools.hiddenfile.show = Versteckte Dateien anzeigen
+tools.terminal = Konsole öffnen
+tools.shell = Shell ausführen
+tools.extract = Zip entpacken
+
+file.exists = Datei existiert schon
+file.exists.info = Es gibt bereits eine Datei mit dem gleichen Namen in diesem Ort.
+overwrite.skip = Überspringen
+overwrite.skipall = Alle überspringen
+overwrite = Überschreiben
+overwrite.all = Alle überschreiben
+
+disk.full = Partition voll
+disk.full.info = Da der Speicher bereits voll ist, möchten Sie diese Datei überspringen?
+disk.full.info2 = Da der Speicher bereits voll ist, kann die angeforderte Operation nicht ausgeführt werden.
+
+newfolder = Neuer Ordner erstellen
+newfolder.insertname = Bitte einen Namen für den Ordner eingeben.
+newfolder.exist = Es gibt bereits eine Datei oder einen Ordner mit dem gleichen Namen wie der von Ihnen angegebenen Ordnernamen.\
+\
+Bitte geben Sie einen anderen Namen an.
+
+paste.location = Ort wählen und wählen Sie Einfügen
+
+dir.root = Root
+dir.filecount = %s Datei
+dir.filecounts = %s Dateien
+
+selected.file = %i Datei ausgewählt
+selected.files = %i Dateien ausgewählt
+
+symlink = Symlink
+symlink.error = Symlink Fehler
+
+settings = Einstellungen
+settings.calib = Bildschirm Kalibrieren
+settings.reset = Zurücksetzen
+
+settings.toolbar = Toolbar Style
+settings.toolbar.icontext = Icon und Text
+settings.toolbar.icononly = Icon
+
+settings.fontsize = Schriftgröße
+settings.fontsize.small = Klein
+settings.fontsize.medium = Mittel
+settings.fontsize.big = Groß
+
+settings.colorspace = Farbraum auswählen
+settings.colorspace.rgba = RGBA
+settings.colorspace.abgr = ABGR
+settings.colorspace.argb = ARGB
+settings.colorspace.bgra = BGRA
+
+settings.vibration = Haptisches Feedback Intensität
+settings.vibration.none = Keine Vibration
+settings.vibration.low = Leicht Vibration
+settings.vibration.medium = Mittel Vibration
+settings.vibration.high = Hohe Vibration
+
+settings.fontfamily = Schriftart
+settings.iconset = Iconset
+settings.themes = Themen
+settings.lang = Sprachen
+
+settings.trans = Dauer der Animation
+settings.trans.0 = keine Dauer
+settings.trans.1 = Schnell
+settings.trans.2 = Normal
+settings.trans.3 = Langsam
+settings.trans.4 = Sehr Langsam
+
+settings.mount = Einbinden Einstellung
+settings.mount.all = Alle Geräte beim Start automatisch einbinden
+settings.mount.none = Keine
+
+settings.reset.msg=Sind Sie sicher, die Einstellungen zurückzusetzen?
+
+newfolder.error = Kann neuen Ordner nicht erstellen
+
+rename = Datei umbennen
+rename.insertname = Bitte geben Sie einen neuen Dateinamen an, um diese Datei umzubenennen
+rename.exist = Es gibt bereits eine Datei oder einen Ordner mit dem gleichen Namen wie der von Ihnen angegebenen Dateiname.\
+\
+Bitte geben Sie einen anderen Namen an.
+
+rename.error = Datei kann nicht umbenannt werden
+
+paste.error = Fehler beim Einfügen
+paste.subfolder_paste = Der Zielordner ist ein Unterordner des Quellordners.\
+\
+Versuchen Sie es in einem anderen Ort einzufügen.
+paste.nofile = Es existiert keine Datei zum einfügen
+
+copy.prepare = Vorbereitung zum Kopieren
+move.prepare = Vorbereitung zum Verschieben
+delete.prepare = Vorbereitung zum Löschen
+
+delete.title = Datei Löschen
+delete.message = Sind Sie sicher, dass Sie %s Einträge endgültig löschen?
+
+extract.error = Fehler beim Entpacken
+extract.invalidfile = Die ausgewählte Datei ist ein ungültiges Zip-Archiv
+extract.extractfile = Zip entpacken
+extract.extractof = entpackt, %i von %i
+extract.preparing = Vorbereiten zum Entpacken
+extract.cancelmsg = Sind Sie sicher, Sie wollen Extraktionsprozess abbrechen?
+
+tools.chmod.read = Read
+tools.chmod.write = Write
+tools.chmod.exec = Exec
+tools.chmod.user = User
+tools.chmod.group = Group
+tools.chmod.others = Others
+tools.chmod.setuid = SetUID
+tools.chmod.setgid = SetGID
+tools.chmod.sticky = Sticky
+
+tools.terminal.title = Terminal
+tools.terminal.terminate = Beenden
+tools.terminal.terminate_info = Shell läuft noch ... Sind Sie sicher, dass Sie es beenden?
