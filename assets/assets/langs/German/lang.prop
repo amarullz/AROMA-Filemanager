@@ -163,4 +163,4 @@ tools.chmod.sticky = Sticky
 
 tools.terminal.title = Terminal
 tools.terminal.terminate = Beenden
-tools.terminal.terminate_info = Shell läuft noch ... Sind Sie sicher, dass Sie es beenden?
+tools.terminal.terminate_info = Shell läuft noch... sind Sie sicher, Shell beenden?
