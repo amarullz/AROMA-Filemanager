@@ -149,7 +149,7 @@ extract.invalidfile = Die ausgewählte Datei ist ein ungültiges Zip-Archiv
 extract.extractfile = Zip entpacken
 extract.extractof = entpackt, %i von %i
 extract.preparing = Vorbereiten zum Entpacken
-extract.cancelmsg = Sind Sie sicher, Sie wollen Extraktionsprozess abbrechen?
+extract.cancelmsg = Sind Sie sicher, Sie wollen den Extraktionsprozess abbrechen?
 
 tools.chmod.read = Read
 tools.chmod.write = Write
