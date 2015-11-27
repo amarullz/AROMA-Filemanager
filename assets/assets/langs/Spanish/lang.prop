@@ -1,0 +1,165 @@
+ok = OK
+yes = Si
+no = No
+done = Realizado
+cancel = Cancelar
+tryagain = Volver a intentar
+exit = Salir
+about = Acerca de
+continue = Continuar
+select = Seleccionar
+close = Cerrar
+
+canceling = Cancelando...
+finishing = Finalizando...
+calculating = Calculando
+discovered = Descubiertos %s Archivos
+deleting = Eliminando %s Archivos
+moving = Moviendo %s de %s Archivos
+copying = Copiando %s de %s Archivos
+progress.of = %s de %s
+permission.denied = Permisos Denegados
+
+seconds = segundos
+minutes = minutos
+hours = horas
+remaining = restantes
+
+mounting = Montando Dispositivos
+umounting = Desmontando Dispositivos
+exit.message = ¿Está seguro que desea salir de Aroma File Manager?
+
+tools.newfolder = Nueva Carpeta
+tools.favorite = Favoritos
+tools.selectall = Seleccionar Todo
+tools.unselect = Deseleccionar
+tools.copy = Copiar
+tools.cut = Cortar
+tools.paste = Pegar
+tools.menu = Menú
+tools.delete = Eliminar
+tools.details = Detalles
+tools.chmod = Cambiar Permisos
+tools.rename = Renombrar
+tools.favorite.add = Añadir a favoritos
+tools.favorite.del = Quitar de favoritos
+tools.hiddenfile = Ocultar archivos ocultos
+tools.hiddenfile.show = Mostrar archivos ocultos 
+tools.terminal = Abrir Consola
+tools.shell = Ejecutar en Shell
+tools.extract = Extraer Zip
+
+file.exists = El archivo ya existe
+file.exists.info = Hay un archivo con el mismo nombre en este destino.
+overwrite.skip = Saltar
+overwrite.skipall = Saltar Todo
+overwrite = Sobreescribir
+overwrite.all = Sobreescribir Todo
+
+disk.full = Disco Completo
+disk.full.info = El almacenamiento está completo, ¿Desea saltarse este archivo?
+disk.full.info2 = El almacenamiento está completo, no se puede realizar la operación.
+
+newfolder = Crear nueva carpeta
+newfolder.insertname = Por favor ingrese un nombre para crear la nueva carpeta
+newfolder.exist = Hay un archivo o carpeta con el mismo nombre que el nombre de carpeta que ha especificado.\
+\
+Por favor especifique un nombre diferente.
+
+paste.location = Seleccione un destino y presione Pegar
+
+dir.root = Root
+dir.filecount = %s Archivo
+dir.filecounts = %s Archivos
+
+selected.file = %i Archivo seleccionado
+selected.files = %i Archivos seleccionados
+
+symlink = Symlink
+symlink.error = Symlink error
+
+settings = Ajustes
+settings.calib = Ajustar Pantalla
+settings.reset = Restaurar Ajustes
+
+settings.toolbar = Estilo de la Barra de Tareas
+settings.toolbar.icontext = Icono y Texto
+settings.toolbar.icononly = Icono solamente
+
+settings.fontsize = Tamaño de la Fuente
+settings.fontsize.small = Pequeña
+settings.fontsize.medium = Mediana
+settings.fontsize.big = Grande
+
+settings.colorspace = Color del Espacio
+settings.colorspace.rgba = RGBA
+settings.colorspace.abgr = ABGR
+settings.colorspace.argb = ARGB
+settings.colorspace.bgra = BGRA
+
+settings.vibration = Intensidad de Vibración
+settings.vibration.none = Sin Vibración
+settings.vibration.low = Vibración Baja
+settings.vibration.medium = Vibración Media
+settings.vibration.high = Vibración Alta
+
+settings.fontfamily = Familia Tipográfica
+settings.iconset = Conjunto de iconos
+settings.themes = Temas
+settings.lang = Lenguajes
+
+settings.trans = Transición de Animación
+settings.trans.0 = Sin Transición
+settings.trans.1 = Rápida
+settings.trans.2 = Normal
+settings.trans.3 = Lenta
+settings.trans.4 = Muy Lenta
+
+settings.mount = Configuración de Montaje
+settings.mount.all = Automontar todos los dispositivos al iniciar
+settings.mount.none = No hacer nada
+
+settings.reset.msg = ¿Está seguro que desea restaurar sus ajustes?
+
+newfolder.error = No se pudo crear la nueva carpeta
+
+rename = Renombrar Archivo
+rename.insertname = Por favor ingrese un nombre para renombrar este archivo
+rename.exist = Hay un archivo o carpeta con el mismo nombre que el nombre del elemento que ha especificado.\
+\
+Por favor especifique un nombre diferente.
+rename.error = No se pudo renombrar el archivo
+
+paste.error = Error al Pegar
+paste.subfolder_paste = La carpeta de destino es una subcarpeta de la carpeta de recurso.\
+\
+Intente pegarla en otro destino.
+paste.nofile = No hay ningún archivo que pegar aquí
+
+copy.prepare = Preparando para Copiar
+move.prepare = Preparando para Mover
+delete.prepare = Preparando para Eliminar
+
+delete.title = Eliminar Archivo
+delete.message = ¿Está seguro que desea eliminar permanentemente %s elementos?
+
+extract.error = Error de Extracción
+extract.invalidfile = El archivo seleccionado no es un archivo zip válido
+extract.extractfile = Extrayendo Zip
+extract.extractof = Extrayendo %i de %i
+extract.preparing = Preparando para Extraer
+extract.cancelmsg = ¿Está seguro que desea cancelar el proceso de extracción?
+
+tools.chmod.read = Leer
+tools.chmod.write = Escribir
+tools.chmod.exec = Exec
+tools.chmod.user = Usuario
+tools.chmod.group = Grupo
+tools.chmod.others = Otros
+tools.chmod.setuid = SetUID
+tools.chmod.setgid = SetGID
+tools.chmod.sticky = Pegadizo
+
+tools.terminal.title = Terminal
+tools.terminal.terminate = Finalizar
+tools.terminal.terminate_info = La Shell aún se encuentra ejecutándose... ¿Está seguro que desea finalizarla?
