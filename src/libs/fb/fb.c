@@ -23,6 +23,7 @@
  */
 #ifndef __libaroma_fb_c__
 #define __libaroma_fb_c__
+#include <sys/stat.h>
 #include "engine.c"
 #include "fb_driver.c"
 

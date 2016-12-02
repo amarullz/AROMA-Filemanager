@@ -24,6 +24,11 @@
 #ifndef __libaroma_linux_fb_qcom_driver_c__
 #define __libaroma_linux_fb_qcom_driver_c__
 
+#ifndef O_DSYNC
+	#define O_DSYNC O_SYNC
+#endif
+
+
 /*
  * Function    : QCOMFB_init
  * Return Value: byte

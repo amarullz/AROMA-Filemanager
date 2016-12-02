@@ -365,30 +365,6 @@ void LINUXFBDP_set_dpi(LIBAROMA_FBP me) {
   if ((me->dpi<160)||(me->dpi>960)){
     me->dpi = dpi_fallback;
   }
-#ifdef __ANDROID__
-  /* android dpi from default.prop/build.prop */
-  char * sf_lcd=libaroma_getprop("ro.sf.lcd_density",
-    libaroma_stream_file("/default.prop"), 1);
-  if (sf_lcd==NULL){
-    /* try /system/build.prop */
-    sf_lcd=libaroma_getprop("ro.sf.lcd_density",
-      libaroma_stream_file("/system/build.prop"), 1);
-  }
-  if (sf_lcd!=NULL){
-    int new_dpi = atoi(sf_lcd);
-    free(sf_lcd);
-    if ((new_dpi>=160)&&(new_dpi<=980)){
-      ALOGI("android getprop ro.sf.lcd_density: %i - OK",new_dpi);
-      me->dpi=new_dpi;
-    }
-    else{
-      ALOGI("android getprop ro.sf.lcd_density: %i - INVALID",new_dpi);
-    }
-  }
-  else{
-    ALOGI("android getprop ro.sf.lcd_density not found");
-  }
-#endif
 } /* End of LINUXFBDP_set_dpi */
 
 /*

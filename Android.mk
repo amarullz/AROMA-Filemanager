@@ -25,9 +25,6 @@ include $(CLEAR_VARS)
   ## LOCAL PATH COPY
   AROMAFM_LOCALPATH := $(LOCAL_PATH)
   
-  ## binary output path
-  AROMA_OUT_PATH := $(TARGET_RECOVERY_ROOT_OUT)/../../aromafm_out
-
   ## ZLIB SOURCE FILES
   LOCAL_SRC_FILES := 	\
     libs/zlib/adler32.c \
@@ -136,11 +133,9 @@ include $(CLEAR_VARS)
   LOCAL_MODULE_TAGS             := eng
   LOCAL_FORCE_STATIC_EXECUTABLE := true
   
-  ## INCLUDES & OUTPUT PATH
-  LOCAL_C_INCLUDES              := $(AROMAFM_LOCALPATH)/include
-  LOCAL_MODULE_PATH             := $(AROMA_OUT_PATH)
+  ## INCLUDES & COMPILER FLAGS
+  LOCAL_C_INCLUDES              := $(AROMAFM_LOCALPATH)/include $(AROMAFM_LOCALPATH)/src
   
-  ## COMPILER FLAGS
   LOCAL_CFLAGS                  := -O2 
   LOCAL_CFLAGS                  += -DFT2_BUILD_LIBRARY=1 -DDARWIN_NO_CARBON 
   LOCAL_CFLAGS                  += -fdata-sections -ffunction-sections
@@ -160,19 +155,42 @@ include $(CLEAR_VARS)
   ## INCLUDED LIBRARIES
   LOCAL_STATIC_LIBRARIES        := libm libc
   
+  ifeq ($(AROMA_NDK_BUILD),yes)
+	LOCAL_CFLAGS += -DAROMA_NDK_BUILD
+  endif
+  
+  #It didn't want to link statically without it
+  LOCAL_LDFLAGS+= -static
+
+## binary output path
+ifeq ($(AROMA_NDK_BUILD),yes)
+  TARGET_OUT := $(LOCAL_PATH)/out
+  AROMA_OUT_PATH := $(TARGET_OUT)/
+else
+  LOCAL_MODULE_PATH             := $(AROMA_OUT_PATH)
+  AROMA_OUT_PATH := $(TARGET_RECOVERY_ROOT_OUT)/../../aromafm_out
+endif
+
 ## Remove Old Build
-$(shell rm -rf $(PRODUCT_OUT)/obj/EXECUTABLES/$(LOCAL_MODULE)_intermediates)
+ifneq ($(AROMA_NDK_BUILD),yes)
+	$(shell rm -rf $(PRODUCT_OUT)/obj/EXECUTABLES/$(LOCAL_MODULE)_intermediates)
+endif
 
 ## Create zip installer
-AROMA_DEVICE_NAME   := $(shell echo $(TARGET_PRODUCT) | cut -d _ -f 2)
+ifeq ($(AROMA_NDK_BUILD),yes)
+	AROMA_DEVICE_NAME	:= generic
+else
+	AROMA_DEVICE_NAME   := $(shell echo $(TARGET_PRODUCT) | cut -d _ -f 2)
+endif
+
 AROMA_ZIP_FILE      := $(AROMA_OUT_PATH)/aromafm_$(AROMA_DEVICE_NAME).zip
 $(AROMA_ZIP_FILE): aroma_filemanager
-	$(info )
-	$(info Making Aroma Installer Zip...)
+	@chmod +x $(AROMAFM_LOCALPATH)/tools/android_building.sh 
 	$(AROMAFM_LOCALPATH)/tools/android_building.sh $(AROMAFM_LOCALPATH) $(AROMA_OUT_PATH) $(AROMA_DEVICE_NAME)
-	$(info Install ----> $(AROMA_ZIP_FILE))
-	$(info )
 
 ALL_DEFAULT_INSTALLED_MODULES += $(AROMA_ZIP_FILE)
+ifeq ($(AROMA_NDK_BUILD),yes)
+	WANTED_INSTALLED_MODULES += $(AROMA_ZIP_FILE)
+endif
 
 include $(BUILD_EXECUTABLE)

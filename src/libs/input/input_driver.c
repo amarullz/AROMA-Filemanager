@@ -29,6 +29,9 @@
  */
 #include <linux/input.h>
 
+#ifdef AROMA_NDK_BUILD
+	#include <linux-input-event-codes.h>
+#endif
 /*
  * Defines & Macros
  *
