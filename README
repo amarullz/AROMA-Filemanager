@@ -2,6 +2,11 @@ AROMA Filemanager - Android Recovery Based File Manager.
 Author: amarullz
 Edited: by Phil, for PhilZ Touch
 
+* How To Build Only Aroma File Manager Module along Android NDK
+  1. # cd [project dir]
+  2. # ndk-build
+  3. # zip will be under [project dir]/out
+
 * Build along CM source
   1. # just lunch and make for your device
   2. # zip will be under [device out folder]/aromafm_out

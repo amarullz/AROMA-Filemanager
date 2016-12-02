@@ -4,8 +4,11 @@ AROMA_OUT_PATH=$(readlink -f $2)
 AROMA_BINARY=$AROMA_OUT_PATH/aroma_filemanager
 AROMA_ZIP_FILE=aromafm_$3.zip
 
+echo
+echo Making Aroma Installer Zip...
+
 if [ ! -x $AROMA_BINARY ]; then
-    echo "0"
+    echo File $AROMA_OUT_PATH/aroma_filemanager does not exist
     exit
 fi
 
@@ -17,6 +20,13 @@ cp -r $AROMA_LOCAL_PATH/assets/assets $AROMA_OUT_PATH/zip_src
 mkdir -p $AROMA_OUT_PATH/zip_src/META-INF/com/google/android
 mv $AROMA_BINARY $AROMA_OUT_PATH/zip_src/META-INF/com/google/android/update-binary
 
+## remove old zip
+[ -f $AROMA_OUT_PATH/$AROMA_ZIP_FILE ] && rm $AROMA_OUT_PATH/$AROMA_ZIP_FILE
+
 cd $AROMA_OUT_PATH/zip_src
 zip -r9q $AROMA_OUT_PATH/$AROMA_ZIP_FILE .
-echo 1
+
+
+echo "Install ----> $AROMA_OUT_PATH/$AROMA_ZIP_FILE"
+
+echo Complete
