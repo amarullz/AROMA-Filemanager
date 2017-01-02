@@ -1,0 +1,142 @@
+﻿ok = OK
+yes = Yes
+no = No
+done = Done
+cancel = Cancel
+tryagain = Try Again
+exit = Exit
+about = About
+continue = Continue
+select = Select
+close = Close
+
+canceling = Canceling...
+finishing = Finishing...
+calculating = Calculating
+discovered = Discovered %s Files
+deleting = Deleting %s Files
+moving = Moving %s of %s Files
+copying = Copying %s of %s Files
+progress.of = %s of %s
+
+seconds = seconds
+minutes = minutes
+hours = hours
+remaining = remaining
+
+mounting = Mounting Devices
+exit.message = Are you sure you want to exit the filemanager?
+
+tools.newfolder = New Folder
+tools.favorite = Favorites
+tools.selectall = Select All
+tools.unselect = Deselect
+tools.copy = Copy
+tools.cut = Cut
+tools.paste = Paste
+tools.menu = Menu
+tools.delete = Delete
+tools.details = Details
+tools.chmod = Change Permission
+tools.rename = Rename
+tools.favorite.add = Add to favorites
+tools.favorite.del = Remove from favorites
+tools.hiddenfile = Hide hidden files
+tools.hiddenfile.show = Show hidden files 
+tools.terminal = Open Console
+
+file.exists = File already exists
+file.exists.info = There is already a file with the same name in this location.
+overwrite.skip = Skip
+overwrite.skipall = Skip All
+overwrite = Overwrite
+overwrite.all = Overwrite All
+
+disk.full = Disk Full
+disk.full.info = The storage is already full, do you want to skip this file?
+disk.full.info2 = The storage is already full, cannot do requested operation.
+
+newfolder = Create new folder
+newfolder.insertname = Please insert a name to create a new folder
+newfolder.exist = There is already a file or folder with the same name as the folder name you specified.\
+\
+Please specify a different name.
+
+paste.location = Select location and press paste
+
+dir.root = Root
+dir.filecount = %s File
+dir.filecounts = %s Files
+
+selected.file = %i File selected
+selected.files = %i Files selected
+
+symlink = Symlink
+symlink.error = Symlink error
+
+settings = Settings
+settings.calib = Calibrate Screen
+settings.reset = Reset Settings
+
+settings.toolbar = Toolbar Style
+settings.toolbar.icontext = Icon and Text
+settings.toolbar.icononly = Icon only
+
+settings.fontsize = Font Size
+settings.fontsize.small = Small
+settings.fontsize.medium = Medium
+settings.fontsize.big = Big
+
+settings.fontfamily = Font Family
+settings.iconset = Iconset
+settings.themes = Themes
+settings.lang = Languages
+
+settings.trans = Transition Animation
+settings.trans.0 = No Transition
+settings.trans.1 = Fast
+settings.trans.2 = Normal
+settings.trans.3 = Smooth
+settings.trans.4 = Extra Smooth
+
+settings.mount = Mount Config
+settings.mount.all = Automount all devices on start
+settings.mount.none = None
+
+settings.reset.msg=Are you sure you want to reset your settings?
+
+newfolder.error = Cannot create a new folder
+
+rename = Rename File
+rename.insertname = Please insert a new filename to rename this file
+rename.exist = There is already a file or folder with the same name as the item name you specified.\
+\
+Please specify a different name.
+rename.error = Cannot rename the file
+
+paste.error = Paste Error
+paste.subfolder_paste = The destination folder is a subfolder of the source folder.\
+\
+Try to paste it in another location.
+paste.nofile = There is no file to paste here
+
+copy.prepare = Preparing to Copy
+move.prepare = Preparing to Move
+delete.prepare = Preparing to Delete
+
+delete.title = Delete File
+delete.message = Are you sure you want to permanently delete %s items?
+
+tools.chmod.read = Read
+tools.chmod.write = Write
+tools.chmod.exec = Exec
+tools.chmod.user = User
+tools.chmod.group = Group
+tools.chmod.others = Others
+tools.chmod.setuid = SetUID
+tools.chmod.setgid = SetGID
+tools.chmod.sticky = Sticky
+
+tools.terminal.title = Terminal
+tools.terminal.terminate = Terminate
+tools.terminal.terminate_info = Shell is still running... Are you sure you want to terminate it?

@@ -1,0 +1,128 @@
+ok = OK
+yes = Ja
+no = Nein
+done = Fertig
+cancel = Löschen
+tryagain = Nochmals versuchen
+exit = Verlassen
+about = Über
+continue = Weiter
+select = Auswahl
+
+canceling = Lösche...
+finishing = Fertigstellung...
+calculating = Berechnung
+discovered = Entdeckte %s Datein
+deleting = Lösche %s Datein
+moving = Verschiebe %s von %s Dateien
+copying = Kopiere %s von %s Dateien
+progress.of = %s von %s
+
+seconds = Sekunden
+minutes = Minuten 
+hours = Stunden
+remaining = Verbleibend
+
+mounting = Montiere Geräte
+exit.message = Bist du sicher dass du den Filemanager verlassen willst?
+
+tools.newfolder = Neuer Ordner
+tools.favorite = Favoriten
+tools.selectall = Wähle alle
+tools.unselect = Abwählen
+tools.copy = Kopieren
+tools.cut = Ausschneiden
+tools.paste = Einfügen
+tools.menu = MenÜ
+tools.delete = Löschen
+tools.details = Details
+tools.chmod = Wechsle Permission
+tools.rename = Umbenennen
+tools.favorite.add = Zu Favoriten hinzufügen
+tools.favorite.del = Lösche von Favoriten
+tools.hiddenfile = Verberge verstecke Dateien
+tools.hiddenfile.show = Zeige versteckte Dateien 
+
+file.exists = Datei existiert bereits
+file.exists.info = Es existiert bereits eine Datei mit dem gleichen Namen an diesem Ort.
+overwrite.skip = Überspringen
+overwrite.skipall = Alle überspringen
+overwrite = Überschreiben
+overwrite.all = Alle überschreiben
+
+disk.full = Disk voll
+disk.full.info = Der Speicher ist voll. Willst du diese Datei überspringen?
+disk.full.info2 = Der Speicher ist voll. Gewünschte Aktion nicht möglich.
+
+newfolder = Erstelle neuen Ordner
+newfolder.insertname = Bitte Namen für neuen Ordner eingeben
+newfolder.exist = Es existiert bereits eine Datei oder ein Ordner mit dem gleichen Namen.\
+\
+Bitte lege einen anderen Namen an.
+
+paste.location = Wähle Speicherort und drücke Einfügen
+
+dir.root = Root
+dir.filecount = %s Datei
+dir.filecounts = %s DateienFiles
+
+selected.file = %i Datei ausgewählt
+selected.files = %i Dateien ausgewählt
+
+symlink = Symlink
+symlink.error = Symlink error
+
+settings = Einstellungen
+settings.calib = Calibriere Screen
+settings.reset = Reset Einstellungen
+
+settings.toolbar = Toolbar Style
+settings.toolbar.icontext = Icon and Text
+settings.toolbar.icononly = Nur Icon
+
+settings.fontsize = Font Größe
+settings.fontsize.small = Klein
+settings.fontsize.medium = Mittel
+settings.fontsize.big = Groß
+
+settings.fontfamily = Font Family
+settings.iconset = Iconset
+settings.themes = Themes
+settings.lang = Sprachen
+
+settings.trans = Animations Übergang
+settings.trans.0 = Kein Übergang
+settings.trans.1 = Schnell
+settings.trans.2 = Normal
+settings.trans.3 = Weich
+settings.trans.4 = Extra Weich
+
+settings.mount = Mount Config
+settings.mount.all = Automount alle Geräte bei Start
+settings.mount.none = Keine
+
+settings.reset.msg= Reset alle Einstellungen?
+
+newfolder.error = Kann keinen Ordner erstellen
+
+rename = Datei umbenennen
+rename.insertname = Bitte neuen Namen eingeben um diese Datei umzubennnen
+rename.exist = Es existiert bereits eine Datei oder ein Ordner mit dem gleichen Namen.\
+\
+Bitte lege einen anderen Namen an.
+rename.error = Kann diese Datei nicht umbenennen
+
+paste.error = Einfügen Error
+paste.subfolder_paste = Der Zielordner ist ein Unterordner des Quellordners.\
+\
+Versuche einen anderen Zielort.
+paste.nofile = Es existiert keine Datei die hier eingefügt werden kann
+
+copy.prepare = Vorbereitung kopieren
+move.prepare = Vorbereitung verschieben
+delete.prepare = Vorbereitung löschen
+
+delete.title = Lösche Datei
+delete.message = Bist du sicher dass du %s Stück löschen willst?
+
+###marc2040 @ xdadevelopers.com###

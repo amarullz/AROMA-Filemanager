@@ -1,0 +1,61 @@
+﻿ok=确定
+yes=是
+no=无
+done=完成
+cancel=取消
+tryagain=再次尝试
+exit=出口
+about=关于
+
+tools.newfolder=新的文件夹
+tools.favorite=收藏
+tools.selectall=全部选择
+tools.unselect=取消选择
+tools.copy=复制
+tools.cut=切
+tools.paste=粘贴
+tools.menu=菜单
+
+newfolder=创建新的文件夹
+newfolder.insertname=请插入新的文件夹的名称来创建新的文件夹
+newfolder.exist=已经有一个文件或文件夹相同的名称与您指定的文件夹名称\
+\
+请指定一个不同的名称。
+
+paste.location=选择位置，然后按粘贴
+
+dir.root=根
+dir.filecount=%s 的文件
+dir.filecounts=%s 的文件
+
+selected.file = %i 个选定的文件
+selected.files = %i 个选定的文件
+
+symlink = Symlink
+symlink.error = Symlink error
+
+settings=设置
+settings.calib=校准屏幕
+settings.reset=复位设置
+settings.mount=摩配置
+
+settings.toolbar = 工具栏风格
+settings.toolbar.icontext = 图标和文字
+settings.toolbar.icononly = 图示仅
+
+settings.fontsize=字体大小
+settings.fontsize.small=小
+settings.fontsize.medium=中等
+settings.fontsize.big=大
+
+settings.fontfamily=字体家庭
+settings.iconset=图标集
+settings.themes=主题
+settings.lang=语言
+
+settings.trans=过渡动画
+settings.trans.0=没有过渡
+settings.trans.1=快速
+settings.trans.2=正常
+settings.trans.3=平滑
+settings.trans.4=额外光滑
