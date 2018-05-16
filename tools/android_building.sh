@@ -2,7 +2,7 @@
 AROMA_LOCAL_PATH=$(readlink -f $1)
 AROMA_OUT_PATH=$(readlink -f $2)
 AROMA_BINARY=$AROMA_OUT_PATH/aroma_filemanager
-AROMA_ZIP_FILE=aromafm_$3.zip
+AROMA_ZIP_FILE=aromafm_$3-KL-Beta.zip
 
 if [ ! -x $AROMA_BINARY ]; then
     echo "0"

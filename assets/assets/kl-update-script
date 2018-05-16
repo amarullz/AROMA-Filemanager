@@ -1,0 +1,52 @@
+#!/sbin/sh
+
+
+klloc="/data/media/0/ZeusKL"
+BootLoc=$2
+BootName=$3
+
+if [ "$1" == "img" ]; then
+	echo -n -e "IMG $1 $2 $3 $4 $5\n" > "/tmp/success.txt"
+else
+	echo -n -e "ZIP $1 $2 $3 $4 $5\n" > "/tmp/success.txt"
+fi
+
+cd /tmp
+
+rm -R "./bootTMP/*"
+mkdir -p "./bootTMP/"
+mkdir -p "$klloc/"
+
+if [ "$1" == "img" ]; then
+	rm boot
+	cp $BootLoc boot
+fi
+
+./unpackbootimg boot "./bootTMP/"
+
+if [ "$4" == 1 ] ; then
+	rm -R "$klloc/*"
+fi
+
+if [ "$4" == 1 ] || [ "$4" == 2 ] ; then
+	rm "$klloc/zImage"
+	cp "/tmp/bootTMP/boot-zImage" "$klloc/zImage"
+	echo "$BootName">"$klloc/kernel"
+fi
+
+if [ "$4" == 1 ] || [ "$4" == 3 ] ; then
+	rm "$klloc/initrd.img"
+	mkdir /tmp/bootTMP/ramdisk/
+	cd /tmp/bootTMP/ramdisk/
+	gunzip -c "/tmp/bootTMP/boot-ramdisk.gz" | cpio -i
+	sed -i -e "s/restorecon_recursive \/data//" ./init.rc
+	find . | cpio -o -H newc | gzip > "$klloc/initrd.img"
+	echo "$BootName">"$klloc/ramdisk"
+fi
+
+chmod 755 "$klloc/"
+chmod 644 "$klloc/*"
+
+cd /tmp
+rm boot
+rm -Rf bootTMP
